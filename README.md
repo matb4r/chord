@@ -1,2 +1,2 @@
-# chord
-Custom and simple implementation of Chord protocol (static grouping modification)
+# Chord
+Custom and simple implementation of Chord protocol (static groups modification).
