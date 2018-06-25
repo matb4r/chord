@@ -95,5 +95,6 @@ class Node {
         int start;
         int end;
         int node;
+        ArrayList<String> ips;
     }
 }
