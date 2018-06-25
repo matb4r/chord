@@ -69,7 +69,7 @@ class Node {
         if (np < np_succ) {
             return id > np && id <= np_succ;
         } else {
-            return id <= np_succ || id > np;
+            return id > np || id <= np_succ;
         }
     }
 
