@@ -9,7 +9,7 @@ class Node {
     String ip; // node ip
 
     public int n; // node/group id
-    ArrayList<String> ips; // all ips in group
+    private ArrayList<String> ips; // all ips in group
 
     private Finger[] fingerTable;
 
