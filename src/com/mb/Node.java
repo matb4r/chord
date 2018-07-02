@@ -11,8 +11,11 @@ class Node {
     ArrayList<String> ips; // all ips in group
 
     private Finger[] fingerTable;
+
     private int successor;
+    private ArrayList<String> successorIps;
     private int predecessor;
+    private ArrayList<String> predecessorIps;
 
     Node(int n) {
         this.n = n;

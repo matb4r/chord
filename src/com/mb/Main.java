@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Main {
 
-    static final int m = 6;
     static final int[] ids = {1, 3, 8, 11, 15, 22, 35};
+    static final int m = ids.length;
     static ArrayList<Node> nodes = initNodes();
 
     private static ArrayList<Node> initNodes() {
@@ -16,7 +16,7 @@ public class Main {
         return nodes;
     }
 
-    public static Node idToNode(int id) {
+    static Node idToNode(int id) {
         for (Node n : nodes) {
             if (n.n == id) {
                 return n;
@@ -29,7 +29,7 @@ public class Main {
         testFindSuccessor(false);
     }
 
-    public static void testFindSuccessor(boolean debug) {
+    static void testFindSuccessor(boolean debug) {
         for (Node testNode : nodes) {
             System.out.println("Node " + testNode.n);
             testFindSuccessor(testNode, 0, 1, debug);
@@ -101,7 +101,7 @@ public class Main {
         System.out.println("Done! All ok!");
     }
 
-    public static void testFindSuccessor(Node node, int find, int expected, boolean debug) {
+    static void testFindSuccessor(Node node, int find, int expected, boolean debug) {
         int x = node.find_successor(find);
         if (x != expected) {
             try {
