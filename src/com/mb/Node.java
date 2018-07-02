@@ -6,8 +6,9 @@ import static com.mb.Main.*;
 
 class Node {
 
-    public int n; // node/group id
     String ip; // node ip
+
+    public int n; // node/group id
     ArrayList<String> ips; // all ips in group
 
     private Finger[] fingerTable;
