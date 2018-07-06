@@ -1,20 +1,21 @@
 package com.mb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
 
-    static final int[] ids = {1, 3, 8, 11, 15, 22, 35};
-    static final int m = ids.length;
-    static ArrayList<Node> nodes = initNodes();
+//    static int[] ids = {1, 3, 8, 11, 15, 22, 35};
+    static final int m = 6;
+    static ArrayList<Node> nodes = new ArrayList<>();
 
-    private static ArrayList<Node> initNodes() {
-        ArrayList<Node> nodes = new ArrayList<>();
-        for (int id : ids) {
-            nodes.add(new Node(id));
-        }
-        return nodes;
-    }
+//    private static ArrayList<Node> initNodes() {
+//        ArrayList<Node> nodes = new ArrayList<>();
+//        for (int id : ids) {
+//            nodes.add(new Node(id));
+//        }
+//        return nodes;
+//    }
 
     static Node idToNode(int id) {
         for (Node n : nodes) {
@@ -26,7 +27,28 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        testFindSuccessor(false);
+        Node n1 = new Node(1, "192.168.1.1");
+        Node n3 = new Node(3, "192.168.1.3");
+        Node n8 = new Node(8, "192.168.1.8");
+        Node n11 = new Node(11, "192.168.1.11");
+        Node n15 = new Node(15, "192.168.1.15");
+        Node n22 = new Node(22, "192.168.1.22");
+        Node n35 = new Node(35, "192.168.1.35");
+
+        nodes.add(n1);
+        nodes.add(n3);
+        nodes.add(n8);
+        nodes.add(n11);
+        nodes.add(n15);
+        nodes.add(n22);
+        nodes.add(n35);
+        n1.join(null);
+        n3.join(n1);
+        n35.join(n3);
+        n22.join(n35);
+        n15.join(n22);
+        n8.join(n15);
+        n11.join(n8);
     }
 
     static void testFindSuccessor(boolean debug) {
