@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Main {
 
     static final int[] ids = {1, 3, 8, 11, 15, 22, 35};
-    static final int m = ids.length;
+    static final int m = 6;
     static ArrayList<Node> nodes = initNodes();
 
     private static ArrayList<Node> initNodes() {
