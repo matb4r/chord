@@ -31,38 +31,6 @@ class Node {
         this.predecessorIps = new ArrayList<>();
     }
 
-//    Node(int n) {
-//        for (int i = 1; i <= m; i++) {
-//            fingerTable[i - 1] = new Finger();
-//            fingerTable[i - 1].i = i;
-//            fingerTable[i - 1].start = (n + (int) Math.pow(2, i - 1)) % (int) Math.pow(2, m);
-//            fingerTable[i - 1].end = (n + (int) Math.pow(2, i) - 1) % (int) Math.pow(2, m);
-//            fingerTable[i - 1].node = successor(fingerTable[i - 1].start);
-//        }
-//        this.successor = fingerTable[0].node;
-//        this.predecessor = predecessor(n);
-//    }
-
-//    private static int successor(int id) {
-//        for (int i = 0; i < ids.length - 1; i++) {
-//            if (ids[i + 1] >= id && ids[i] < id) {
-//                return ids[i + 1];
-//            }
-//        }
-//        return ids[0];
-//    }
-//
-//    private int predecessor(int id) {
-//        for (int i = 1; i < ids.length; i++) {
-//            if (this.n == ids[i]) {
-//                return ids[i - 1];
-//            }
-//        }
-//        return ids[ids.length - 1];
-//    }
-
-    // lookups
-
     public int find_successor(int id) {
         if (id >= Math.pow(2, m)) {
             throw new RuntimeException("Id [" + id + "] too big for the identifier space");
@@ -107,8 +75,6 @@ class Node {
         return this.predecessor;
     }
 
-    // joins
-
     public void join(Node node) {
         if (node != null) {
             init_finger_table(node);
@@ -132,7 +98,7 @@ class Node {
 
     public void init_finger_table(Node node) {
         fingerTable[0] = new Finger();
-        fingerTable[0].i = 0;
+        fingerTable[0].i = 1;
         fingerTable[0].start = (n + (int) Math.pow(2, 0)) % (int) Math.pow(2, m);
         fingerTable[0].end = (n + (int) Math.pow(2, 1) - 1) % (int) Math.pow(2, m);
         fingerTable[0].node = node.find_successor(fingerTable[0].start);
@@ -147,10 +113,18 @@ class Node {
             fingerTable[i - 1].i = i;
             fingerTable[i - 1].start = (n + (int) Math.pow(2, i - 1)) % (int) Math.pow(2, m);
             fingerTable[i - 1].end = (n + (int) Math.pow(2, i) - 1) % (int) Math.pow(2, m);
-            if (fingerTable[i - 1].start >= n && fingerTable[i - 1].start < fingerTable[i - 2].node) {
-                fingerTable[i - 1].node = fingerTable[i - 2].node;
+            if (n > fingerTable[i - 2].node) {
+                if (fingerTable[i - 1].start >= n || fingerTable[i - 1].start <= fingerTable[i - 2].node) {
+                    fingerTable[i - 1].node = fingerTable[i - 2].node;
+                } else {
+                    fingerTable[i - 1].node = node.find_successor(fingerTable[i - 1].start);
+                }
             } else {
-                fingerTable[i - 1].node = node.find_successor(fingerTable[i - 1].start);
+                if (fingerTable[i - 1].start >= n && fingerTable[i - 1].start <= fingerTable[i - 2].node) {
+                    fingerTable[i - 1].node = fingerTable[i - 2].node;
+                } else {
+                    fingerTable[i - 1].node = node.find_successor(fingerTable[i - 1].start);
+                }
             }
         }
     }
@@ -163,15 +137,21 @@ class Node {
     }
 
     public void update_finger_table(int s, int i) {
-        if (s >= n && s < fingerTable[i].node) {
+        for (int j = 1; j <= m; j++) {
+            fingerTable[j - 1].node = find_successor(fingerTable[j - 1].start);
+        }
+        if (s >= n && s <= fingerTable[i].node) {
             fingerTable[i].node = s;
             int p = predecessor;
-            idToNode(p).update_finger_table(s, i);
+            // condition to prevent stack overflow in 1 -> 35 -> ... combination
+            if (p != successor) {
+                idToNode(p).update_finger_table(s, i);
+            }
         }
     }
 
-    public int getSuccessor() {
-        return fingerTable[0].node;
+    public Finger[] getFingerTable() {
+        return fingerTable;
     }
 
     class Finger {

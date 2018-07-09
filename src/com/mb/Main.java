@@ -1,21 +1,12 @@
 package com.mb;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class Main {
 
-//    static int[] ids = {1, 3, 8, 11, 15, 22, 35};
     static final int m = 6;
     static ArrayList<Node> nodes = new ArrayList<>();
-
-//    private static ArrayList<Node> initNodes() {
-//        ArrayList<Node> nodes = new ArrayList<>();
-//        for (int id : ids) {
-//            nodes.add(new Node(id));
-//        }
-//        return nodes;
-//    }
 
     static Node idToNode(int id) {
         for (Node n : nodes) {
@@ -27,28 +18,75 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Node n1 = new Node(1, "192.168.1.1");
-        Node n3 = new Node(3, "192.168.1.3");
-        Node n8 = new Node(8, "192.168.1.8");
-        Node n11 = new Node(11, "192.168.1.11");
-        Node n15 = new Node(15, "192.168.1.15");
-        Node n22 = new Node(22, "192.168.1.22");
-        Node n35 = new Node(35, "192.168.1.35");
+        testJoin(true);
+    }
 
-        nodes.add(n1);
-        nodes.add(n3);
-        nodes.add(n8);
-        nodes.add(n11);
-        nodes.add(n15);
-        nodes.add(n22);
-        nodes.add(n35);
-        n1.join(null);
-        n3.join(n1);
-        n35.join(n3);
-        n22.join(n35);
-        n15.join(n22);
-        n8.join(n15);
-        n11.join(n8);
+    static void testJoin(boolean debug) {
+        for (int i = 0; i < 1000; i++) {
+            nodes.clear();
+            Node n1 = new Node(1, "192.168.1.1");
+            Node n3 = new Node(3, "192.168.1.3");
+            Node n8 = new Node(8, "192.168.1.8");
+            Node n11 = new Node(11, "192.168.1.11");
+            Node n15 = new Node(15, "192.168.1.15");
+            Node n22 = new Node(22, "192.168.1.22");
+            Node n35 = new Node(35, "192.168.1.35");
+            nodes.add(n1);
+            nodes.add(n3);
+            nodes.add(n8);
+            nodes.add(n11);
+            nodes.add(n15);
+            nodes.add(n22);
+            nodes.add(n35);
+            Collections.shuffle(nodes);
+
+            if (debug) {
+                for (Node n : nodes) {
+                    System.out.print(n.n + " ");
+                }
+                System.out.print("\n");
+            }
+
+            nodes.get(0).join(null);
+            for (int j = 1; j < nodes.size(); j++) {
+                nodes.get(j).join(nodes.get(j - 1));
+            }
+            Node.Finger[] fingers = n3.getFingerTable();
+            testJoin(fingers[0].start, 4, debug);
+            testJoin(fingers[1].start, 5, debug);
+            testJoin(fingers[2].start, 7, debug);
+            testJoin(fingers[3].start, 11, debug);
+            testJoin(fingers[4].start, 19, debug);
+            testJoin(fingers[5].start, 35, debug);
+            testJoin(fingers[0].end, 4, debug);
+            testJoin(fingers[1].end, 6, debug);
+            testJoin(fingers[2].end, 10, debug);
+            testJoin(fingers[3].end, 18, debug);
+            testJoin(fingers[4].end, 34, debug);
+            testJoin(fingers[5].end, 2, debug);
+            testJoin(fingers[0].node, 8, debug);
+            testJoin(fingers[1].node, 8, debug);
+            testJoin(fingers[2].node, 8, debug);
+            testJoin(fingers[3].node, 11, debug);
+            testJoin(fingers[4].node, 22, debug);
+            testJoin(fingers[5].node, 35, debug);
+            System.out.println("  iteration " + i + " ok!");
+        }
+        System.out.println("Done! All ok!");
+    }
+
+    static void testJoin(int result, int expected, boolean debug) {
+        if (result != expected) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (Node n : nodes) {
+                System.out.print(n.n + " ");
+            }
+            throw new RuntimeException("join: should get " + expected + " but got " + result);
+        }
     }
 
     static void testFindSuccessor(boolean debug) {
