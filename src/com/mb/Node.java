@@ -26,6 +26,7 @@ class Node {
         this.n = n;
         this.ip = ip;
         this.ips = new ArrayList<>();
+        this.ips.add(this.ip);
         this.fingerTable = new Finger[m];
         this.successorIps = new ArrayList<>();
         this.predecessorIps = new ArrayList<>();
@@ -105,9 +106,9 @@ class Node {
         successor = fingerTable[0].node;
         predecessor = idToNode(successor).predecessor;
         idToNode(successor).predecessor = n;
-        idToNode(successor).predecessorIps.add(ip);
+        idToNode(successor).predecessorIps = ips;
         idToNode(predecessor).successor = n;
-        idToNode(predecessor).successorIps.add(ip);
+        idToNode(predecessor).successorIps = ips;
         for (int i = 2; i <= m; i++) {
             fingerTable[i - 1] = new Finger();
             fingerTable[i - 1].i = i;
