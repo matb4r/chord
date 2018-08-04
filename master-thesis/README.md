@@ -1,2 +1,2 @@
 # Master thesis
-Chord protocol extension
+Extension of the Chord protocol
