@@ -1,7 +1,7 @@
 /**
  * 
  */
-package example.chord2local;
+package example.chord2async;
 
 import peersim.core.CommonState;
 import peersim.core.Network;
@@ -9,7 +9,7 @@ import peersim.core.Node;
 import peersim.edsim.EDProtocol;
 import peersim.transport.Transport;
 
-import java.math.*;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -62,7 +62,7 @@ public class ChordProtocol implements EDProtocol, Comparable<ChordProtocol> {
 	private void send(ChordMessage msg, BigInteger destID){
 		Transport transport = (Transport) node.getProtocol(Utils.TID);
 		msg.addToPath(destID);
-		ChordProtocol cpDest = Utils.NODES.get(destID);
+		ChordProtocol cpDest = Utils.NODES.get(destID);  
 		if(cpDest != null && cpDest.isUp())
 			transport.send(node, cpDest.node, msg, Utils.PID);
 		else

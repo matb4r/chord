@@ -1,13 +1,13 @@
 package example.chord2;
 
-import peersim.config.Configuration;
-import peersim.core.CommonState;
-import peersim.core.Node;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import peersim.config.Configuration;
+import peersim.core.CommonState;
+import peersim.core.Node;
 
 
 public class Utils {
@@ -60,14 +60,6 @@ public class Utils {
 		while(Utils.NODES.containsKey(newId));
 		
 		return newId;
-	}
-	
-	public static boolean isUp(BigInteger nid){
-		if(!NODES.containsKey(nid) || NODES.get(nid) == null)
-			return false;
-		
-		return NODES.get(nid).isUp();
-			
 	}
 	
 }

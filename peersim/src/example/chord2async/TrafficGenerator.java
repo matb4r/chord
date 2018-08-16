@@ -1,13 +1,14 @@
 
-package example.chord2local;
+package example.chord2async;
+
+import peersim.config.Configuration;
+import peersim.core.CommonState;
+import peersim.core.Control;
+import peersim.core.Network;
+import peersim.core.Node;
+import peersim.edsim.EDSimulator;
 
 import java.math.BigInteger;
-
-
-import example.chord2local.ChordProtocol;
-import peersim.core.*;
-import peersim.config.Configuration;
-import peersim.edsim.EDSimulator;
 
 
 public class TrafficGenerator implements Control {

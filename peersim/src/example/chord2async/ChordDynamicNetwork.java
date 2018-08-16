@@ -1,10 +1,6 @@
-package example.chord2;
-
-import java.util.ArrayList;
-import java.util.Collections;
+package example.chord2async;
 
 import peersim.core.CommonState;
-import peersim.core.Fallible;
 import peersim.core.Network;
 import peersim.dynamics.DynamicNetwork;
 
@@ -15,8 +11,6 @@ public class ChordDynamicNetwork extends DynamicNetwork {
 	}
 
 	protected void remove(int n){
-		//super.remove(n);
-		
 		for(int i=0; i < n; i++){
 			int index = CommonState.r.nextInt(Network.size());
 			ChordProtocol cp = Utils.getChordFromNode(Network.get(index));

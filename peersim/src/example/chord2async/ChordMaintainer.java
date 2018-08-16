@@ -1,7 +1,5 @@
-package example.chord2local;
+package example.chord2async;
 
-import example.chord2local.ChordProtocol;
-import example.chord2local.Utils;
 import peersim.core.Control;
 import peersim.core.Network;
 

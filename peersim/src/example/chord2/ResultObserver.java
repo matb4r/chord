@@ -1,9 +1,10 @@
 package example.chord2;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import peersim.core.Control;
 import peersim.core.Network;
-
-import java.util.ArrayList;
 
 public class ResultObserver implements Control {
 	
@@ -11,9 +12,13 @@ public class ResultObserver implements Control {
 
 	
 	public boolean execute() {
+		
 		ArrayList<Integer> hopCounters = new ArrayList<Integer>(); 
+	
 		int max = 0;
 		int min = Integer.MAX_VALUE;
+			
+			
 		for (int j = 0; j < Utils.receivedMessages.size(); j++){
 			@SuppressWarnings("unchecked")
 			int hops = ((ArrayList<String>)Utils.receivedMessages.get(j).getContent()).size()-1;
@@ -23,7 +28,10 @@ public class ResultObserver implements Control {
 				min = hops;
 			hopCounters.add(hops);
 		}
+				
+		
 		double mean = meanCalculator(hopCounters);
+		
 		System.out.println("Mean:  " + mean + " Max Value: " + max+ " Min Value: " + min);
 		System.out.println("Failures: " + Utils.FAILS+ " Success: " + Utils.SUCCESS);
 		System.out.println("Final system size: " + Network.size());
@@ -31,6 +39,7 @@ public class ResultObserver implements Control {
 	}
 
 	private double meanCalculator(ArrayList<Integer> list) {
+		
 		int lenght = list.size();
 		if (lenght == 0)
 			return 0;
