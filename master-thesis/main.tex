@@ -1,0 +1,219 @@
+\documentclass[12pt, twoside, openany]{report}
+\usepackage[dvips]{graphicx,color,rotating}
+\usepackage[utf8]{inputenc}
+\usepackage{indentfirst}
+\usepackage{t1enc}
+\usepackage{a4wide}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{enumerate}
+\usepackage{verbatim}
+\usepackage[MeX]{polski}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{left=25mm,right=25mm,bindingoffset=10mm, top=25mm, bottom=25mm}
+\usepackage{amssymb, latexsym}
+\usepackage{amsthm}
+\usepackage{palatino}
+\usepackage{float}
+\usepackage{tabulary}
+\usepackage{array}
+\usepackage{pstricks}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{courier}
+\usepackage{pgfplots}
+\usepackage{etoolbox}
+\patchcmd{\abstract}{\null\vfil}{}{}{} % abstract top align.
+
+\newtheorem{twierdzenie}{Twierdzenie}[section]
+
+%\linespread{1.5}
+
+% styl listingów
+\lstset{
+    xleftmargin=17pt,
+    numbers = left,
+    %framexleftmargin=10mm,
+    frame=lrbt,
+    %backgroundcolor=\color[RGB]{250,250,250},
+    %keywordstyle=\bfseries\color{blue},
+    %identifierstyle=\bfseries,
+    %numberstyle=\color[RGB]{0,192,192},
+    %commentstyle=\it\color[RGB]{96,96,96},
+    %stringstyle=\rmfamily\slshape\color[RGB]{128,0,0},
+    %showstringspaces=true,
+    breaklines=true,
+    breakatwhitespace=try,
+    %language=C++,
+    showstringspaces=false,
+    tabsize=4,
+    basicstyle=\footnotesize\ttfamily,
+    aboveskip=1em
+    %postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+}
+
+
+\author{Mateusz Bartkowiak}
+\title{Współbieżne modelowanie i~prezentacja dynamiki obiektów fizycznych}
+
+
+\begin{document}
+
+\begin{titlepage}
+
+\noindent
+
+
+\centering
+\Large POLITECHNIKA POZNAŃSKA\\
+\large WYDZIAŁ INFORMATYKI\\
+Zakład Systemów Informatycznych: Systemy Rozproszone
+
+\vfill
+\includegraphics[width=120pt,height=120pt]{PP}
+
+\vfill
+\center
+\LARGE
+Mateusz Bartkowiak
+
+\center
+\Large
+Praca magisterska
+
+\vfill
+\center
+\Huge
+\textbf{Efektywne wyszukiwanie danych w systemach P2P w oparciu o rozszerzenia protokołu Chord}
+
+
+\vfill
+\center
+\Large
+Promotor: dr inż. Anna Kobusińska
+
+\vfill
+\center
+\large
+Poznań, Październik 2018
+
+\end{titlepage}
+
+% wlasny abstract
+\renewcommand{\abstractname}{}
+\begin{abstract}
+\thispagestyle{plain} % numer strony
+\begin{center}
+\textbf{Streszczenie}
+\end{center}
+
+\indent
+Polskie streszczenie pracy.
+
+\vspace{50px}
+\begin{center}
+\textbf{Abstract}
+\end{center}
+
+\indent
+English abstract
+
+\end{abstract}
+
+
+\tableofcontents
+
+
+%-----------Poczatek czesci zasadniczej-----------
+
+\chapter{Wstęp}
+
+\begin{itemize}
+\item uzasadniać temat pracy
+\item ogólnie p2p
+\item dlaczego chce robic grupy
+\end{itemize}
+
+
+\section{Cel pracy i motywacja}
+
+Cel pracy itd.
+
+
+\section{Omówienie rozdziałów}
+
+Omówienie rozdziałów.
+
+
+
+\chapter{Przegląd istniejących rozwiązań}
+
+\begin{itemize}
+\item wspomniec o chordzie
+\item opisac rozszerzenia chorda, raczej w kontekscie mojej pracy
+\item moze zawrzec stabilizacje?
+\end{itemize}
+
+
+\chapter{Model systemu}
+
+\begin{itemize}
+\item opisac konkretnie, ustruktyryzowany/nieustr, jak sa wezly polaczone
+\item wezly polaczone sa w logiczny pierscien…
+\item mozna cos o grupach, ale bardzo oglnie, nie wchodzic w moje rozwiazanie
+
+\end{itemize}
+
+
+\chapter{Protokół Chord}
+
+\begin{itemize}
+\item jak dziala
+\item pseudokod
+
+\end{itemize}
+
+
+\chapter{Zaproponowane rozwiązanie}
+
+\begin{itemize}
+\item ogolny opis, opisac od czego abstrachuje, moze stabilizacje zawrzec?
+\item szczegolowy opis, pseudokod
+
+
+\end{itemize}
+
+
+\chapter{Testy symulacyjne}
+
+\begin{itemize}
+\item opisac PeerSim
+\item scenariusze: ile wezlow, jak czesto dolaczaja, jak duze sa grupy, wspolczyniki stabilizacji
+\item wyniki
+\item analiza
+\end{itemize}
+
+
+\chapter{Podsumowanie}
+
+\begin{itemize}
+\item o czym byla praca, czy cel osiagniety, czy spoko wyniki, dalsze rozwiazania
+\end{itemize}
+
+
+%-----------Koniec czesci zasadniczej-----------
+
+\begin{thebibliography}{11}
+\addcontentsline{toc}{chapter}{Bibliografia} % dodane do spisu treści
+
+\bibitem{bib:dziubak} Jacek Matulewski, Tomasz Dziubak, Marcin Sylwestrzak, Radosław Płoszajczak, \emph{Grafika, Fizyka, Metody numeryczne. Symulacje fizyczne z wizualizacją 3D}, Wydawnictwo naukowe PWN, Warszawa 2010
+
+\bibitem{bib:gpu_gems} Lars Nyland, Mark Harris, Jan Prins, \emph{GPU Gems 3}, Chapter 31. Fast N-Body Simulation with CUDA, [online] \url{http://http.developer.nvidia.com/GPUGems3/gpugems3_ch31.html} [dostęp: 01-01-2017]
+
+\end{thebibliography}
+
+\end{document}
