@@ -35,7 +35,7 @@ public class ChordProtocol implements CDProtocol {
         } else {
             Group g = closestPrecedingNode(id);
 
-            // becouse of recursive calls and stackoverflow...
+            // because of recursive calls and stackoverflow...
             if (g.no.equals(group.no)) {
                 return group;
             }
@@ -141,13 +141,13 @@ public class ChordProtocol implements CDProtocol {
 
     @Override
     public void nextCycle(Node node, int protocolID) {
-        System.out.println("Node " + ip + " is calling!");
-        stabilize();
-        for (int i = 0; i < m; i++) {
-            fixFingers();
-        }
-        checkPredecessor();
-        checkGroup();
+//        System.out.println("Node " + ip + " is calling!");
+//        checkPredecessor();
+//        checkGroup();
+//        stabilize();
+//        for (int i = 0; i < m; i++) {
+//            fixFingers();
+//        }
     }
 
     @Override

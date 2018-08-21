@@ -51,7 +51,7 @@ public class ChordInitializer implements NodeInitializer {
             }
         }
         ArrayList<ChordProtocol> allNodes = Utils.getAllNodes(pid);
-        System.out.println("siema");
+        System.out.println("Node " + cp.ip + " added");
     }
 
     public void join(ChordProtocol cp) {

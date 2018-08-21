@@ -179,7 +179,7 @@ public DynamicNetwork(String prefix)
  * configuration.
  * @return always false 
  */
-public final boolean execute()
+public boolean execute()
 {
 	if (add == 0)
 		return false;
