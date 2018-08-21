@@ -185,17 +185,17 @@ public static final void nextExperiment()
 	// initialization
 	CDState.setCycle(0);
 	CDState.setPhase(CDState.PHASE_UNKNOWN);
-	System.err.println("CDSimulator: resetting");
+	System.out.println("-------------------- CDSimulator: resetting");
 	controls = null;
 	ctrlSchedules = null;
 	Network.reset();
-	System.err.println("CDSimulator: running initializers");
+	System.out.println("-------------------- CDSimulator: running initializers");
 	runInitializers();
 
 	// main cycle
 	loadControls();
 
-	System.err.println("CDSimulator: starting simulation");
+	System.out.println("-------------------- CDSimulator: starting simulation");
 	for (int i = 0; i < cycles; ++i) {
 		CDState.setCycle(i);
 
@@ -206,7 +206,7 @@ public static final void nextExperiment()
 		}
 		if (stop)
 			break;
-		System.err.println("CDSimulator: cycle " + i + " done");
+		System.out.println("-------------------- CDSimulator: cycle " + i + " done");
 	}
 
 	CDState.setPhase(CDState.POST_SIMULATION);
