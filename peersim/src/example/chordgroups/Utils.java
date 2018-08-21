@@ -49,10 +49,11 @@ public class Utils {
 
     public static ChordProtocol getFirstCPByNo(BigInteger no, int pid) {
         ArrayList<ChordProtocol> nodes = getCPsByNo(no, pid);
-//        if (nodes.size() == 0) {
-//            System.out.println("siema");
-//        }
-        return nodes.get(0);
+        if (nodes.size() == 0) {
+            return null;
+        } else {
+            return nodes.get(0);
+        }
     }
 
     public static void updateIps(BigInteger n, ArrayList<String> ips, int pid) {

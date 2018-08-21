@@ -18,7 +18,10 @@
 
 package peersim.cdsim;
 
+import java.math.BigInteger;
 import java.util.*;
+
+import example.chordgroups.Utils;
 import peersim.config.*;
 import peersim.core.*;
 

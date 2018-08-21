@@ -50,7 +50,7 @@ public class ChordProtocol implements CDProtocol {
 //                return this.predecessor;
 //            }
 //            else
-            if (Utils.inAB(fingerTable[i].group.no, group.no, id)) {
+            if (Utils.betweenAB(fingerTable[i].group.no, group.no, id)) {
                 return fingerTable[i].group;
             }
         }
@@ -103,51 +103,29 @@ public class ChordProtocol implements CDProtocol {
 
     public void fixFingers() {
         if (next >= m) {
-            next = 1;
+            next = 0;
         }
         fingerTable[next].group = findSuccessor(fingerTable[next].start);
         Utils.updateFingerTable(group.no, fingerTable, pid);
         next++;
     }
 
-    public void checkPredecessor() {
-        for (int i = 0; i < Network.size(); i++) {
-            Node node = Network.get(i);
-            ChordProtocol cp = (ChordProtocol) node.getProtocol(pid);
-            if (cp.group.no.equals(predecessor.no)) {
-                if (!node.isUp()) {
-                    predecessor.ips.remove(cp.ip);
-                    Utils.updateIps(predecessor.no, predecessor.ips, pid);
-                    if (predecessor.ips.size() == 0) {
-                        Utils.updatePredecessor(predecessor.no, null, pid);
-                    }
-                }
-            }
-        }
-    }
-
-    public void checkGroup() {
-        for (int i = 0; i < Network.size(); i++) {
-            Node node = Network.get(i);
-            ChordProtocol cp = (ChordProtocol) node.getProtocol(pid);
-            if (cp.group.no.equals(group.no)) {
-                if (!node.isUp()) {
-                    group.ips.remove(cp.ip);
-                    Utils.updateIps(group.no, group.ips, pid);
-                }
-            }
-        }
-    }
+//    public void checkSuccessor() {
+//        if (successor == null || Utils.getFirstCPByNo(successor.no, pid) == null) {
+////        ChordProtocol succCP = Utils.getFirstCPByNo(successor.no, pid);
+////        if (succCP == null) {
+//            successor = null;
+//            Utils.updateSuccessor(group.no, null, pid);
+//            successor = Utils.getRandomCP(pid).findSuccessor(group.no);
+//            ChordProtocol p = Utils.getFirstCPByNo(successor.no, pid);
+//            p.predecessor = group;
+//            Utils.updatePredecessor(p.group.no, p.predecessor, pid);
+//        }
+//    }
 
     @Override
     public void nextCycle(Node node, int protocolID) {
-//        System.out.println("Node " + ip + " is calling!");
-//        checkPredecessor();
-//        checkGroup();
-//        stabilize();
-//        for (int i = 0; i < m; i++) {
-//            fixFingers();
-//        }
+
     }
 
     @Override

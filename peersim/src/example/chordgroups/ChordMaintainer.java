@@ -25,8 +25,6 @@ public class ChordMaintainer implements Control {
                 // info mb: a moze by tak tylko jeden fix finger?
                 cp.fixFingers();
             }
-            cp.checkGroup();
-            cp.checkPredecessor();
         }
         return false;
     }
