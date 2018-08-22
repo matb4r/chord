@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import example.chordgroups.Utils;
 import peersim.config.*;
 import peersim.core.*;
@@ -182,6 +183,8 @@ public static final boolean isConfigurationCycleDriven()
 public static final void nextExperiment()
 {
 	String started = LocalTime.now().toString();
+	int maxNetSize = Integer.MIN_VALUE;
+	int minNetSize = Integer.MAX_VALUE;
 
 	// Reading parameter
 	cycles = Configuration.getInt(PAR_CYCLES);
@@ -214,6 +217,12 @@ public static final void nextExperiment()
 			break;
 		System.out.println("-------------------- CDSimulator: cycle " + i + " done");
 		Utils.cycle++;
+		if(Network.size() > maxNetSize) {
+			maxNetSize = Network.size();
+		}
+		if (Network.size() < minNetSize) {
+			minNetSize = Network.size();
+		}
 	}
 
 	CDState.setPhase(CDState.POST_SIMULATION);
@@ -225,6 +234,9 @@ public static final void nextExperiment()
 	}
 	System.out.println("started " + started);
 	System.out.println("stopped " + LocalTime.now());
+	System.out.println("Min net size: " + minNetSize);
+	System.out.println("Max net size: " + maxNetSize);
+
 }
 
 }
