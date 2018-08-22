@@ -19,6 +19,8 @@
 package peersim.cdsim;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import example.chordgroups.Utils;
@@ -179,6 +181,7 @@ public static final boolean isConfigurationCycleDriven()
  */
 public static final void nextExperiment()
 {
+	String started = LocalTime.now().toString();
 
 	// Reading parameter
 	cycles = Configuration.getInt(PAR_CYCLES);
@@ -220,6 +223,8 @@ public static final void nextExperiment()
 		if (ctrlSchedules[j].fin)
 			controls[j].execute();
 	}
+	System.out.println("started " + started);
+	System.out.println("stopped " + LocalTime.now());
 }
 
 }

@@ -25,10 +25,18 @@ public class ChordDynamicNetwork extends DynamicNetwork {
 
     public final boolean execute() {
         if (random) {
-            if(CommonState.r.nextBoolean()) {
-                add(1);
+            if (CommonState.r.nextBoolean()) {
+                try {
+                    add(1);
+                } catch (Exception ex) {
+                }
             } else {
-                remove(1);
+                if (Network.size() > 1) {
+                    try {
+                        remove();
+                    } catch (Exception ex) {
+                    }
+                }
             }
         } else {
             if (isAddNow) {
@@ -44,8 +52,8 @@ public class ChordDynamicNetwork extends DynamicNetwork {
                 }
             } else {
                 try {
-                    if (Network.size() > minsize)
-                        remove(1);
+                    if (Network.size() > 0 && Network.size() > minsize)
+                        remove();
                     removeCounter--;
                     if (removeCounter == 0) {
                         removeCounter = (int) addPositive;
@@ -59,15 +67,12 @@ public class ChordDynamicNetwork extends DynamicNetwork {
         return false;
     }
 
-    protected void remove(int n) {
-        //info mb: dodane dla sysout
-        for (int i = 0; i < n; ++i) {
-            int index = CommonState.r.nextInt(Network.size());
-            Node node = Network.get(index);
-            ChordProtocol cp = (ChordProtocol) node.getProtocol(0);
-            Network.remove(index);
-            System.out.println("Node " + cp.ip + " died");
-        }
+    protected void remove() {
+        int index = CommonState.r.nextInt(Network.size());
+        Node node = Network.get(index);
+        ChordProtocol cp = (ChordProtocol) node.getProtocol(0);
+        Network.remove(index);
+        System.out.println("Node " + cp.ip + " died");
     }
 
 }
