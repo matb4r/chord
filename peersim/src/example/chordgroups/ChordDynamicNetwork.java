@@ -7,48 +7,45 @@ import peersim.dynamics.DynamicNetwork;
 
 public class ChordDynamicNetwork extends DynamicNetwork {
 
+    int addPositive = (int) add >= 0 ? (int) add : (int) -add;
+    boolean isAddNow = (int) add >= 0;
+
+    int addCounter = (int) addPositive;
+    int removeCounter = (int) addPositive;
+
     public ChordDynamicNetwork(String prefix) {
         super(prefix);
     }
 
-    public final boolean execute()
-    {
-        if (add == 0)
-            return false;
-        if (!substitute) {
-            if ((maxsize <= Network.size() && add > 0)
-                    || (minsize >= Network.size() && add < 0))
-                return false;
-        }
-        int toadd = 0;
-        int toremove = 0;
-        if (add > 0) {
-            toadd = (int) Math.round(add < 1 ? add * Network.size() : add);
-            if (!substitute && toadd > maxsize - Network.size())
-                toadd = maxsize - Network.size();
-            if (substitute)
-                toremove = toadd;
-        } else if (add < 0) {
-            toremove = (int) Math.round(add > -1 ? -add * Network.size() : -add);
-            if (!substitute && toremove > Network.size() - minsize)
-                toremove = Network.size() - minsize;
-            if (substitute)
-                toadd = toremove;
+    public final boolean execute() {
+        if (isAddNow) {
+            try {
+                if (Network.size() < maxsize)
+                    add(1);
+                addCounter--;
+                if (addCounter == 0) {
+                    addCounter = (int) addPositive;
+                    isAddNow = false;
+                }
+            } catch (Exception ex) {
+            }
+        } else {
+            try {
+                if (Network.size() > minsize)
+                    remove(1);
+                removeCounter--;
+                if (removeCounter == 0) {
+                    removeCounter = (int) addPositive;
+                    isAddNow = true;
+                }
+            } catch (Exception ex) {
+            }
         }
 
-        // info mb: dodane zeby najpierw add jesli wieksze od 0
-        if (add > 0) {
-            add(toadd);
-            remove(toremove);
-        } else {
-            remove(toremove);
-            add(toadd);
-        }
         return false;
     }
 
-    protected void remove(int n)
-    {
+    protected void remove(int n) {
         //info mb: dodane dla sysout
         for (int i = 0; i < n; ++i) {
             int index = CommonState.r.nextInt(Network.size());

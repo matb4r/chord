@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 public class Utils {
 
+    public static int cycle = 0;
+
     public static String generateIp(BigInteger groupNo, int m) {
         return "0.0." + groupNo + "." + new BigInteger(m, CommonState.r);
     }
@@ -25,12 +27,33 @@ public class Utils {
         return nodes;
     }
 
-    public static ChordProtocol getRandomCP(int pid) {
+    public static ChordProtocol getAnyCP(int pid) {
         Node n;
         do {
             n = Network.get(CommonState.r.nextInt(Network.size()));
         } while (n == null || n.isUp() == false);
         return ((ChordProtocol) n.getProtocol(pid));
+    }
+
+    public static ChordProtocol getRandomCP(ChordProtocol cp, int pid) {
+        if (isOnlyOneGroupInNetwork(pid)) {
+            return null;
+        }
+        Node n;
+        do {
+            n = Network.get(CommonState.r.nextInt(Network.size()));
+        } while (n == null || n.isUp() == false || ((ChordProtocol) n.getProtocol(pid)).group.no.equals(cp.group.no));
+        return ((ChordProtocol) n.getProtocol(pid));
+    }
+
+    public static boolean isOnlyOneGroupInNetwork(int pid) {
+        BigInteger no = ((ChordProtocol) Network.get(0).getProtocol(pid)).group.no;
+        for (int i = 1; i < Network.size(); i++) {
+            if (!((ChordProtocol) Network.get(i).getProtocol(pid)).group.no.equals(no)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static ArrayList<ChordProtocol> getCPsByNo(BigInteger no, int pid) {
@@ -136,7 +159,7 @@ public class Utils {
     }
 
     private static boolean isNoInList(BigInteger no, ArrayList<ChordProtocol> list) {
-        for(ChordProtocol cp : list) {
+        for (ChordProtocol cp : list) {
             if (cp.group != null && cp.group.no != null && cp.group.no.equals(no)) {
                 return true;
             }

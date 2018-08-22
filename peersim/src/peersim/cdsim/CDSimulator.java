@@ -175,7 +175,7 @@ public static final boolean isConfigurationCycleDriven()
 // ---------------------------------------------------------------------
 
 /**
- * Runs an experiment, resetting everything except the random seed. 
+ * Runs an experiment, resetting everything except the random seed.
  */
 public static final void nextExperiment()
 {
@@ -210,6 +210,7 @@ public static final void nextExperiment()
 		if (stop)
 			break;
 		System.out.println("-------------------- CDSimulator: cycle " + i + " done");
+		Utils.cycle++;
 	}
 
 	CDState.setPhase(CDState.POST_SIMULATION);

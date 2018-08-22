@@ -20,9 +20,12 @@ public class ChordMaintainer implements Control {
         System.out.println("executing maintaining");
         ArrayList<ChordProtocol> allNodes = Utils.getAllNodes(pid);
         for (ChordProtocol cp : allNodes) {
-            cp.stabilize();
+            cp.checkSuccessor();
+            cp.checkPredecessor();
+            try {
+                cp.stabilize();
+            } catch (Exception ex) {}
             for (int i = 0; i < cp.m; i++) {
-                // info mb: a moze by tak tylko jeden fix finger?
                 cp.fixFingers();
             }
         }

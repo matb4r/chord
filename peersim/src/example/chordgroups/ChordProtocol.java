@@ -2,7 +2,6 @@ package example.chordgroups;
 
 import peersim.cdsim.CDProtocol;
 import peersim.core.CommonState;
-import peersim.core.Network;
 import peersim.core.Node;
 
 import java.math.BigInteger;
@@ -39,8 +38,12 @@ public class ChordProtocol implements CDProtocol {
             if (g.no.equals(group.no)) {
                 return group;
             }
-
-            return Utils.getFirstCPByNo(g.no, pid).findSuccessor(id);
+            ChordProtocol firstCPByNo = Utils.getFirstCPByNo(g.no, pid);
+            if (firstCPByNo == null) {
+                return group;
+            } else {
+                return firstCPByNo.findSuccessor(id);
+            }
         }
     }
 
@@ -88,7 +91,8 @@ public class ChordProtocol implements CDProtocol {
     }
 
     public void stabilize() {
-        Group p = Utils.getFirstCPByNo(successor.no, pid).predecessor;
+        ChordProtocol firstCPByNo = Utils.getFirstCPByNo(successor.no, pid);
+        Group p = firstCPByNo.predecessor;
         if (Utils.betweenAB(p.no, group.no, successor.no)) {
             Utils.updateSuccessor(group.no, p, pid);
         }
@@ -110,18 +114,25 @@ public class ChordProtocol implements CDProtocol {
         next++;
     }
 
-//    public void checkSuccessor() {
-//        if (successor == null || Utils.getFirstCPByNo(successor.no, pid) == null) {
-////        ChordProtocol succCP = Utils.getFirstCPByNo(successor.no, pid);
-////        if (succCP == null) {
-//            successor = null;
-//            Utils.updateSuccessor(group.no, null, pid);
-//            successor = Utils.getRandomCP(pid).findSuccessor(group.no);
-//            ChordProtocol p = Utils.getFirstCPByNo(successor.no, pid);
-//            p.predecessor = group;
-//            Utils.updatePredecessor(p.group.no, p.predecessor, pid);
-//        }
-//    }
+    public void checkSuccessor() {
+        if (Utils.getFirstCPByNo(successor.no, pid) == null) {
+            ChordProtocol randomCP = Utils.getRandomCP(this, pid);
+            if (randomCP == null) {
+                // jesli ta grupa jest jedyna w sieci
+                successor = group;
+            } else {
+                successor = randomCP.findSuccessor(group.no);
+            }
+            Utils.updateSuccessor(group.no, successor, pid);
+            Utils.updatePredecessor(successor.no, group, pid);
+        }
+    }
+
+    public void checkPredecessor() {
+        if (predecessor == null || Utils.getFirstCPByNo(predecessor.no, pid) == null) {
+            Utils.updatePredecessor(group.no, null, pid);
+        }
+    }
 
     @Override
     public void nextCycle(Node node, int protocolID) {

@@ -1,7 +1,6 @@
 package example.chordgroups;
 
 import peersim.config.Configuration;
-import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
@@ -27,7 +26,7 @@ public class CreateInitial implements Control {
     public CreateInitial(String prefix) {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         idLength = Configuration.getInt(prefix + "." + PAR_IDLENGTH);
-        maxGroupSize = Configuration.getInt(prefix+ "." + PAR_MAX_GROUP_SIZE);
+        maxGroupSize = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
     }
 
     @Override

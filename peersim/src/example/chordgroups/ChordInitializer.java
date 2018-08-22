@@ -1,7 +1,6 @@
 package example.chordgroups;
 
 import peersim.config.Configuration;
-import peersim.core.CommonState;
 import peersim.core.Node;
 import peersim.dynamics.NodeInitializer;
 
@@ -43,7 +42,7 @@ public class ChordInitializer implements NodeInitializer {
         if (stability >= 0.5) {
             join(cp);
         } else {
-            Group g = Utils.getRandomCP(pid).findGroupToJoin(stability);
+            Group g = Utils.getAnyCP(pid).findGroupToJoin(stability);
             if (g == null) {
                 join(cp);
             } else {
@@ -73,20 +72,30 @@ public class ChordInitializer implements NodeInitializer {
     }
 
     public void initFingerTable(ChordProtocol cp) {
-        cp.predecessor = null;
-        cp.successor = Utils.getRandomCP(pid).findSuccessor(cp.group.no);
+        ChordProtocol randomCP = Utils.getAnyCP(pid);
+        // update newNode.succ
+        cp.successor = randomCP.findSuccessor(cp.group.no);
+        Utils.updateSuccessor(cp.group.no, cp.successor, pid);
+
+        // update newNode.pred
+        ChordProtocol succCP = Utils.getFirstCPByNo(cp.successor.no, pid);
+        cp.predecessor = succCP.predecessor;
+        Utils.updatePredecessor(cp.group.no, cp.predecessor, pid);
+
+        // update newNode.pred.succ
+        if (cp.predecessor != null) {
+            ChordProtocol predCP = Utils.getFirstCPByNo(cp.predecessor.no, pid);
+            Utils.updateSuccessor(predCP.group.no, cp.group, pid);
+        }
+
+        // update newNode.succ.pred
+        Utils.updatePredecessor(succCP.group.no, cp.group, pid);
 
         cp.fingerTable[0] = new Finger();
         cp.fingerTable[0].i = 1;
         cp.fingerTable[0].start = (cp.group.no.add(BigDecimal.valueOf(Math.pow(2, 0)).toBigInteger()).mod(BigDecimal.valueOf(Math.pow(2, cp.m)).toBigInteger()));
         cp.fingerTable[0].end = (cp.group.no.add(BigDecimal.valueOf(Math.pow(2, 1)).toBigInteger().subtract(BigInteger.ONE)).mod(BigDecimal.valueOf(Math.pow(2, cp.m)).toBigInteger()));
         cp.fingerTable[0].group = cp.successor;
-
-        ChordProtocol succCP = Utils.getFirstCPByNo(cp.successor.no, pid);
-        cp.predecessor = succCP.predecessor;
-        ChordProtocol predCP = Utils.getFirstCPByNo(cp.predecessor.no, pid);
-        Utils.updatePredecessor(succCP.group.no, cp.group, pid);
-        Utils.updateSuccessor(predCP.group.no, cp.group, pid);
 
         for (int i = 2; i <= cp.m; i++) {
             cp.fingerTable[i - 1] = new Finger();
@@ -96,7 +105,7 @@ public class ChordInitializer implements NodeInitializer {
             if (Utils.inAB(cp.fingerTable[i - 1].start, cp.group.no, cp.fingerTable[i - 2].group.no)) {
                 cp.fingerTable[i - 1].group = cp.fingerTable[i - 2].group;
             } else {
-                cp.fingerTable[i - 1].group = Utils.getRandomCP(pid).findSuccessor(cp.fingerTable[i - 1].start);
+                cp.fingerTable[i - 1].group = randomCP.findSuccessor(cp.fingerTable[i - 1].start);
             }
         }
     }
