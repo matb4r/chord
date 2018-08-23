@@ -138,13 +138,19 @@ English abstract
 \end{itemize}
 
 
-\chapter{Sieci Peer-to-Peer}
+\chapter{Systemy Peer-to-Peer}
 
-\begin{itemize}
-\item ogólnie o P2P
-\item problemy i wyzwania
-\item istniejące rozwiązania
-\end{itemize}
+System P2P (ang. \textit{Peer-to-Peer}) jest z definicji systemem w którym wszystkie węzły tworzące sieć są równoważne w sensie funkcjonalnym i pełnią rolę zarówno klienta jak i serwera. Każdy węzeł może bezpośrednio nawiązywać połączenie z innym. Brak jest centralnego serwera który np. byłby głównym magazynem danych, bądź pośredniczyłby w komunikacji. Założenia te rodzą wiele problemów i ograniczeń, dlatego też budując komercyjne systemy P2P często odchodzi się od tej definicji wyróżniając specjalne węzły, które pełnią dodatkowe funkcje. Rozdział ten opisuje różne budowy systemów P2P, pojawiające się problemy i wyzwania które należy podjąć, oraz przedstawia już istniejące i wykorzystywane rozwiązania.
+
+\section{Sieć nakładkowa}
+Systemy P2P wykorzystują do działania sieć nakładkową (ang. \textit{overlay network}), która jest dodatkową warstwą abstrakcji nadbudowaną nad istniejącą siecią (np. Internet). Parametry niefunkcjonalne systemu P2P takie jak odporność na awarie, autonomia węzłów, wydajność, skalowalność czy bezpieczeństwo zależą w dużej mierze od budowy sieci nakładkowej, którą można podzielić na trzy główne typy: nieustrukturyzowane, ustrukturyzowane oraz sieci z tzw. super-węzłami (ang. \textit{super-peer network}).
+
+
+\section{Problemy i wyzwania}
+
+dynamizm jest cecha ktora odroznia od sys rozpr. rodzi to wiele problemow
+
+\section{Istniejące rozwiązania}
 
 
 \chapter{Protokół Chord}
@@ -197,9 +203,11 @@ English abstract
 \begin{thebibliography}{11}
 \addcontentsline{toc}{chapter}{Bibliografia} % dodane do spisu treści
 
-\bibitem{bib:dziubak} Jacek Matulewski, Tomasz Dziubak, Marcin Sylwestrzak, Radosław Płoszajczak, \emph{Grafika, Fizyka, Metody numeryczne. Symulacje fizyczne z wizualizacją 3D}, Wydawnictwo naukowe PWN, Warszawa 2010
+\bibitem{bib:martins} Vidal Martins, \emph{Data Replication in P2P Systems}, Réseaux et télécommunications [cs.NI]. Université de Nantes, 2007. Français. <tel-00481828>
 
-\bibitem{bib:gpu_gems} Lars Nyland, Mark Harris, Jan Prins, \emph{GPU Gems 3}, Chapter 31. Fast N-Body Simulation with CUDA, [online] \url{http://http.developer.nvidia.com/GPUGems3/gpugems3_ch31.html} [dostęp: 01-01-2017]
+\bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, [online] \url{http://www.cs.put.poznan.pl/akobusinska/lsds.html} [dostęp: 23.08.2018 r.]
+
+\bibitem{bib:gpu_gems} Lars Nyland, Mark Harris, Jan Prins, \emph{GPU Gems 3}, Chapter 31. Fast N-Body Simulation with CUDA, [online] \url{http://http.developer.nvidia.com/GPUGems3/gpugems3_ch31.html} [dostęp: 01.01.2017]
 
 \end{thebibliography}
 
