@@ -1,0 +1,3 @@
+n.notify(n'):
+	if predecessor is null or n' $\in$ (predecessor, n)
+		predecessor = n'

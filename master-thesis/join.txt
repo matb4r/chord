@@ -1,0 +1,3 @@
+n.join(n'):
+	predecessor = null
+	successor = n'.find_successor(n)

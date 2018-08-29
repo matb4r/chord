@@ -1,0 +1,5 @@
+n.closest_preceding_node(id):
+	for i = m downto 1
+		if finger[i] $\in$ (n, id)
+			return finger[i]
+	return n

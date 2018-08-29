@@ -1,0 +1,6 @@
+n.find_successor(id):
+	if id $\in$ (n, succesor$>$
+		return successor
+	else
+		n' = closest_preceding_node(id)
+		return n'.find_successor(id)

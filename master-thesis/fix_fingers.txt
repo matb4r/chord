@@ -1,0 +1,5 @@
+n.fix_fingers():
+	next = next + 1
+	if next $>$ m
+		next = 1
+	finger[next] = find_successor(n + 2$^{next - 1}$)

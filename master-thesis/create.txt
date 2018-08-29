@@ -1,0 +1,3 @@
+n.create():
+	predecessor = null
+	successor = n
