@@ -150,7 +150,7 @@ Rozdział ten pokazuje tło, na którym powstał protokół Statycznych Grup, ws
 
 \section{Problemy i wyzwania}
 
-Każdy system dużej skali stoi przed problemem awarii różnych części systemu. W odróżnieniu od wysoce niezawodnych centrów danych, systemy P2P często składają się z niepewnych węzłów, które nieraz pracują w niestabilnych warunkach (np. fizycznie poruszający się węzeł będący podłączony do sieci przez interfejs bezprzewodowy), czy dołączają do sieci tylko na pewien okres czasu. Zjawisko częstego rozłączania węzłów z sieci nazwijmy \textit{odpływem}.
+Każdy system dużej skali stoi przed problemem awarii różnych części systemu. W odróżnieniu od wysoce niezawodnych centrów danych, systemy P2P często składają się z niepewnych węzłów, które nieraz pracują w niestabilnych warunkach (np. fizycznie poruszający się węzeł będący podłączony do sieci przez interfejs bezprzewodowy), czy dołączają do sieci tylko na pewien okres czasu. Zjawisko częstego rozłączania węzłów z sieci nazwijmy \textit{odpływem}. Natomiast zjawisko częstego dołączania węzłów do sieci nazwijmy \textit{przypływem}.
 
 Systemy Peer-to-Peer są formą systemów rozproszonych z tą różnicą, że efekt odpływu jest w nich częstym i naturalnym zjawiskiem, co rodzi szereg dodatkowych problemów. Do tego dochodzą trudności typowe dla systemów rozproszonych, co razem sprawia, że skonstruowanie dobrego, w sensie poprawności i efektywności, systemu P2P jest zadaniem trudnym.
 
@@ -165,6 +165,7 @@ Dobry system P2P powinien spełniać szereg własności. Wybrane własności wa�
 \end{itemize}
 
 \section{Replikacja}
+\label{replikacja}
 
 Remedium na problemy z dostępnością, jakością usług, czy odpornością na awarie powstałe w wyniku nieuniknionych odpływów, są mechanizmy replikacji. Po pierwsze, replikacja zwiększa dostępność poprzez eliminację pojedynczych punktów awarii (obiekty są dostępne z różnych węzłów). Po drugie, poprawia wydajność systemu poprzez redukcję obciążenia komunikacyjnego w sieci (obiekty mogą być umiejscowione bliżej węzłów pytających oraz są udostępniane jednocześnie z wielu węzłów). Ponadto replikacja poprawia skalowalność systemu, ponieważ przy wzroście liczby węzłów, możliwe jest zachowanie akceptowalnych czasów odpowiedzi.
 
@@ -250,7 +251,7 @@ Utrzymywanie pierścienia odbywa się w następujący sposób: gdy węzeł \text
 
 \subsection{Odnajdywanie lokalizacji klucza}
 
-Każdy węzeł posiada wskaźnik na swojego następnika. Dzięki temu w prosty sposób możliwe jest odnalezienie węzła odpowiedzialnego za dany klucz poprzez rekurencyjne odpytywanie się kolejnych następników. Posiadanie aktualnego wskaźnika na swojego następnika jest warunkiem koniecznym otrzymania poprawnego wyniku. Aczkolwiek aby zmniejszyć liczbę komunikatów podczas operacji lookup, każdy węzeł posiada dodatkowe informacje trasowania. Informacje te przechowywanie są w specjalnej tablicy trasowania, którą określa się mianem \textit{finger table}. Niech \textit{m} będzie liczbą bitów używanych do zapisywania identyfikatorów kluczy i węzłów. Wtenczas tablica trasowania posiada \textit{m} wpisów. Każdy \textit{i}-ty wpis tej tablicy węzła \textit{n} posiada informacje o pierwszym węźle \textit{s} (jego identyfikator oraz adres, który służy do komunukacji - jest nim najczęściej adres IP), który jest za \textit{n} o przynajmniej $2^{i-1}$ na okręgu identyfikatorów. Wzór na identyfikator węzła \textit{s} w \textit{i}-tym wpisie węzła \textit{n}, gdzie $1\leq i \leq m$:
+Każdy węzeł posiada wskaźnik na swojego następnika. Dzięki temu w prosty sposób możliwe jest odnalezienie węzła odpowiedzialnego za dany klucz poprzez rekurencyjne odpytywanie się kolejnych następników. Posiadanie aktualnego wskaźnika na swojego następnika jest warunkiem koniecznym otrzymania poprawnego wyniku. Aczkolwiek aby zmniejszyć liczbę komunikatów podczas operacji lookup, każdy węzeł posiada dodatkowe informacje trasowania. Informacje te przechowywanie są w specjalnej tablicy trasowania, którą określa się mianem \textit{finger table}. Niech \textit{m} będzie liczbą bitów używanych do zapisywania identyfikatorów kluczy i węzłów. Wtenczas tablica trasowania posiada \textit{m} wpisów. Każdy \textit{i}-ty wpis tej tablicy węzła \textit{n} posiada informacje o pierwszym węźle \textit{s} (jego identyfikator oraz adres, który służy do komunikacji - jest nim najczęściej adres IP), który jest za \textit{n} o przynajmniej $2^{i-1}$ na okręgu identyfikatorów. Wzór na identyfikator węzła \textit{s} w \textit{i}-tym wpisie węzła \textit{n}, gdzie $1\leq i \leq m$:
 
 \begin{equation}
 \label{eq:start}
@@ -267,54 +268,73 @@ Warto zwrócić uwagę, że pierwszy wpis w tablicy trasowania węzła \textit{n
 \label{fig:finger_table}
 \end{figure}
 
-Schemat ten posiada dwie cechy. Po pierwsze, każdy węzeł posiada informację o małej liczbie węzłów, z czego większość tych węzłów znajduje się w małej odległości od niego na pierścieniu. Po drugie, korzystając z tablicy trasowania z reguły nie można bezpośrednio okreslić nastepnika dowolnego klucza. Dla przykładu, węzeł 8 na rysunku \ref{fig:finger_table} nie może samodzielnie ustalić bezpośredniego następnika klucza 34, gdyż następnik ten (węzeł 38) nie znajduje się w tablicy trasowania węzła 8.
+Schemat ten posiada dwie cechy. Po pierwsze, każdy węzeł posiada informację o małej liczbie węzłów, z czego większość tych węzłów znajduje się w małej odległości od niego na pierścieniu. Po drugie, korzystając z tablicy trasowania z reguły nie można bezpośrednio określić następnika dowolnego klucza. Dla przykładu, węzeł 8 na rysunku \ref{fig:finger_table} nie może samodzielnie ustalić bezpośredniego następnika klucza 34, gdyż następnik ten (węzeł 38) nie znajduje się w tablicy trasowania węzła 8.
 
 Listing \ref{lst:find_successor} pokazuje pseudokod funkcji \textit{find\_successor}, która jest odpowiednikiem operacji lookup, czyli odnalezienia węzła odpowiedzialnego za dany klucz. Jeżeli identyfikator \textit{id} znajduje się pomiędzy identyfikatorem aktualnego węzła \textit{n} a identyfikatorem następnika \textit{successor} tego węzła, to funkcja ta zwraca wskaźnik na następnik węzła \textit{n}. W przeciwnym wypadku, wykorzystując funkcję \textit{closest\_preceding\_node} pokazaną na listingu \ref{lst:closest_preceding_node}, węzeł \textit{n} przeszukuje tablice trasowania, aby znaleźć taki węzeł \textit{n'}, którego identyfikator jest najbliższy lecz mniejszy od \textit{id}; i następnie wywołuje zdalną metodę \textit{find\_succesor} węzła \textit{n'}. Wybieranie węzła \textit{n'} odbywa się w taki sposób, ponieważ im węzeł znajduje się bliżej \textit{id} na pierścieniu, tym posiada więcej informacji o obszarze pierścienia wokół \textit{id}.
 
-\lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie następnika obiektu o danym identyfikatorze.}, captionpos=b, label={lst:find_successor}, float]{find_successor.txt}
+\lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie następnika obiektu o danym identyfikatorze.}, captionpos=b, label={lst:find_successor}, float=h]{find_successor.txt}
 
-\lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie najwyższego poprzednika obiektu o danym identyfikatorze z tablicy trasowania.}, captionpos=b, label={lst:closest_preceding_node}, float]{closest_preceding_node.txt}
+\lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie najwyższego poprzednika obiektu o danym identyfikatorze z tablicy trasowania.}, captionpos=b, label={lst:closest_preceding_node}, float=h]{closest_preceding_node.txt}
 
 \begin{figure}[H]
 \floatstyle{boxed}
 \centering
 \includegraphics[width=0.6\textwidth,height=\textheight,keepaspectratio]{lookup_example.png}
-\caption{Ścieżka zapytania o klucz 54 rozpoczynającego się od operacji lookup węzeła 8.}
+\caption{Ścieżka zapytania o klucz 54 rozpoczynającego się od operacji lookup węzła 8.}
 \label{fig:lookup_example}
 \end{figure}
 
-Przykładowo węzeł 8 chciałby znaleźć nastepnika klucza 54. Sytuacja ta pokazana jest na rysunku \ref{fig:lookup_example}. Ponieważ ostatnim wpisem w tablicy trasowania węzła 8, który poprzedza 54, jest węzeł 42, to węzeł 8 wyśle zapytanie do węzła 42. Dalej, węzeł 42 przeszuka swoją tablicę trasowania, aby odnaleźć największy węzeł, który poprzedza klucz 54, i będzie to węzeł 51. Wyśle więc do niego zapytanie, a węzeł 51 odpowie, że to jego następnik, węzeł 56, jest następnikiem klucza 54. Ostatecznie odpowiedź ta wróci do węzła 8.
+Przykładowo węzeł 8 chciałby znaleźć następnika klucza 54. Sytuacja ta pokazana jest na rysunku \ref{fig:lookup_example}. Ponieważ ostatnim wpisem w tablicy trasowania węzła 8, który poprzedza 54, jest węzeł 42, to węzeł 8 wyśle zapytanie do węzła 42. Dalej, węzeł 42 przeszuka swoją tablicę trasowania, aby odnaleźć największy węzeł, który poprzedza klucz 54, i będzie to węzeł 51. Wyśle więc do niego zapytanie, a węzeł 51 odpowie, że to jego następnik, węzeł 56, jest następnikiem klucza 54. Ostatecznie odpowiedź ta wróci do węzła 8.
 
-Twórcy protokołu Chord udowadniają \cite{bib:chord}, iż złożoność komunikacyjna operacji lookup, w sieci składającej się z \textit{N} węzłów, z dużym prawdopodobieństeim wynosi $\mathcal{O}(\log{}N)$. A średni czas odnalezienia węzła odpowiedzialnego za dany klucz podczas eksperymentów wyniósł $\frac{1}{2} \log{} N$.
+Twórcy protokołu Chord udowadniają \cite{bib:chord}, iż złożoność komunikacyjna operacji lookup, w sieci składającej się z \textit{N} węzłów, z dużym prawdopodobieństwem wynosi $\mathcal{O}(\log{}N)$. A średni czas odnalezienia węzła odpowiedzialnego za dany klucz podczas eksperymentów wyniósł $\frac{1}{2} \log{} N$.
 
 \subsection{Zmiany w sieci}
 
 W praktyce, Chord musi radzić sobie z ciągłym dołączaniem węzłów oraz ich nieprzewidywalnym odłączaniem. Aby operacja lookup zawsze zwracała poprawny wynik mimo zmian w sieci, protokół Chord musi zapewnić, aby w każdym węźle wskaźniki na następnika były aktualne. Dbają o to specjalne procedury wykonywane cyklicznie przez wszystkie węzły, które uaktualniają tablice trasowania oraz wskaźniki na następnika i poprzednika. 
 
-Pseudokod procedury odpowiedzialnej za dołączanie węzła pokazuje listing \ref{lst:join}. Węzeł \textit{n} dołącza się do istniejącego pierścienia przy pomocy innego węzła \textit{n'}, który tworzy owy pierścień. Jeżeli jednak węzeł \textit{n} ma zamiar stworzyć nowy pierścień, wywołuje procedurę \textit{create} pokazaną na listingu \ref{lst:create}. Samo dołączenie do sieci nie sprawia, iż reszta węzłów w sieci wie o nowym węźle. Dopiero precedura stabilizacji \textit{stabilize}, pokazana na listingu \ref{lst:stabilize} i uruchamiana cyklicznie przez każdy węzeł, uaktualnia informacje o węzłach w sieci. Za każdym razem, gdy węzeł \textit{n} uruchomi stabilizację, sprawdzane jest czy to poprzednik \textit{p} następnika \textit{successor} węzła \textit{n} nie powinien być jego następnikiem. Będzie tak, jeśli \textit{p} jest nowo dołączonym węzłem. Dodatkowo, wywołując procedurę \textit{notify} pokazaną na listingu \ref{lst:notify}, stabilizacja powiadamia następnika węzła \textit{n} o istnieniu węzła \textit{n} w sieci, dając szansę na uaktualnienie wskaźnika na poprzednika.
+Pseudokod procedury odpowiedzialnej za dołączanie węzła pokazuje listing \ref{lst:join}. Węzeł \textit{n} dołącza się do istniejącego pierścienia przy pomocy innego węzła \textit{n'}, który tworzy owy pierścień. Jeżeli jednak węzeł \textit{n} ma zamiar stworzyć nowy pierścień, wywołuje procedurę \textit{create} pokazaną na listingu \ref{lst:create}. Samo dołączenie do sieci nie sprawia, iż reszta węzłów w sieci wie o nowym węźle. Dopiero procedura stabilizacji \textit{stabilize}, pokazana na listingu \ref{lst:stabilize} i uruchamiana cyklicznie przez każdy węzeł, uaktualnia informacje o węzłach w sieci. Za każdym razem, gdy węzeł \textit{n} uruchomi stabilizację, sprawdzane jest czy to poprzednik \textit{p} następnika \textit{successor} węzła \textit{n} nie powinien być jego następnikiem. Będzie tak, jeśli \textit{p} jest nowo dołączonym węzłem. Dodatkowo, wywołując procedurę \textit{notify} pokazaną na listingu \ref{lst:notify}, stabilizacja powiadamia następnika węzła \textit{n} o istnieniu węzła \textit{n} w sieci, dając szansę na uaktualnienie wskaźnika na poprzednika.
+
+
+\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej za utworzenie nowego pierścienia Chord.}, captionpos=b, label={lst:create}, float=!h]{create.txt}
+
+\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej dołączenie węzła do pierścienia Chord zawierającego węzeł \textit{n'}.}, captionpos=b, label={lst:join}, float=!h]{join.txt}
+
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za weryfikację bezpośredniego następnika \textit{successor} węzła \textit{n} oraz powiadomienie go o \textit{n}.}, captionpos=b, label={lst:stabilize}, float=!h]{stabilize.txt}
+
+\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej za ewentualną aktualizację wskaźnika na poprzednika \textit{predecessor}.}, captionpos=b, label={lst:notify}, float=!h]{notify.txt}
+
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za aktualizację wpisów w tablicy trasowania.}, captionpos=b, label={lst:fix_fingers}, float=!h]{fix_fingers.txt}
+
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za wyzerowanie wskaźnika na poprzednika \textit{predecessor} w przypadku jego awarii.}, captionpos=b, label={lst:check_predecessor}, float=!h]{check_predecessor.txt}
 
 Każdy węzeł okresowo uruchamia procedurę \textit{fix\_fingers} pokazaną na listingu \ref{lst:fix_fingers}, która uaktualnia wpisy w tablicy trasowania. Dzięki temu nowe węzły wypełniają swoje tablice, a węzły będące wcześniej w sieci, aktualizują je o ewentualne nowe węzły. Ponadto każdy węzeł wykonuje cyklicznie procedurę \textit{check\_predecessor} pokazaną na listingu \ref{lst:check_predecessor}, która zeruje wskaźnik na poprzednika, jeśli uległ on awarii. Wskaźniki te uaktualniane są podczas cyklicznej operacji \textit{notify}.
 
-\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej za utworzenie nowego pierścienia Chord.}, captionpos=b, label={lst:create}, float]{create.txt}
 
-\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej dołączenie węzła do pierścienia Chord zawierającego węzeł \textit{n'}.}, captionpos=b, label={lst:join}, float]{join.txt}
+W praktyce, przez ciągłe przypływy oraz odpływy węzłów, stan pierścienia Chord nigdy nie będzie stabilny. Dołączenia, rozłączenia i cykliczny algorytm stabilizacji będą się przeplatały bez końca. Pierścień nie będzie miał czasu, aby ustabilizować się w pełni, nim nastąpi zmiana w zbiorze węzłów sieci. Jednakże autorzy protokołu zapewniają, że jeśli protokół stabilizacji będzie uruchamiany z odpowiednią częstotliwością, to pierścień będzie utrzymywał się w stanie ,,prawie stabilnym'', w którym to operacje lookup wykonują się sprawnie i zwracają poprawne wyniki \cite{bib:chord}.
 
-\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za weryfikację bezpśredniego nastepnika \textit{successor} węzła \textit{n} oraz powiadomienie go o \textit{n}.}, captionpos=b, label={lst:stabilize}, float]{stabilize.txt}
+\section{Istniejące rozszerzenia}
 
-\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej za ewentualną aktualizację wskaźnika na poprzednika \textit{predecessor}.}, captionpos=b, label={lst:notify}, float]{notify.txt}
+Protokół Chord jest prosty w swojej idei. Jego konstrukcja pozostawia duże pole do ewentualnych rozszerzeń. Sami autorzy zaproponowali kilka prostych usprawnień. Ponadto powstało wiele pomysłów jak rozszerzyć Chorda o dodatkowe funkcjonalności, takie jak replikacja danych. Są też rozwiązania, które korzystają z Chorda, dostosowywując go do swoich potrzeb. Sam motyw przewodni tej pracy bazuje na Chordzie, rozszerzając go o mechanizm grupowania wspierający replikację.
 
-\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za aktualizację wpisów w tablicy trasowania.}, captionpos=b, label={lst:fix_fingers}, float]{fix_fingers.txt}
+\subsection{Usprawnienie działania}
 
-\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za wyzerowanie wskaźnika na poprzednika \textit{predecessor} w przypadku jego awarii.}, captionpos=b, label={lst:check_predecessor}, float]{check_predecessor.txt}
+Aby poprawić działanie protokołu Chord, autorzy proponują dwa rozszerzenia. Po pierwsze, zamiast wskaźnika na następnika, każdy węzeł może utrzymywać listę następników. Dzięki temu mógłby odwołać się do innego następnika, jeżeli bliższy następnik uległ awarii. Poprawia to działanie protokołu, gdyż uodparnia na odpływy, zachowując wydajność operacji lookup na wysokim poziomie. Drugą rekomendacją autorów jest zaimplementowanie procedury odłączenia z sieci. W bazowej implementacji odejście węzła polega na jego nagłym rozłączeniu, bez informowania sieci i traktuje się je tak jak awarie. Zamiast tego, węzeł mógłby poinformować swojego następnika oraz poprzednika, że opuszcza sieć, dzięki czemu mogłyby one uaktualnić wskaźniki. Ponadto węzeł mógłby przed opuszczeniem przetransferować klucze za które jest odpowiedzialny, swojemu następnikowi. Zamiany ta zwiększyłyby dostępność systemu, oraz poprawiły jego wydajność.
 
-\section{Rozszerzenia}
+\subsection{Replikacja}
 
+Jak zostało wspomniane w podrozdziale \ref{replikacja}, replikacja danych zwiększa dostępność systemu. W protokole Chord nie występuje natywnie owy mechanizm, dlatego też podczas awarii węzła, wszystkie klucze, za które odpowiadał, zostają utracone, stając się niedostępnymi. Są zastosowania, w których ,,problem'' ten problemem nie będzie. Lecz są i takie systemy, w których replikacja jest konieczna.
 
+Najprostszym rozwiązaniem wydaje się być replikacja u sąsiadów (ang. \textit{Neighbor Replication}). W podejściu tym, każdy węzeł dba, aby dane replikować u swoich sąsiadów. Mechanizm ten jest elastyczny, gdyż pozwala indywidualnie (osobno przez każdy węzeł) kontrolować stopień replikacji, dzięki czemu można dobierać odpowiednie polityki według potrzeb; np. replikować popularne dane\footnote{Dane popularne to te, o które relatywnie często przychodzą żądania.} na bardziej stabilnych węzłach, bądź na większej ich ilości. Zaletą tego podejścia są niskie koszty monitoringu. Wadą natomiast wysokie koszty utrzymywania replik.
 
+Innym podejściem jest tzw. multi-publikacja (ang. \textit{Multi-Publication}). Rozwiązanie te opiera się na replikowaniu danych na wielu, deterministycznie wyznaczonych pozycjach w pierścieniu Chord. Sposób wyznaczania pozycji może być dowolny, aczkolwiek jest stały dla całej sieci, a więc o wiele mniej elastyczny, niż replikacja u sąsiadów. Sugerowane jest, aby obiekt był przechowywany pod wieloma kluczami, które wyznaczane są kilkoma funkcjami skrótu. Problemem multi-publikacji są odpływy, które trzeba monitorować, aby zachować ustalony stopień replikacji. Natomiast plusem może być dobre zrównoważenie obciążenia (w zależności od doboru metody wyznaczania pozycji).
+
+\subsection{Grupowanie}
+
+Ciekawym pomysłem jest mechanizm grupowania. Jest on bezpośrednią inspiracją dla protokołu Statycznych Grup, a więc wymaga szczególnego omówienia. Ponadto może działać w oderwaniu od protokołu Chord. Dlatego też mechanizmowi grupowania został poświęcony osobny rozdział (\ref{rozdzial_grupowanie}).
 
 
 \chapter{Grupowanie węzłów}
-
+\label{rozdzial_grupowanie}
 \begin{itemize}
 \item idea
 \item istniejące rozwiązania
@@ -353,7 +373,7 @@ Każdy węzeł okresowo uruchamia procedurę \textit{fix\_fingers} pokazaną na 
 \begin{thebibliography}{11}
 \addcontentsline{toc}{chapter}{Bibliografia} % dodane do spisu treści
 
-\bibitem{bib:martins} Vidal Martins, \emph{Data Replication in P2P Systems}, Réseaux et télécommunications [cs.NI]. Université de Nantes, 2007. Français. <tel-00481828>
+\bibitem{bib:martins} Vidal Martins, \emph{Data Replication in P2P Systems}, Réseaux et télécommunications [cs.NI], Université de Nantes, 2007, Français
 
 \bibitem{bib:jeyasheeli} Ms. F. Golda Jeyasheeli, L. Rajashree, \emph{Cost Effective File Replication in P2P File Sharing Systems}, 2012 International Conference on Computing, Electronics and Electrical Technologies [ICCEET]
  
@@ -361,11 +381,15 @@ Każdy węzeł okresowo uruchamia procedurę \textit{fix\_fingers} pokazaną na 
 
 \bibitem{bib:paiva} J. Paiva, L. Rodrigues, \emph{Policies for Efficient Data Replication in P2P Systems}, INESC-ID, Instituto Superior Técnico, Universidade Técnica
 
-\bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, Instytut Informatyki, Politechnika Poznańska
+\bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, 2017, Instytut Informatyki, Politechnika Poznańska
 
 \bibitem{bib:chord}  I. Stoica, R. Morris, D. Liben-Nowell, D. R. Karger, M. F. Kaashoek, F. Dabek, and H. Balakrishnan, \emph{Chord: A Scalable Peer-to-Peer Lookup Protocol for Internet Applications}, MIT Laboratory for Computer Science
 
 \bibitem{bib:chord_lec} Smruti R. Sarangi, \emph{Distributed Hash Tables, Chord}, Lectures, Department of Computer Science, Indian Institute of Technology, New Delhi, India
+
+\bibitem{bib:chord_lec} P. Knezevic, A. Wombacher, T. Risse, \emph{Enabling High Data Availability in a DHT}, 16th International Workshop on Database and Expert Systems Applications, 2005 (pp. 363-367). [10.1109/DEXA.2005.84] Los Alamitos: IEEE Computer Society Press. DOI: 10.1109/DEXA.2005.84
+
+\bibitem{bib:chord_lec} A. Rao, K. Lakshminarayanan, S. Surana, R. Karp, I. Stoica, \emph{Load Balancing in Structured P2P Systems}, Peer-to-Peer Systems II. IPTPS 2003. Lecture Notes in Computer Science, vol 2735. Springer, Berlin, Heidelberg
 
 %\bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, [online] \url{http://www.cs.put.poznan.pl/akobusinska/lsds.html} [dostęp: 23.08.2018 r.]
 
