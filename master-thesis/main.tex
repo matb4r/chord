@@ -309,12 +309,11 @@ Pseudokod procedury odpowiedzialnej za dołączanie węzła pokazuje listing \re
 
 Każdy węzeł okresowo uruchamia procedurę \textit{fix\_fingers} pokazaną na listingu \ref{lst:fix_fingers}, która uaktualnia wpisy w tablicy trasowania. Dzięki temu nowe węzły wypełniają swoje tablice, a węzły będące wcześniej w sieci, aktualizują je o ewentualne nowe węzły. Ponadto każdy węzeł wykonuje cyklicznie procedurę \textit{check\_predecessor} pokazaną na listingu \ref{lst:check_predecessor}, która zeruje wskaźnik na poprzednika, jeśli uległ on awarii. Wskaźniki te uaktualniane są podczas cyklicznej operacji \textit{notify}.
 
-
 W praktyce, przez ciągłe przypływy oraz odpływy węzłów, stan pierścienia Chord nigdy nie będzie stabilny. Dołączenia, rozłączenia i cykliczny algorytm stabilizacji będą się przeplatały bez końca. Pierścień nie będzie miał czasu, aby ustabilizować się w pełni, nim nastąpi zmiana w zbiorze węzłów sieci. Jednakże autorzy protokołu zapewniają, że jeśli protokół stabilizacji będzie uruchamiany z odpowiednią częstotliwością, to pierścień będzie utrzymywał się w stanie ,,prawie stabilnym'', w którym to operacje lookup wykonują się sprawnie i zwracają poprawne wyniki \cite{bib:chord}.
 
 \section{Istniejące rozszerzenia}
 
-Protokół Chord jest prosty w swojej idei. Jego konstrukcja pozostawia duże pole do ewentualnych rozszerzeń. Sami autorzy zaproponowali kilka prostych usprawnień. Ponadto powstało wiele pomysłów jak rozszerzyć Chorda o dodatkowe funkcjonalności, takie jak replikacja danych. Są też rozwiązania, które korzystają z Chorda, dostosowywując go do swoich potrzeb. Sam motyw przewodni tej pracy bazuje na Chordzie, rozszerzając go o mechanizm grupowania wspierający replikację.
+Protokół Chord jest prosty w swojej idei. Jego konstrukcja pozostawia duże pole do ewentualnych rozszerzeń. Sami autorzy zaproponowali kilka prostych usprawnień. Ponadto powstało wiele pomysłów jak rozszerzyć Chorda o dodatkowe funkcjonalności, takie jak replikacja danych. Są też rozwiązania, które korzystają z Chorda, dostosowywując go do swoich potrzeb. Sam motyw przewodni tej pracy bazuje na rozszerzeniu protokołu Chordzie o dodatkowy mechanizm grupowania.
 
 \subsection{Usprawnienie działania}
 
@@ -332,7 +331,7 @@ Innym podejściem jest tzw. multi-publikacja (ang. \textit{Multi-Publication}). 
 
 Istnieje też wiele innych rozwiązań mających u swego rdzenia mechanizm Chord. Dobrym przykładem jest algorytm TAC (ang. Topology Aware Chord)\cite{bib:tac}, rozszerzający Chorda o mechanizmy kontrolujące topologię sieci nakładkowej w zależności od fizycznej sieci w której działa. Autorzy twierdzą, że dzięki temu uzyskali lepszą wydajność pod kątem trasowania wiadomości oraz zużycia pasma.
 
-Innym, istotnym w kontekście tej pracy, pomysłem jest mechanizm grupowania. Jest on bezpośrednią inspiracją dla protokołu Statycznych Grup, a więc wymaga szczególnego omówienia; ponadto może działać w oderwaniu od protokołu Chord; dlatego też mechanizmowi grupowania został poświęcony osobny rozdział (\ref{rozdzial_grupowanie}).
+Chord został tak zaprojektowany, aby rozszerzanie go nie stanowiło problemu. Dlatego powstało wiele pomysłów jak go zmienić, aby poprawić różne parametry systemu. Sam Protokół Statycznych Grup, jest w swojej istocie rozszerzeniem Chorda, ale ponieważ jest on tematem przewodnim tej pracy, został mu poświęcony osobny rozdział (\ref{rozdzial_rozwiazanie}).
 
 
 \chapter{Grupowanie węzłów}
@@ -346,7 +345,7 @@ Innym, istotnym w kontekście tej pracy, pomysłem jest mechanizm grupowania. Je
 
 
 \chapter{Zaproponowane rozwiązanie}
-
+\label{rozdzial_rozwiazanie}
 \begin{itemize}
 \item ogolny opis
 \item do czego dążę
