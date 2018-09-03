@@ -329,17 +329,31 @@ Innym podejściem jest tzw. multi-publikacja (ang. \textit{Multi-Publication}). 
 
 \subsection{Inne}
 
-Istnieje też wiele innych rozwiązań mających u swego rdzenia mechanizm Chord. Dobrym przykładem jest algorytm TAC (ang. Topology Aware Chord)\cite{bib:tac}, rozszerzający Chorda o mechanizmy kontrolujące topologię sieci nakładkowej w zależności od fizycznej sieci w której działa. Autorzy twierdzą, że dzięki temu uzyskali lepszą wydajność pod kątem trasowania wiadomości oraz zużycia pasma.
+Istnieje też wiele innych rozwiązań mających u swego rdzenia mechanizm Chord. Dobrym przykładem jest algorytm TAC (ang. Topology Aware Chord) \cite{bib:tac}, rozszerzający Chorda o mechanizmy kontrolujące topologię sieci nakładkowej w zależności od fizycznej sieci w której działa. Autorzy twierdzą, że dzięki temu uzyskali lepszą wydajność pod kątem trasowania wiadomości oraz zużycia pasma.
 
 Chord został tak zaprojektowany, aby rozszerzanie go nie stanowiło problemu. Dlatego powstało wiele pomysłów jak go zmienić, aby poprawić różne parametry systemu. Sam Protokół Statycznych Grup, jest w swojej istocie rozszerzeniem Chorda, ale ponieważ jest on tematem przewodnim tej pracy, został mu poświęcony osobny rozdział (\ref{rozdzial_rozwiazanie}).
 
 
 \chapter{Grupowanie węzłów}
 \label{rozdzial_grupowanie}
-\begin{itemize}
-\item idea
-\item istniejące rozwiązania
-\end{itemize}
+
+Zapewnianie istotnych własności systemów rozproszonych, takich jak skalowalność, czy dostępność, jest ważnym zagadnieniem, nad którym ciągle trwają badania. W wyniku prac badawczych, powstaje wiele konceptów. Mechanizm grupowania węzłów w zbiory jest jednym z takich pomysłów. Sugeruje on, aby podstawym komponentem w sieci P2P nie był węzeł, lecz grupa węzłów, każda odpowiedzialna za dany zbiór kluczy. Komunikacja w sieci odbywała by się na dwóch poziomach: międzygrupowym, oraz wewnątrzgrupowym. Pomysł ten jest bezpośrednią inspiracją dla protokołu Statycznych Grup. Dlatego też, mechanizmowi temu został poświęcony niniejszy rozdział, opisując jego ideę, sposób działania, oraz wyszczególniając co zapewnia, a co pomija.
+
+\section{Pomysł}
+
+Idea grupowania węzłów w środowisku DHT została wypromowana przez autorów systemu Scatter \cite{bib:scatter}. System ten powstał jako próba zapewnienia silnej spójności rozproszonych danych, 
+zachowując jednocześnie dużą skalowalność. Osiągnięcie zadowalającej spójności, dla operacji na pojedyńczej parze klucz-wartość pomimo zmiennych opóźnień w sieci, przypływów i odpływów, oraz błędów komunikacyjnych, przy jednoczesnym zapewnieniu dobrej skalowalności, w której to system sprawnie działa w niestabilnym środowisku nawet z ponad milionem węzłów, wydaje się być zadaniem nietrywialnym. Mimo tego autorzy twierdzą, że ich system zapewnia te własności, co popierają eksperymentami.
+o
+Podstawowym komponentem w systemie Scatter jest samoorganizująca się grupa węzłów. Grupa wewnętrznie używa mechanizmów replikacji opartych na algorytmie konsensusu Paxos jako podstawy do zapewnienia spójności oraz odporności na awarie. Sam Scatter implementuje również kilka rozszerzeń i optymalizacji do podstawowego algorytmu Paxos, takich jak wybieranie lidera grupy, czy algorytm rekonfiguracji po utracie lub zyskaniu członka grupy.
+Ponieważ grupy zarządzają wewnętrzną integralnością używając sprawdzonych protokołów konsensusu, prosty i agresywny detektor awarii wystarcza. Węzły, które zostały wyłączone z grupy, nie mogą brać udziału w jej akcjach. Gdyby jednak nieudało się dostatecznie szybko wykryć awarię węzła, grupa nadal mogłaby podejmować akcje, gdyż do działania potrzebne jest kworum węzłów.
+
+Scatter implementuje prosty model DHT z przestrzenią kluczy w formie okręgu, którą nazywamy - podobnie jak w protokole Chord - pierścieniem. Przestrzeń ta jednak różni się od tej w protokole Chord, iż jest podzielona pomiędzy grupy, a nie węzły. Każda grupa posiada aktualne informacje o dwóch sąsiednich grupach: tej która ją poprzedza na pierścieniu, oraz nastepnej.
+Sąsiednie grupy mogą wykonywać tzw. operacje międzygrupowe: podzielenie grupy na dwie mniejsze, połączenie dwóch grup, migracja członka z jednej grupy do drugiej oraz repartycja, czyli zmiana podziału odpowiedzialności za odpowiednie przedziały kluczy. Żeby nie było niespójności pomiędzy węzłami, operacje międzygrupowe powinny być atomowe. Dlatego też, wykonywane są w ramach rozproszonych transakcji, używając do tego protokołu zatwierdzania dwufazowego 2PC (ang. \textit{two-phase commit protocol}).
+
+
+\section{Rollerchain}
+
+\section{Polityki}
 
 
 
@@ -396,6 +410,8 @@ Chord został tak zaprojektowany, aby rozszerzanie go nie stanowiło problemu. D
 \bibitem{bib:chord_lec} A. Rao, K. Lakshminarayanan, S. Surana, R. Karp, I. Stoica, \emph{Load Balancing in Structured P2P Systems}, Peer-to-Peer Systems II. IPTPS 2003. Lecture Notes in Computer Science, vol 2735. Springer, Berlin, Heidelberg
 
 \bibitem{bib:tac} Javad Taheri , Mohammad Kazem Akbari, \emph{TAC: A Topology-Aware Chord-based Peer-to-Peer Network}, Advanced Information Technologies Lab., Department of Computer Engineering and IT, Amirkabir University of Technology, Tehran, Iran
+
+\bibitem{bib:scatter} Lisa Glendenning, Ivan Beschastnikh, Arvind Krishnamurthy, Thomas E. Anderson, \emph{Scalable consistency in Scatter}, SOSP '11 Proceedings of the Twenty-Third ACM Symposium on Operating Systems Principles
 
 %\bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, [online] \url{http://www.cs.put.poznan.pl/akobusinska/lsds.html} [dostęp: 23.08.2018 r.]
 
