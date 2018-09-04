@@ -13,10 +13,12 @@ public class StaticGroupsInitializer implements NodeInitializer {
     private static final String PAR_PROT = "protocol";
     private static final String PAR_IDLENGTH = "idLength";
     private static final String PAR_MAX_GROUP_SIZE = "maxGroupSize";
+    private static final String PAR_STABILITY_RESTRICTION = "stabilityRestriction";
 
     private int pid = 0;
     private int idLength = 0;
     private int maxGroupSize = 0;
+    private double stabilityRestriction = 0;
 
     private StaticGroupsProtocol cp;
 
@@ -24,6 +26,7 @@ public class StaticGroupsInitializer implements NodeInitializer {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         idLength = Configuration.getInt(prefix + "." + PAR_IDLENGTH);
         maxGroupSize = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
+        stabilityRestriction = Configuration.getDouble(prefix + "." + PAR_STABILITY_RESTRICTION);
     }
 
     @Override
@@ -39,7 +42,7 @@ public class StaticGroupsInitializer implements NodeInitializer {
 
 
         float stability = cp.calculateStability();
-        if (stability >= 0.8) {
+        if (stability >= stabilityRestriction) {
             join(cp);
         } else {
             Group g = Utils.getAnyCP(pid).findGroupToJoin(stability);

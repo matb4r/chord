@@ -12,11 +12,13 @@ public class StaticGroupsMetrics implements Control {
     private static final String PAR_MAX_GROUP_SIZE = "maxGroupSize";
     private static final String PAR_CYCLES = "cycles";
     private static final String PAR_INIT_NETWORK_SIZE = "networkInitSize";
+    private static final String PAR_STABILITY_RESTRICTION = "stabilityRestriction";
 
     private int idLength = 0;
     private int maxGroupSize = 0;
     private int cycles = 0;
     private int networkInitSize = 0;
+    private double stabilityRestriction = 0;
 
     LocalTime started;
     LocalTime stopped;
@@ -29,6 +31,7 @@ public class StaticGroupsMetrics implements Control {
         maxGroupSize = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
         cycles = Configuration.getInt(prefix + "." + PAR_CYCLES);
         networkInitSize = Configuration.getInt(prefix + "." + PAR_INIT_NETWORK_SIZE);
+        stabilityRestriction = Configuration.getDouble(prefix + "." + PAR_STABILITY_RESTRICTION);
     }
 
     @Override
@@ -52,6 +55,7 @@ public class StaticGroupsMetrics implements Control {
         System.out.println("network init size: " + networkInitSize);
         System.out.println("m: " + idLength);
         System.out.println("max group size: " + maxGroupSize);
+        System.out.println("stability restriction: " + stabilityRestriction);
         System.out.println("started " + started);
         System.out.println("stopped " + stopped);
         System.out.println("time: " + stopped.minusNanos(started.toNanoOfDay()));
