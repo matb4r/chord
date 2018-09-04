@@ -339,7 +339,7 @@ Chord został tak zaprojektowany, aby rozszerzanie go nie stanowiło problemu. D
 
 Zapewnianie istotnych własności systemów rozproszonych, takich jak skalowalność, czy dostępność, jest ważnym zagadnieniem, nad którym ciągle trwają badania. W wyniku prac badawczych, powstaje wiele konceptów. Mechanizm grupowania węzłów w zbiory jest jednym z takich pomysłów. Sugeruje on, aby podstawym komponentem w sieci P2P nie był węzeł, lecz grupa węzłów, każda odpowiedzialna za dany zbiór kluczy. Komunikacja w sieci odbywała by się na dwóch poziomach: międzygrupowym, oraz wewnątrzgrupowym. Pomysł ten jest bezpośrednią inspiracją dla protokołu Statycznych Grup. Dlatego też, mechanizmowi temu został poświęcony niniejszy rozdział, opisując jego ideę, sposób działania, oraz wyszczególniając co zapewnia, a co pomija.
 
-\section{Scatter}
+\section{System Scatter}
 
 Idea grupowania węzłów w środowisku DHT została wypromowana przez autorów systemu Scatter \cite{bib:scatter}. System ten powstał jako próba zapewnienia silnej spójności rozproszonych danych, 
 zachowując jednocześnie dużą skalowalność. Osiągnięcie zadowalającej spójności, dla operacji na pojedyńczej parze klucz-wartość pomimo zmiennych opóźnień w sieci, przypływów i odpływów, oraz błędów komunikacyjnych, przy jednoczesnym zapewnieniu dobrej skalowalności, w której to system sprawnie działa w niestabilnym środowisku nawet z ponad milionem węzłów, wydaje się być zadaniem nietrywialnym. Mimo tego autorzy twierdzą, że ich system zapewnia te własności, co popierają eksperymentami.
@@ -361,7 +361,8 @@ Sąsiednie grupy mogą wykonywać tzw. operacje międzygrupowe: podzielenie grup
 
 Aby cały system działał poprawnie, każdy sąsiad dowolnej grupy \textit{G}, musi posiadać najświęższą wiedzę o jakimś podzbiorze członków grupy \textit{G}. Aby to zapewnić, członkowstwo grupy \textit{G} jest rozsyłane sąsiadom za każdym razem, gdy ulegnie ono zmianie. Ponadto Scatter sam w sobie nie gwarantuje niezawodnego dostarczania wiadomości oraz nie zapewnia uporządkowania dostarczania wiadomości FIFO (ang. \textit{First In, First Out} – pierwszy na wejściu, pierwszy na wyjściu).
 
-\section{Rollerchain}
+\section{System Rollerchain}
+\label{subch_rollerchain}
 
 Inną, wartą uwagi implementacją mechanizmu grupowania węzłów jest Rollerchain \cite{bib:rollerchain}. Jest to system DHT, dla powstania którego bezpośrednią inspiracją był Scatter. Rollerchain implementuje jednak kilka dodatkowych mechanizmów, doprecyzowując niektóre aspekty, których autorzy systemu Scatter celowo, zostawiając wolność, pominęli.
 
@@ -382,13 +383,19 @@ Grupy w Rollerchain są połączone tzw. wirtualnymi łączami (ang. \textit{vir
 
 \section{Polityki}
 
-Sam mechanizm grupowania węzłów nie specyfikuje do której grupy trafi nowy węzeł, ani nie mówi o warunkach które muszą zajść, aby wykonać daną operację międzygrupową. Wybór grupy i warunki operacji międzygrupowych zależą od danej implementacji i mogą mieć różne motywacje. Mają one jednak istotny wpływ na budowę całej sieci, a więc zachowanie całego systemu. Mogą więc pozytywnie wpłynąć na system, poprawiając niektóre parametry, lecz źle przemyślane mogą je tylko pogorszyć. Sposoby wybierania grup i warunki potrzebne do zajścia operacji międzygrupowych nazwijmy politykami. Poniżej przedstawione jest kilka przykładowych polityk, które zostały zaproponowane jako warte uwagi \cite{bib:paiva}.
+Sam mechanizm grupowania węzłów nie specyfikuje do której grupy trafi nowy węzeł, ani nie mówi o warunkach które muszą zajść, aby wykonać daną operację międzygrupową. Sposoby wybierania grup i warunki potrzebne do zajścia operacji międzygrupowych nazwijmy politykami. Zależą one od danej implementacji i mogą mieć różne motywacje. Mają one jednak istotny wpływ na budowę całej sieci, a więc i zachowanie całego systemu. Mogą więc pozytywnie wpłynąć na system, poprawiając niektóre parametry, lecz źle przemyślane mogą je tylko pogorszyć. Dla przykładu wspomniany w podrozdziale \ref{subch_rollerchain} Rollerchain stosuje opisaną tam politykę, aby zagwarantować równowagę obciążenia między grupami. Z kolei autorzy systemu Scatter nie specyfikują konkretnej polityki, pozostawiając wolność w tej kwestii. Poniżej przedstawione jest kilka przykładowych polityk, które zostały zaproponowane jako warte uwagi \cite{bib:paiva}.
 
 \subsection{Żywotność i równowaga obciążenia}
-Polityka nazwana przez autorów R-LB (ang. \textit{Resilient Load-Balancing}), oprócz zrównoważenia obciążenia ma na celu zagwarantowanie żywotności grup. Aby zapewnić tą pierwszą własność, nowy węzeł dołącza do grup w których obciążenie przypadające na jeden węzeł jest największe, a gdy grupa musi się podzielić na dwie mniejsze (bo np. stała się zbyt duża), to klucze są tak rozdzielone, aby obciążenie przypadające na węzeł było możliwie równe w obu grupach. Podobną logikę implementuje wyżej wspomniany Rollerchain. Jednak polityka R-LB gwarantuje jeszcze własność żywotności grup. Aby ją zapewnić, nowe węzły wybierają z najbardziej obciążonych grup te najmniejsze i do nich dołączają. Ponadto grupy niebezpiecznie małe inicjują operację połączenia się z grupami sąsiednimi.
+Polityka nazwana przez autorów R-LB (ang. \textit{Resilient Load-Balancing}), oprócz zrównoważenia obciążenia ma na celu zagwarantowanie żywotności grup. Aby zapewnić tą pierwszą własność, nowy węzeł dołącza do grup w których obciążenie przypadające na jeden węzeł jest największe, a gdy grupa musi się podzielić na dwie mniejsze (bo np. stała się zbyt duża), to klucze są tak rozdzielone, aby obciążenie przypadające na węzeł było możliwie równe w obu grupach. Oprócz tego, polityka R-LB gwarantuje jeszcze własność żywotności grup. Aby ją zapewnić, nowe węzły wybierają z najbardziej obciążonych grup te najmniejsze i do nich dołączają. Ponadto grupy niebezpiecznie małe inicjują operację połączenia się z grupami sąsiednimi. Samo zrównoważenie obciążenia
 
-\subsection{•}
+\subsection{Duże grupy}
+Polityka nazwana \textit{Supersize-me} polega na tym, aby wszystkie grupy były relatywnie duże, tzn. żeby składały się z większej ilości węzłów, niż jest to wymagane ze względu na zachowanie odpowiedniego stopnia replikacji. Przez to redundancja danych jest zwiększona, aczkolwiek szansa, że grupy będą małe (co może skutkować całkowitym zniknięciem grupy, bądź kosztownymi operacjami łączenia się grup) jest niska. W zamian za zmniejszenie transferu danych przy odpływach, transfer jest zwiększony przy przypływach.
 
+\subsection{Małe grupy}
+Polityka nazwana \textit{Avoid-Surplus} jest przeciwieństwem polityki Supersize-me. Jej celem jest utrzymywanie rozmiaru grup na jak najniżsyzm poziomie, który jednocześnie zapewniłby pożądany stopień replikacji. Osiąga się to poprzez dołączanie nowych węzłów do grup największych, co skutkuje częściej wykonywaną operacją podziału grup. Dzieki temu zredukowana jest redundancja danych w systemie i zmniejszają się koszty monitoringu (które zależą w dużym stopniu od rozmiaru grup). Aczkolwiek system jest wrażliwy na odpływy, które mogą doprowadzać do częstych operacji łączenia grup (ze względu na ich nieakceptowalny, zbyt mały rozmiar).
+
+\subsection{Węzły niestabilne odpowiedzialne za mniej kluczy}
+Polityka nazwana \textit{Hotter-on-Ephemeral} polega na dołączaniu najbardziej zawodnych węzłów, do grup przechowujących najczęściej używane dane. Żeby zachować równowagę obciążenia, grupy te będą przechowywać najmniej kluczy. A więc polityka ta zapewnia, że do grup które trzymają mało kluczy, dołączać będą bardziej zawodne węzły. Przez to najwięcej dołączeń (które generują wezły niestabilne) bedzie właśnie w ramach tych grup. Skutkuje to zmniejszeniem przesyłu danych (przy przypływach) i kosztów monitoringu, oraz podobnie jak w R-LB zapewnia dobre zrównoważenie obciążenia. Ponadto, aby zachować stabilność grup, najbardziej zawodne grupy mogą być większe niż inne. Polityka Hotter-on-Ephemeral zakłada, że znana jest wartość metryki stabilności pojedynczego węzła. Może być ona wyznaczona na różne sposoby. Podobnie też, polityka w protokole Statycznych Grup zakłada znajomość tej wartości każdego nowego węzła, aby zdecydować jaką akcję ma podjąć dany węzeł (więcej w rozdziale \ref{rozdzial_rozwiazanie}).
 
 \chapter{Zaproponowane rozwiązanie}
 \label{rozdzial_rozwiazanie}
