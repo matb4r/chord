@@ -127,20 +127,11 @@ public class Utils {
         return false;
     }
 
-    public static BigInteger generateUniqueId(int idLength, int pid) {
+    public static BigInteger generateUniqueNo(int idLength) {
         BigInteger no;
         do {
             no = new BigInteger(idLength, CommonState.r);
-        } while (isNoInList(no, NODES));
+        } while (GROUPS.keySet().contains(no));
         return no;
-    }
-
-    private static boolean isNoInList(BigInteger no, ArrayList<StaticGroupsProtocol> list) {
-        for (StaticGroupsProtocol cp : list) {
-            if (cp.group != null && cp.group.no != null && cp.group.no.equals(no)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

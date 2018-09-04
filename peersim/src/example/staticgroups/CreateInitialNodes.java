@@ -8,7 +8,6 @@ import peersim.core.Node;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * info mb
@@ -45,7 +44,7 @@ public class CreateInitialNodes implements Control {
             cp.MAX_GROUP_SIZE = maxGroupSize;
             cp.fingerTable = new Finger[cp.m];
             cp.group = new Group();
-            cp.group.no = Utils.generateUniqueId(idLength, pid);
+            cp.group.no = Utils.generateUniqueNo(idLength);
             cp.ip = Utils.generateIp(cp.group.no, cp.m);
             cp.group.ips.add(cp.ip);
             Utils.NODES.add(cp);

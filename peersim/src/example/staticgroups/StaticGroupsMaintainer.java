@@ -3,8 +3,6 @@ package example.staticgroups;
 import peersim.config.Configuration;
 import peersim.core.Control;
 
-import java.util.ArrayList;
-
 public class StaticGroupsMaintainer implements Control {
 
     private static final String PAR_PROT = "protocol";

@@ -63,7 +63,7 @@ public class StaticGroupsInitializer implements NodeInitializer {
     }
 
     public void join(StaticGroupsProtocol cp) {
-        cp.group.no = Utils.generateUniqueId(idLength, pid);
+        cp.group.no = Utils.generateUniqueNo(idLength);
         cp.ip = Utils.generateIp(cp.group.no, cp.m);
         cp.group.ips.add(cp.ip);
         initFingerTable(cp);
