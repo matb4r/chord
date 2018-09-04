@@ -11,9 +11,9 @@ import java.math.BigInteger;
 /**
  * info mb
  * co sie dzieje na samiuskim poczatku
- * network.size definiuje ile na poczatku wezlowe tworzonych przez CreateInitial
+ * network.size definiuje ile na poczatku wezlowe tworzonych przez CreateInitialNodes
  */
-public class CreateInitial implements Control {
+public class CreateInitialNodes implements Control {
 
     private static final String PAR_PROT = "protocol";
     private static final String PAR_IDLENGTH = "idLength";
@@ -23,7 +23,7 @@ public class CreateInitial implements Control {
     private int idLength = 0;
     private int maxGroupSize = 0;
 
-    public CreateInitial(String prefix) {
+    public CreateInitialNodes(String prefix) {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         idLength = Configuration.getInt(prefix + "." + PAR_IDLENGTH);
         maxGroupSize = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
@@ -33,7 +33,7 @@ public class CreateInitial implements Control {
     public boolean execute() {
 
         // info mb: tworzenie nowych wezlow na samym poczatku: kazdy wezel tworzy nowa grupe
-        System.out.println("executing CreateInitial");
+        System.out.println("executing CreateInitialNodes");
         for (int i = 0; i < Network.size(); i++) {
             Node node = Network.get(i);
             StaticGroupsProtocol cp = (StaticGroupsProtocol) node.getProtocol(pid);
