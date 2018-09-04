@@ -24,23 +24,17 @@ public class RandomDynamicNetwork extends DynamicNetwork {
     }
 
     public final boolean execute() {
-        if (random) {
-            if (CommonState.r.nextBoolean()) {
-                try {
+        try {
+            if (random) {
+                if (CommonState.r.nextBoolean()) {
                     add(1);
-                } catch (Exception ex) {
-                }
-            } else {
-                if (Network.size() > 1) {
-                    try {
+                } else {
+                    if (Network.size() > 1) {
                         remove();
-                    } catch (Exception ex) {
                     }
                 }
-            }
-        } else {
-            if (isAddNow) {
-                try {
+            } else {
+                if (isAddNow) {
                     if (Network.size() < maxsize)
                         add(1);
                     addCounter--;
@@ -48,10 +42,7 @@ public class RandomDynamicNetwork extends DynamicNetwork {
                         addCounter = (int) addPositive;
                         isAddNow = false;
                     }
-                } catch (Exception ex) {
-                }
-            } else {
-                try {
+                } else {
                     if (Network.size() > 0 && Network.size() > minsize)
                         remove();
                     removeCounter--;
@@ -59,9 +50,10 @@ public class RandomDynamicNetwork extends DynamicNetwork {
                         removeCounter = (int) addPositive;
                         isAddNow = true;
                     }
-                } catch (Exception ex) {
                 }
             }
+        } catch (Exception ex) {
+            StaticGroupsMetrics.exceptionsCounter++;
         }
 
         return false;

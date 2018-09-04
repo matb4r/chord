@@ -21,6 +21,7 @@ package peersim.cdsim;
 import java.time.LocalTime;
 import java.util.*;
 
+import example.staticgroups.StaticGroupsMetrics;
 import example.staticgroups.Utils;
 import peersim.config.*;
 import peersim.core.*;
@@ -179,9 +180,6 @@ public static final boolean isConfigurationCycleDriven()
  */
 public static final void nextExperiment()
 {
-	String started = LocalTime.now().toString();
-	int maxNetSize = Integer.MIN_VALUE;
-	int minNetSize = Integer.MAX_VALUE;
 
 	// Reading parameter
 	cycles = Configuration.getInt(PAR_CYCLES);
@@ -202,6 +200,13 @@ public static final void nextExperiment()
 	loadControls();
 
 	System.out.println("-------------------- CDSimulator: starting simulation");
+
+	for (int j = 0; j < controls.length; ++j) {
+		if (controls[j] instanceof StaticGroupsMetrics) {
+			((StaticGroupsMetrics)controls[j]).executeOnStart();
+		}
+	}
+
 	for (int i = 0; i < cycles; ++i) {
 		CDState.setCycle(i);
 
@@ -214,12 +219,6 @@ public static final void nextExperiment()
 			break;
 		System.out.println("-------------------- CDSimulator: cycle " + i + " done");
 		Utils.cycle++;
-		if(Network.size() > maxNetSize) {
-			maxNetSize = Network.size();
-		}
-		if (Network.size() < minNetSize) {
-			minNetSize = Network.size();
-		}
 	}
 
 	CDState.setPhase(CDState.POST_SIMULATION);
@@ -229,10 +228,12 @@ public static final void nextExperiment()
 		if (ctrlSchedules[j].fin)
 			controls[j].execute();
 	}
-	System.out.println("started " + started);
-	System.out.println("stopped " + LocalTime.now());
-	System.out.println("Min net size: " + minNetSize);
-	System.out.println("Max net size: " + maxNetSize);
+
+	for (int j = 0; j < controls.length; ++j) {
+		if (controls[j] instanceof StaticGroupsMetrics) {
+			((StaticGroupsMetrics)controls[j]).executeOnEnd();
+		}
+	}
 
 }
 
