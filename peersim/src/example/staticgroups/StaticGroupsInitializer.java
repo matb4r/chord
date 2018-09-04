@@ -1,4 +1,4 @@
-package example.chordgroups;
+package example.staticgroups;
 
 import peersim.config.Configuration;
 import peersim.core.Node;
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-public class ChordInitializer implements NodeInitializer {
+public class StaticGroupsInitializer implements NodeInitializer {
 
     private static final String PAR_PROT = "protocol";
     private static final String PAR_IDLENGTH = "idLength";
@@ -18,9 +18,9 @@ public class ChordInitializer implements NodeInitializer {
     private int idLength = 0;
     private int maxGroupSize = 0;
 
-    private ChordProtocol cp;
+    private StaticGroupsProtocol cp;
 
-    public ChordInitializer(String prefix) {
+    public StaticGroupsInitializer(String prefix) {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         idLength = Configuration.getInt(prefix + "." + PAR_IDLENGTH);
         maxGroupSize = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
@@ -28,8 +28,8 @@ public class ChordInitializer implements NodeInitializer {
 
     @Override
     public void initialize(Node n) {
-        System.out.println("executing ChordInitializer");
-        cp = (ChordProtocol) n.getProtocol(pid);
+        System.out.println("executing StaticGroupsInitializer");
+        cp = (StaticGroupsProtocol) n.getProtocol(pid);
         cp.next = 0;
         cp.pid = pid;
         cp.m = idLength;
@@ -49,42 +49,42 @@ public class ChordInitializer implements NodeInitializer {
                 joinToGroup(cp, g);
             }
         }
-        ArrayList<ChordProtocol> allNodes = Utils.getAllNodes(pid);
+        ArrayList<StaticGroupsProtocol> allNodes = Utils.getAllNodes(pid);
         System.out.println("Node " + cp.ip + " added");
     }
 
-    public void join(ChordProtocol cp) {
+    public void join(StaticGroupsProtocol cp) {
         cp.group.no = Utils.generateUniqueId(idLength, pid);
         cp.ip = Utils.generateIp(cp.group.no, cp.m);
         cp.group.ips.add(cp.ip);
         initFingerTable(cp);
     }
 
-    public void joinToGroup(ChordProtocol cp, Group g) {
+    public void joinToGroup(StaticGroupsProtocol cp, Group g) {
         cp.group = g;
         cp.ip = Utils.generateIp(g.no, cp.m);
         g.ips.add(cp.ip);
         Utils.updateIps(g.no, g.ips, pid);
-        ChordProtocol firstCPByNo = Utils.getFirstCPByNo(g.no, pid);
+        StaticGroupsProtocol firstCPByNo = Utils.getFirstCPByNo(g.no, pid);
         cp.fingerTable = firstCPByNo.fingerTable;
         cp.predecessor = firstCPByNo.predecessor;
         cp.successor = firstCPByNo.successor;
     }
 
-    public void initFingerTable(ChordProtocol cp) {
-        ChordProtocol randomCP = Utils.getAnyCP(pid);
+    public void initFingerTable(StaticGroupsProtocol cp) {
+        StaticGroupsProtocol randomCP = Utils.getAnyCP(pid);
         // update newNode.succ
         cp.successor = randomCP.findSuccessor(cp.group.no);
         Utils.updateSuccessor(cp.group.no, cp.successor, pid);
 
         // update newNode.pred
-        ChordProtocol succCP = Utils.getFirstCPByNo(cp.successor.no, pid);
+        StaticGroupsProtocol succCP = Utils.getFirstCPByNo(cp.successor.no, pid);
         cp.predecessor = succCP.predecessor;
         Utils.updatePredecessor(cp.group.no, cp.predecessor, pid);
 
         // update newNode.pred.succ
         if (cp.predecessor != null) {
-            ChordProtocol predCP = Utils.getFirstCPByNo(cp.predecessor.no, pid);
+            StaticGroupsProtocol predCP = Utils.getFirstCPByNo(cp.predecessor.no, pid);
             Utils.updateSuccessor(predCP.group.no, cp.group, pid);
         }
 

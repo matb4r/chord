@@ -1,4 +1,4 @@
-package example.chordgroups;
+package example.staticgroups;
 
 import peersim.core.Node;
 
@@ -15,8 +15,8 @@ public class NodeComparator implements Comparator {
 
     @Override
     public int compare(Object arg0, Object arg1) {
-        String a = ((ChordProtocol) ((Node) arg0).getProtocol(pid)).ip;
-        String b = ((ChordProtocol) ((Node) arg1).getProtocol(pid)).ip;
+        String a = ((StaticGroupsProtocol) ((Node) arg0).getProtocol(pid)).ip;
+        String b = ((StaticGroupsProtocol) ((Node) arg1).getProtocol(pid)).ip;
 
         BigInteger aGroupNo = new BigInteger(a.split("\\.")[2]);
         BigInteger bGroupNo = new BigInteger(b.split("\\.")[2]);

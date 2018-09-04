@@ -1,4 +1,4 @@
-package example.chordgroups;
+package example.staticgroups;
 
 import peersim.config.Configuration;
 import peersim.core.Control;
@@ -36,7 +36,7 @@ public class CreateInitial implements Control {
         System.out.println("executing CreateInitial");
         for (int i = 0; i < Network.size(); i++) {
             Node node = Network.get(i);
-            ChordProtocol cp = (ChordProtocol) node.getProtocol(pid);
+            StaticGroupsProtocol cp = (StaticGroupsProtocol) node.getProtocol(pid);
             cp.next = 0;
             cp.pid = pid;
             cp.m = idLength;
@@ -58,13 +58,13 @@ public class CreateInitial implements Control {
 
     public void setPredecessors() {
         for (int i = 0; i < Network.size(); i++) {
-            ChordProtocol cp = (ChordProtocol) Network.get(i).getProtocol(pid);
+            StaticGroupsProtocol cp = (StaticGroupsProtocol) Network.get(i).getProtocol(pid);
             if (i == 0) {
                 // info mb: dla pierwszego wezla, poprzednikiem musi byc wezel ostatni
-                ChordProtocol pred = (ChordProtocol) Network.get(Network.size() - 1).getProtocol(pid);
+                StaticGroupsProtocol pred = (StaticGroupsProtocol) Network.get(Network.size() - 1).getProtocol(pid);
                 cp.predecessor = pred.group;
             } else {
-                ChordProtocol pred = (ChordProtocol) Network.get(i - 1).getProtocol(pid);
+                StaticGroupsProtocol pred = (StaticGroupsProtocol) Network.get(i - 1).getProtocol(pid);
                 cp.predecessor = pred.group;
             }
         }
@@ -72,20 +72,20 @@ public class CreateInitial implements Control {
 
     public void setSuccessors() {
         for (int i = 0; i < Network.size(); i++) {
-            ChordProtocol cp = (ChordProtocol) Network.get(i).getProtocol(pid);
+            StaticGroupsProtocol cp = (StaticGroupsProtocol) Network.get(i).getProtocol(pid);
             if (i == Network.size() - 1) {
                 // info mb: dla ostatniego wezla, nastepnikiem musi byc pierwszy wezel
-                ChordProtocol succ = (ChordProtocol) Network.get(0).getProtocol(pid);
+                StaticGroupsProtocol succ = (StaticGroupsProtocol) Network.get(0).getProtocol(pid);
                 cp.successor = succ.group;
             } else {
-                ChordProtocol succ = (ChordProtocol) Network.get(i + 1).getProtocol(pid);
+                StaticGroupsProtocol succ = (StaticGroupsProtocol) Network.get(i + 1).getProtocol(pid);
                 cp.successor = succ.group;
             }
         }
     }
 
     public void createFingerTable() {
-        for (ChordProtocol cp : Utils.getAllNodes(pid)) {
+        for (StaticGroupsProtocol cp : Utils.getAllNodes(pid)) {
 
             cp.fingerTable[0] = new Finger();
             cp.fingerTable[0].i = 1;
@@ -105,7 +105,7 @@ public class CreateInitial implements Control {
 
     public Group findSmallestGroupGE(BigInteger id) {
         // dziala tylko dlatego, ze wezly sa posortowane po group.no
-        for (ChordProtocol cp : Utils.getAllNodes(pid)) {
+        for (StaticGroupsProtocol cp : Utils.getAllNodes(pid)) {
             if (cp.group.no.compareTo(id) >= 0) {
                 return cp.group;
             }

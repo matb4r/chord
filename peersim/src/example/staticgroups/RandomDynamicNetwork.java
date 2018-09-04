@@ -1,4 +1,4 @@
-package example.chordgroups;
+package example.staticgroups;
 
 import peersim.config.Configuration;
 import peersim.core.CommonState;
@@ -6,7 +6,7 @@ import peersim.core.Network;
 import peersim.core.Node;
 import peersim.dynamics.DynamicNetwork;
 
-public class ChordDynamicNetwork extends DynamicNetwork {
+public class RandomDynamicNetwork extends DynamicNetwork {
 
     private static final String PAR_RANDOM = "random";
 
@@ -18,7 +18,7 @@ public class ChordDynamicNetwork extends DynamicNetwork {
     int addCounter = (int) addPositive;
     int removeCounter = (int) addPositive;
 
-    public ChordDynamicNetwork(String prefix) {
+    public RandomDynamicNetwork(String prefix) {
         super(prefix);
         random = Configuration.contains(prefix + "." + PAR_RANDOM);
     }
@@ -70,7 +70,7 @@ public class ChordDynamicNetwork extends DynamicNetwork {
     protected void remove() {
         int index = CommonState.r.nextInt(Network.size());
         Node node = Network.get(index);
-        ChordProtocol cp = (ChordProtocol) node.getProtocol(0);
+        StaticGroupsProtocol cp = (StaticGroupsProtocol) node.getProtocol(0);
         Network.remove(index);
         System.out.println("Node " + cp.ip + " died");
     }

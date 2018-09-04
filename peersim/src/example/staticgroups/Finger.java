@@ -1,4 +1,4 @@
-package example.chordgroups;
+package example.staticgroups;
 
 import java.math.BigInteger;
 

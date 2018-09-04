@@ -18,13 +18,10 @@
 
 package peersim.cdsim;
 
-import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import example.chordgroups.Utils;
+import example.staticgroups.Utils;
 import peersim.config.*;
 import peersim.core.*;
 

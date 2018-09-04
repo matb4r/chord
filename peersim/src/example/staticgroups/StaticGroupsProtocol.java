@@ -1,4 +1,4 @@
-package example.chordgroups;
+package example.staticgroups;
 
 import peersim.cdsim.CDProtocol;
 import peersim.core.CommonState;
@@ -6,7 +6,7 @@ import peersim.core.Node;
 
 import java.math.BigInteger;
 
-public class ChordProtocol implements CDProtocol {
+public class StaticGroupsProtocol implements CDProtocol {
 
     public String ip;
     public Group group;
@@ -21,7 +21,7 @@ public class ChordProtocol implements CDProtocol {
 
     public int pid;
 
-    public ChordProtocol(String prefix) {
+    public StaticGroupsProtocol(String prefix) {
     }
 
     public void join(Node n) {
@@ -38,7 +38,7 @@ public class ChordProtocol implements CDProtocol {
             if (g.no.equals(group.no)) {
                 return group;
             }
-            ChordProtocol firstCPByNo = Utils.getFirstCPByNo(g.no, pid);
+            StaticGroupsProtocol firstCPByNo = Utils.getFirstCPByNo(g.no, pid);
             if (firstCPByNo == null) {
                 return group;
             } else {
@@ -91,7 +91,7 @@ public class ChordProtocol implements CDProtocol {
     }
 
     public void stabilize() {
-        ChordProtocol firstCPByNo = Utils.getFirstCPByNo(successor.no, pid);
+        StaticGroupsProtocol firstCPByNo = Utils.getFirstCPByNo(successor.no, pid);
         Group p = firstCPByNo.predecessor;
         if (Utils.betweenAB(p.no, group.no, successor.no)) {
             Utils.updateSuccessor(group.no, p, pid);
@@ -116,7 +116,7 @@ public class ChordProtocol implements CDProtocol {
 
     public void checkSuccessor() {
         if (Utils.getFirstCPByNo(successor.no, pid) == null) {
-            ChordProtocol randomCP = Utils.getRandomCP(this, pid);
+            StaticGroupsProtocol randomCP = Utils.getRandomCP(this, pid);
             if (randomCP == null) {
                 // jesli ta grupa jest jedyna w sieci
                 successor = group;
@@ -141,9 +141,9 @@ public class ChordProtocol implements CDProtocol {
 
     @Override
     public Object clone() {
-        ChordProtocol cp = null;
+        StaticGroupsProtocol cp = null;
         try {
-            cp = (ChordProtocol) super.clone();
+            cp = (StaticGroupsProtocol) super.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }

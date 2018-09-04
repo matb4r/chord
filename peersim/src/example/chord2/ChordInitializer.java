@@ -90,9 +90,9 @@ public class ChordInitializer implements NodeInitializer, Control {
             ChordProtocol cp = (ChordProtocol) node.getProtocol(pid);
 
             System.out.print(cp + "@" + node.getIndex() + ": ");
-//			System.out.print((ChordProtocol) cp.predecessor.getProtocol(pid));
+//			System.out.print((StaticGroupsProtocol) cp.predecessor.getProtocol(pid));
 //			for(int j =0; j < cp.successorList.length; j++){
-//				System.out.print((ChordProtocol) cp.successorList[j].getProtocol(pid) + "@"+cp.successorList[j].getIndex() + " ");
+//				System.out.print((StaticGroupsProtocol) cp.successorList[j].getProtocol(pid) + "@"+cp.successorList[j].getIndex() + " ");
 //			}
             for (int j = 0; j < cp.fingerTable.length; j++) {
                 if (cp.fingerTable[j] != null)
