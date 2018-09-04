@@ -339,23 +339,55 @@ Chord został tak zaprojektowany, aby rozszerzanie go nie stanowiło problemu. D
 
 Zapewnianie istotnych własności systemów rozproszonych, takich jak skalowalność, czy dostępność, jest ważnym zagadnieniem, nad którym ciągle trwają badania. W wyniku prac badawczych, powstaje wiele konceptów. Mechanizm grupowania węzłów w zbiory jest jednym z takich pomysłów. Sugeruje on, aby podstawym komponentem w sieci P2P nie był węzeł, lecz grupa węzłów, każda odpowiedzialna za dany zbiór kluczy. Komunikacja w sieci odbywała by się na dwóch poziomach: międzygrupowym, oraz wewnątrzgrupowym. Pomysł ten jest bezpośrednią inspiracją dla protokołu Statycznych Grup. Dlatego też, mechanizmowi temu został poświęcony niniejszy rozdział, opisując jego ideę, sposób działania, oraz wyszczególniając co zapewnia, a co pomija.
 
-\section{Pomysł}
+\section{Scatter}
 
 Idea grupowania węzłów w środowisku DHT została wypromowana przez autorów systemu Scatter \cite{bib:scatter}. System ten powstał jako próba zapewnienia silnej spójności rozproszonych danych, 
 zachowując jednocześnie dużą skalowalność. Osiągnięcie zadowalającej spójności, dla operacji na pojedyńczej parze klucz-wartość pomimo zmiennych opóźnień w sieci, przypływów i odpływów, oraz błędów komunikacyjnych, przy jednoczesnym zapewnieniu dobrej skalowalności, w której to system sprawnie działa w niestabilnym środowisku nawet z ponad milionem węzłów, wydaje się być zadaniem nietrywialnym. Mimo tego autorzy twierdzą, że ich system zapewnia te własności, co popierają eksperymentami.
-o
+
 Podstawowym komponentem w systemie Scatter jest samoorganizująca się grupa węzłów. Grupa wewnętrznie używa mechanizmów replikacji opartych na algorytmie konsensusu Paxos jako podstawy do zapewnienia spójności oraz odporności na awarie. Sam Scatter implementuje również kilka rozszerzeń i optymalizacji do podstawowego algorytmu Paxos, takich jak wybieranie lidera grupy, czy algorytm rekonfiguracji po utracie lub zyskaniu członka grupy.
 Ponieważ grupy zarządzają wewnętrzną integralnością używając sprawdzonych protokołów konsensusu, prosty i agresywny detektor awarii wystarcza. Węzły, które zostały wyłączone z grupy, nie mogą brać udziału w jej akcjach. Gdyby jednak nieudało się dostatecznie szybko wykryć awarię węzła, grupa nadal mogłaby podejmować akcje, gdyż do działania potrzebne jest kworum węzłów.
 
-Scatter implementuje prosty model DHT z przestrzenią kluczy w formie okręgu, którą nazywamy - podobnie jak w protokole Chord - pierścieniem. Przestrzeń ta jednak różni się od tej w protokole Chord, iż jest podzielona pomiędzy grupy, a nie węzły. Każda grupa posiada aktualne informacje o dwóch sąsiednich grupach: tej która ją poprzedza na pierścieniu, oraz nastepnej.
-Sąsiednie grupy mogą wykonywać tzw. operacje międzygrupowe: podzielenie grupy na dwie mniejsze, połączenie dwóch grup, migracja członka z jednej grupy do drugiej oraz repartycja, czyli zmiana podziału odpowiedzialności za odpowiednie przedziały kluczy. Żeby nie było niespójności pomiędzy węzłami, operacje międzygrupowe powinny być atomowe. Dlatego też, wykonywane są w ramach rozproszonych transakcji, używając do tego protokołu zatwierdzania dwufazowego 2PC (ang. \textit{two-phase commit protocol}).
+\begin{figure}[H]
+\floatstyle{boxed}
+\centering
+\includegraphics[width=0.5\textwidth,height=\textheight,keepaspectratio]{scatter.png}
+\caption{Zagnieżdżony konsensus w pierścieniu Scatter.}
+\label{fig:scatter}
+\end{figure}
 
+Scatter implementuje prosty model DHT z przestrzenią kluczy w formie okręgu, którą nazywamy - podobnie jak w protokole Chord - pierścieniem. Przestrzeń ta jednak różni się od tej w protokole Chord, iż jest podzielona pomiędzy grupy, a nie węzły. Każda grupa posiada aktualne informacje o dwóch sąsiednich grupach: tej która ją poprzedza na pierścieniu, oraz nastepnej.
+
+Sąsiednie grupy mogą wykonywać tzw. operacje międzygrupowe: podzielenie grupy na dwie mniejsze, połączenie dwóch grup, migracja członka z jednej grupy do drugiej oraz repartycja, czyli zmiana podziału odpowiedzialności za odpowiednie przedziały kluczy. Żeby nie było niespójności pomiędzy węzłami, operacje międzygrupowe powinny być atomowe. Dlatego też, wykonywane są w ramach rozproszonych transakcji, używając do tego protokołu zatwierdzania dwufazowego 2PC (ang. \textit{two-phase commit protocol}). Autorzy rozwiązanie te nazywają zagnieżdżonym konsensusem. Ilustruje to rysunek \ref{fig:scatter}, na którym widać, że operacje międzygrupowe wykonywane są przy pomocy 2PC (dzięki temu grupy ustalają "wspólną wersję wydarzeń"), a każdą decyzję, którą ma podjąć dana grupa ustalna jest pomiędzy węzłami należącymi do niej przy pomocy protokołu Paxos. W każdej grupie wyłaniany jest lider koordynujący akcje grupy. W przypadku jego awarii, inny węzeł może przejąć dowodzenie i kontynuować transakcję. Transakacja zakończy się pod warunkiem, że większość węzłów z każdej grupy pozostanie poprawna. W przeciwnym wypadku, po upływie ustalnego czasu, transakcja zostaje odrzucona. Ponadto, autorzy zachęcają do współbieżności, aby węzły wykonując operacje międzygrupowe, odpowiadały na żądania klientów. Jednak w przypadku takiej implementacji, po zatwierdzeniu transakcji potrzebna by była przerwa na rekonfigurację.
+
+Aby cały system działał poprawnie, każdy sąsiad dowolnej grupy \textit{G}, musi posiadać najświęższą wiedzę o jakimś podzbiorze członków grupy \textit{G}. Aby to zapewnić, członkowstwo grupy \textit{G} jest rozsyłane sąsiadom za każdym razem, gdy ulegnie ono zmianie. Ponadto Scatter sam w sobie nie gwarantuje niezawodnego dostarczania wiadomości oraz nie zapewnia uporządkowania dostarczania wiadomości FIFO (ang. \textit{First In, First Out} – pierwszy na wejściu, pierwszy na wyjściu).
 
 \section{Rollerchain}
 
+Inną, wartą uwagi implementacją mechanizmu grupowania węzłów jest Rollerchain \cite{bib:rollerchain}. Jest to system DHT, dla powstania którego bezpośrednią inspiracją był Scatter. Rollerchain implementuje jednak kilka dodatkowych mechanizmów, doprecyzowując niektóre aspekty, których autorzy systemu Scatter celowo, zostawiając wolność, pominęli.
+
+Rollerchain, w przeciwieństwie do Scatter, który przy wykonywaniu operacji opiera się na konsensusie, przez co są one kosztowne i mogą być blokowane przy dużych odpływach, bazuje na zalewaniu sieci wykorzystując mechanizmy plotkarskie\footnote{Mechanizmy plotkarskie (ang. \textit{gossiping}, \textit{rumor monegering}), czy też epidemiczne (ang. \textit{epidemic}) rozsyłają wiadomości w sposób zainspirowany rozchodzeniem się plotek między ludźmi, czy też rozprzestrzenianiem się epidemii na danym obszarze. Korzystają one z abstrakcji komunikacyjnej określanej jako probabilistyczne rozgłaszanie niezawodne (ang. \textit{probabilistic reliable broadcast}) \cite{bib:pr}.} (ang. \textit{gossip-based mechanism}). Przez to Rollerchain zapewnia słabsze gwarancje. Jednak autorzy twierdzą, że używając tych mechanizmów, system zachowuje się lepiej w przypadku dużych przypływów oraz odpływów niż systemy z silniejszymi gwarancjami, co popierają eksperymentami.
+
+Jednym z celów systemu Rollerchain jest zachowanie równomiernego obciążenia między węzłami, dlatego też strategia dołączania nowych węzłów do sieci uwzględnia aktualne obciążenie węzłów kluczami. Gdy węzeł chce dołączyć do sieci, odpytywane są losowe grupy. Nowy węzeł wybiera z tych grup tą najbardziej obciążoną i do niej dołącza.
+
+Grupy w Rollerchain są połączone tzw. wirtualnymi łączami (ang. \textit{virtual links}, patrz rysunek \ref{fig:links}a), które tworzą logiczny pierścień (na wzór pierścienia Scatter). Łącza te powstają w wyniku istnienia bezpośrednich połączeń między węzłami z różnych grup - nazwijmy te połączenia łączami fizycznymi. Ponieważ replikowanie wszystkich danych na wszystkich członkach grupy nie jest wymagane, zbiory łącz fizycznych (każdy przechowywany na innym węźle) mogą się od siebie różnić. A więc, aby zapewnić odporność na awarie oraz zrównoważenie obciążenia na poziomie grupy, łącza fizyczne powinny być równomierne rozłożone pomiędzy węzłami. Dla przykładu, sytuacja pokazana na rysunku \ref{fig:links}b, w której tylko jeden węzeł jakiejś grupy posiada niepusty zbiór łącz fizycznych, jest silnie nieporządana. Podobnie niewskazana jest sytuacja, w której to wszystkie węzły jakiejś grupy posiadają jednakowy zbiór łącz fizycznych, z tylko jednym elementem (patrz rysunek \ref{fig:links}c). Idealną strukturę łącza wirtualnego pokazuje rysunek \ref{fig:links}d: każdy węzeł grupy \textit{A} posiada łącze fizyczne do innego węzła z grupy \textit{B}. Oczywiście zachowanie równomiernego rozłożenia łącz fizycznych wymaga dodatkowych operacji i monitoringu, lecz ze względu na ich nieistotność w kontekscie protokołu Statycznych Grup, opis tych aspektów zostaje pominięty.
+
+\begin{figure}[H]
+\floatstyle{boxed}
+\centering
+\includegraphics[width=0.7\textwidth,height=\textheight,keepaspectratio]{links.png}
+\caption{Przykłady łącz międzygrupowych.}
+\label{fig:links}
+\end{figure}
+
+
 \section{Polityki}
 
+Sam mechanizm grupowania węzłów nie specyfikuje do której grupy trafi nowy węzeł, ani nie mówi o warunkach które muszą zajść, aby wykonać daną operację międzygrupową. Wybór grupy i warunki operacji międzygrupowych zależą od danej implementacji i mogą mieć różne motywacje. Mają one jednak istotny wpływ na budowę całej sieci, a więc zachowanie całego systemu. Mogą więc pozytywnie wpłynąć na system, poprawiając niektóre parametry, lecz źle przemyślane mogą je tylko pogorszyć. Sposoby wybierania grup i warunki potrzebne do zajścia operacji międzygrupowych nazwijmy politykami. Poniżej przedstawione jest kilka przykładowych polityk, które zostały zaproponowane jako warte uwagi \cite{bib:paiva}.
 
+\subsection{Żywotność i równowaga obciążenia}
+Polityka nazwana przez autorów R-LB (ang. \textit{Resilient Load-Balancing}), oprócz zrównoważenia obciążenia ma na celu zagwarantowanie żywotności grup. Aby zapewnić tą pierwszą własność, nowy węzeł dołącza do grup w których obciążenie przypadające na jeden węzeł jest największe, a gdy grupa musi się podzielić na dwie mniejsze (bo np. stała się zbyt duża), to klucze są tak rozdzielone, aby obciążenie przypadające na węzeł było możliwie równe w obu grupach. Podobną logikę implementuje wyżej wspomniany Rollerchain. Jednak polityka R-LB gwarantuje jeszcze własność żywotności grup. Aby ją zapewnić, nowe węzły wybierają z najbardziej obciążonych grup te najmniejsze i do nich dołączają. Ponadto grupy niebezpiecznie małe inicjują operację połączenia się z grupami sąsiednimi.
+
+\subsection{•}
 
 
 \chapter{Zaproponowane rozwiązanie}
@@ -401,6 +433,8 @@ Sąsiednie grupy mogą wykonywać tzw. operacje międzygrupowe: podzielenie grup
 
 \bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, 2017, Instytut Informatyki, Politechnika Poznańska
 
+\bibitem{bib:pr} Jerzy Brzeziński, \emph{Przetwarzanie rozproszone. Mechanizmy rozgłaszania niezawodnego.}, Wykłady, [online] \url{http://wazniak.mimuw.edu.pl/images/e/ea/Pr-1st-1.1-w12.tresc-kolor.pdf} [dostęp: 23.08.2018 r.]
+
 \bibitem{bib:chord}  I. Stoica, R. Morris, D. Liben-Nowell, D. R. Karger, M. F. Kaashoek, F. Dabek, and H. Balakrishnan, \emph{Chord: A Scalable Peer-to-Peer Lookup Protocol for Internet Applications}, MIT Laboratory for Computer Science
 
 \bibitem{bib:chord_lec} Smruti R. Sarangi, \emph{Distributed Hash Tables, Chord}, Lectures, Department of Computer Science, Indian Institute of Technology, New Delhi, India
@@ -412,6 +446,9 @@ Sąsiednie grupy mogą wykonywać tzw. operacje międzygrupowe: podzielenie grup
 \bibitem{bib:tac} Javad Taheri , Mohammad Kazem Akbari, \emph{TAC: A Topology-Aware Chord-based Peer-to-Peer Network}, Advanced Information Technologies Lab., Department of Computer Engineering and IT, Amirkabir University of Technology, Tehran, Iran
 
 \bibitem{bib:scatter} Lisa Glendenning, Ivan Beschastnikh, Arvind Krishnamurthy, Thomas E. Anderson, \emph{Scalable consistency in Scatter}, SOSP '11 Proceedings of the Twenty-Third ACM Symposium on Operating Systems Principles
+
+\bibitem{bib:rollerchain} J. Paiva, J. Leitao, L. Rodrigues, \emph{Rollerchain: A DHT for Efficient Replication}, Proceedings - IEEE 12th International Symposium on Network Computing and Applications, NCA 2013. 17-24. 10.1109/NCA.2013.29
+
 
 %\bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, [online] \url{http://www.cs.put.poznan.pl/akobusinska/lsds.html} [dostęp: 23.08.2018 r.]
 
