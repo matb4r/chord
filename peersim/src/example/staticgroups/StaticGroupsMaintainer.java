@@ -18,16 +18,16 @@ public class StaticGroupsMaintainer implements Control {
     @Override
     public boolean execute() {
         System.out.println("executing maintaining");
-        ArrayList<StaticGroupsProtocol> allNodes = Utils.getAllNodes(pid);
-        for (StaticGroupsProtocol cp : allNodes) {
+        for (StaticGroupsProtocol cp : Utils.NODES) {
             cp.checkSuccessor();
             cp.checkPredecessor();
             try {
                 cp.stabilize();
-            } catch (Exception ex) {}
-            for (int i = 0; i < cp.m; i++) {
-                cp.fixFingers();
+            } catch (Exception ex) {
+                StaticGroupsMetrics.exceptionsCounter++;
             }
+//            for (int i = 0; i < cp.m; i++)
+            cp.fixFingers();
         }
         return false;
     }

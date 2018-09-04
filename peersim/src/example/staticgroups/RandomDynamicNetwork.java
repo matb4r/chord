@@ -6,6 +6,8 @@ import peersim.core.Network;
 import peersim.core.Node;
 import peersim.dynamics.DynamicNetwork;
 
+import java.util.ArrayList;
+
 public class RandomDynamicNetwork extends DynamicNetwork {
 
     private static final String PAR_RANDOM = "random";
@@ -63,6 +65,10 @@ public class RandomDynamicNetwork extends DynamicNetwork {
         int index = CommonState.r.nextInt(Network.size());
         Node node = Network.get(index);
         StaticGroupsProtocol cp = (StaticGroupsProtocol) node.getProtocol(0);
+        ArrayList<StaticGroupsProtocol> group = Utils.GROUPS.get(cp.group.no);
+        group.remove(cp);
+        Utils.GROUPS.put(cp.group.no, group);
+        Utils.NODES.remove(cp);
         Network.remove(index);
         System.out.println("Node " + cp.ip + " died");
     }

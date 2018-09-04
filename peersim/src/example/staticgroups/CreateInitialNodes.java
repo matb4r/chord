@@ -7,6 +7,8 @@ import peersim.core.Node;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * info mb
@@ -46,46 +48,51 @@ public class CreateInitialNodes implements Control {
             cp.group.no = Utils.generateUniqueId(idLength, pid);
             cp.ip = Utils.generateIp(cp.group.no, cp.m);
             cp.group.ips.add(cp.ip);
+            Utils.NODES.add(cp);
         }
 
         Network.sort(new NodeComparator(pid));
+        Utils.NODES.sort(new StaticGroupNodeComparator());
 
         setPredecessors();
         setSuccessors();
         createFingerTable();
+        addToGroupHash();
         return false;
     }
 
     public void setPredecessors() {
-        for (int i = 0; i < Network.size(); i++) {
-            StaticGroupsProtocol cp = (StaticGroupsProtocol) Network.get(i).getProtocol(pid);
+        for (int i = 0; i < Utils.NODES.size(); i++) {
+            StaticGroupsProtocol cp = Utils.NODES.get(i);
+
             if (i == 0) {
                 // info mb: dla pierwszego wezla, poprzednikiem musi byc wezel ostatni
-                StaticGroupsProtocol pred = (StaticGroupsProtocol) Network.get(Network.size() - 1).getProtocol(pid);
+                StaticGroupsProtocol pred = Utils.NODES.get(Utils.NODES.size() - 1);
                 cp.predecessor = pred.group;
             } else {
-                StaticGroupsProtocol pred = (StaticGroupsProtocol) Network.get(i - 1).getProtocol(pid);
+                StaticGroupsProtocol pred = Utils.NODES.get(i - 1);
                 cp.predecessor = pred.group;
             }
         }
     }
 
     public void setSuccessors() {
-        for (int i = 0; i < Network.size(); i++) {
-            StaticGroupsProtocol cp = (StaticGroupsProtocol) Network.get(i).getProtocol(pid);
-            if (i == Network.size() - 1) {
+        for (int i = 0; i < Utils.NODES.size(); i++) {
+            StaticGroupsProtocol cp = Utils.NODES.get(i);
+
+            if (i == Utils.NODES.size() - 1) {
                 // info mb: dla ostatniego wezla, nastepnikiem musi byc pierwszy wezel
-                StaticGroupsProtocol succ = (StaticGroupsProtocol) Network.get(0).getProtocol(pid);
+                StaticGroupsProtocol succ = Utils.NODES.get(0);
                 cp.successor = succ.group;
             } else {
-                StaticGroupsProtocol succ = (StaticGroupsProtocol) Network.get(i + 1).getProtocol(pid);
+                StaticGroupsProtocol succ = Utils.NODES.get(i + 1);
                 cp.successor = succ.group;
             }
         }
     }
 
     public void createFingerTable() {
-        for (StaticGroupsProtocol cp : Utils.getAllNodes(pid)) {
+        for (StaticGroupsProtocol cp : Utils.NODES) {
 
             cp.fingerTable[0] = new Finger();
             cp.fingerTable[0].i = 1;
@@ -103,13 +110,24 @@ public class CreateInitialNodes implements Control {
         }
     }
 
+    public void addToGroupHash() {
+        for (StaticGroupsProtocol cp : Utils.NODES) {
+            ArrayList<StaticGroupsProtocol> group = Utils.GROUPS.get(cp.group.no);
+            if (group == null) {
+                group = new ArrayList<>();
+            }
+            group.add(cp);
+            Utils.GROUPS.put(cp.group.no, group);
+        }
+    }
+
     public Group findSmallestGroupGE(BigInteger id) {
         // dziala tylko dlatego, ze wezly sa posortowane po group.no
-        for (StaticGroupsProtocol cp : Utils.getAllNodes(pid)) {
+        for (StaticGroupsProtocol cp : Utils.NODES) {
             if (cp.group.no.compareTo(id) >= 0) {
                 return cp.group;
             }
         }
-        return Utils.getAllNodes(pid).get(0).group;
+        return Utils.NODES.get(0).group;
     }
 }

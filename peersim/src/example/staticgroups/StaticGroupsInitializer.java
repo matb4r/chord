@@ -39,7 +39,7 @@ public class StaticGroupsInitializer implements NodeInitializer {
 
 
         float stability = cp.calculateStability();
-        if (stability >= 0.5) {
+        if (stability >= 0.8) {
             join(cp);
         } else {
             Group g = Utils.getAnyCP(pid).findGroupToJoin(stability);
@@ -49,8 +49,14 @@ public class StaticGroupsInitializer implements NodeInitializer {
                 joinToGroup(cp, g);
             }
         }
-        ArrayList<StaticGroupsProtocol> allNodes = Utils.getAllNodes(pid);
         System.out.println("Node " + cp.ip + " added");
+        Utils.NODES.add(cp);
+        ArrayList<StaticGroupsProtocol> group = Utils.GROUPS.get(cp.group.no);
+        if (group == null) {
+            group = new ArrayList<>();
+        }
+        group.add(cp);
+        Utils.GROUPS.put(cp.group.no, group);
     }
 
     public void join(StaticGroupsProtocol cp) {
