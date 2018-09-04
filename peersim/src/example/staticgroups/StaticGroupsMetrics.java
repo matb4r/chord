@@ -43,9 +43,7 @@ public class StaticGroupsMetrics implements Control {
     }
 
     public void executeOnStart() {
-        this.started = LocalTime.now();
-        this.cycles = cycles;
-        this.networkInitSize = networkInitSize;
+        started = LocalTime.now();
     }
 
     public void executeOnEnd() {
