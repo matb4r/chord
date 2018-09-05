@@ -17,6 +17,24 @@ public class StaticGroupsTests implements Control {
 
     @Override
     public boolean execute() {
+//        if (test) {
+//            for (StaticGroupsProtocol p : Utils.NODES) {
+//                if (predecessorTest(p) == false) {
+//                    StaticGroupsMetrics.badPredecessorsCounter++;
+//                    if (!StaticGroupsMetrics.badNodes.contains(p))
+//                        StaticGroupsMetrics.badNodes.add(p);
+//                }
+//                if (successorTest(p) == false) {
+//                    StaticGroupsMetrics.badSuccessorsCounter++;
+//                    if (!StaticGroupsMetrics.badNodes.contains(p))
+//                        StaticGroupsMetrics.badNodes.add(p);
+//                }
+//            }
+//        }
+        return false;
+    }
+
+    public void executeOnEnd() {
         if (test) {
             for (StaticGroupsProtocol p : Utils.NODES) {
                 if (predecessorTest(p) == false) {
@@ -31,7 +49,6 @@ public class StaticGroupsTests implements Control {
                 }
             }
         }
-        return false;
     }
 
     private boolean predecessorTest(StaticGroupsProtocol p) {

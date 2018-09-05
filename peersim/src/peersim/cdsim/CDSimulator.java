@@ -18,13 +18,13 @@
 
 package peersim.cdsim;
 
-import java.time.LocalTime;
-import java.util.*;
-
 import example.staticgroups.StaticGroupsMetrics;
+import example.staticgroups.StaticGroupsTests;
 import example.staticgroups.Utils;
-import peersim.config.*;
+import peersim.config.Configuration;
 import peersim.core.*;
+
+import java.util.Arrays;
 
 /**
  * This is the cycle driven simulation engine. It is a fully static
@@ -55,186 +55,201 @@ import peersim.core.*;
  * the controls scheduled to run after the last cycle are still executed
  * completely, irrespective of their return value and even if the
  * experiment was interrupted.
+ *
  * @see Configuration
  */
-public class CDSimulator
-{
+public class CDSimulator {
 
 // ============== fields ===============================================
 // =====================================================================
 
-/**
- * Parameter representing the maximum number of cycles to be performed
- * @config
- */
-public static final String PAR_CYCLES = "simulation.cycles";
+    /**
+     * Parameter representing the maximum number of cycles to be performed
+     *
+     * @config
+     */
+    public static final String PAR_CYCLES = "simulation.cycles";
 
-/**
- * This option is only for experts. It switches off the main cycle that
- * calls the cycle driven protocols. When you switch this off, you need to
- * control the execution of the protocols by configuring controls that do
- * the job (e.g., {@link FullNextCycle}, {@link NextCycle}). It's there for
- * people who want maximal flexibility for their hacks.
- * @config
- */
-private static final String PAR_NOMAIN = "simulation.nodefaultcycle";
+    /**
+     * This option is only for experts. It switches off the main cycle that
+     * calls the cycle driven protocols. When you switch this off, you need to
+     * control the execution of the protocols by configuring controls that do
+     * the job (e.g., {@link FullNextCycle}, {@link NextCycle}). It's there for
+     * people who want maximal flexibility for their hacks.
+     *
+     * @config
+     */
+    private static final String PAR_NOMAIN = "simulation.nodefaultcycle";
 
-/**
- * This is the prefix for initializers. These have to be of type
- * {@link Control}. They are run at the beginning of each experiment, in
- * the order specified by the configuration.
- * @see Configuration
- * @config
- */
-private static final String PAR_INIT = "init";
+    /**
+     * This is the prefix for initializers. These have to be of type
+     * {@link Control}. They are run at the beginning of each experiment, in
+     * the order specified by the configuration.
+     *
+     * @config
+     * @see Configuration
+     */
+    private static final String PAR_INIT = "init";
 
-/**
- * This is the prefix for controls. These have to be of type
- * {@link Control}. They are run before each cycle, in the order specified
- * by the configuration.
- * @see Configuration
- * @config
- */
-private static final String PAR_CTRL = "control";
+    /**
+     * This is the prefix for controls. These have to be of type
+     * {@link Control}. They are run before each cycle, in the order specified
+     * by the configuration.
+     *
+     * @config
+     * @see Configuration
+     */
+    private static final String PAR_CTRL = "control";
 
 // --------------------------------------------------------------------
 
-/** The maximum number of cycles to be performed */
-private static int cycles;
+    /**
+     * The maximum number of cycles to be performed
+     */
+    private static int cycles;
 
-/** holds the modifiers of this simulation */
-private static Control[] controls = null;
+    /**
+     * holds the modifiers of this simulation
+     */
+    private static Control[] controls = null;
 
-/** Holds the control schedulers of this simulation */
-private static Scheduler[] ctrlSchedules = null;
+    /**
+     * Holds the control schedulers of this simulation
+     */
+    private static Scheduler[] ctrlSchedules = null;
 
 // =============== initialization ======================================
 // =====================================================================
 
-/** to prevent construction */
-private CDSimulator()
-{
-}
+    /**
+     * to prevent construction
+     */
+    private CDSimulator() {
+    }
 
 // =============== private methods =====================================
 // =====================================================================
 
-/**
- * Load and run initializers.
- */
-private static void runInitializers()
-{
+    /**
+     * Load and run initializers.
+     */
+    private static void runInitializers() {
 
-	Object[] inits = Configuration.getInstanceArray(PAR_INIT);
-	String names[] = Configuration.getNames(PAR_INIT);
+        Object[] inits = Configuration.getInstanceArray(PAR_INIT);
+        String names[] = Configuration.getNames(PAR_INIT);
 
-	for (int i = 0; i < inits.length; ++i) {
-		System.err.println("- Running initializer " + names[i] + ": "
-				+ inits[i].getClass());
-		((Control) inits[i]).execute();
-	}
-}
+        for (int i = 0; i < inits.length; ++i) {
+            System.err.println("- Running initializer " + names[i] + ": "
+                    + inits[i].getClass());
+            ((Control) inits[i]).execute();
+        }
+    }
 
 // --------------------------------------------------------------------
 
-private static String[] loadControls()
-{
+    private static String[] loadControls() {
 
-	boolean nomaincycle = Configuration.contains(PAR_NOMAIN);
-	String[] names = Configuration.getNames(PAR_CTRL);
-	if (nomaincycle) {
-		controls = new Control[names.length];
-		ctrlSchedules = new Scheduler[names.length];
-	} else {
-		// provide for an extra control that handles the main cycle
-		controls = new Control[names.length + 1];
-		ctrlSchedules = new Scheduler[names.length + 1];
-		// calling with a prefix that cannot exist
-		controls[names.length] = new FullNextCycle(" ");
-		ctrlSchedules[names.length] = new Scheduler(" ");
-	}
-	for (int i = 0; i < names.length; ++i) {
-		controls[i] = (Control) Configuration.getInstance(names[i]);
-		ctrlSchedules[i] = new Scheduler(names[i]);
-	}
-	System.err.println("CDSimulator: loaded controls " + Arrays.asList(names));
-	return names;
-}
-
-// ---------------------------------------------------------------------
-
-/**
- * This method is used to check whether the current configuration can be
- * used for cycle-driven simulations. It checks for the existence of
- * configuration parameter {@value #PAR_CYCLES}.
- */
-public static final boolean isConfigurationCycleDriven()
-{
-	return Configuration.contains(PAR_CYCLES);
-}
+        boolean nomaincycle = Configuration.contains(PAR_NOMAIN);
+        String[] names = Configuration.getNames(PAR_CTRL);
+        if (nomaincycle) {
+            controls = new Control[names.length];
+            ctrlSchedules = new Scheduler[names.length];
+        } else {
+            // provide for an extra control that handles the main cycle
+            controls = new Control[names.length + 1];
+            ctrlSchedules = new Scheduler[names.length + 1];
+            // calling with a prefix that cannot exist
+            controls[names.length] = new FullNextCycle(" ");
+            ctrlSchedules[names.length] = new Scheduler(" ");
+        }
+        for (int i = 0; i < names.length; ++i) {
+            controls[i] = (Control) Configuration.getInstance(names[i]);
+            ctrlSchedules[i] = new Scheduler(names[i]);
+        }
+        System.err.println("CDSimulator: loaded controls " + Arrays.asList(names));
+        return names;
+    }
 
 // ---------------------------------------------------------------------
 
-/**
- * Runs an experiment, resetting everything except the random seed.
- */
-public static final void nextExperiment()
-{
+    /**
+     * This method is used to check whether the current configuration can be
+     * used for cycle-driven simulations. It checks for the existence of
+     * configuration parameter {@value #PAR_CYCLES}.
+     */
+    public static final boolean isConfigurationCycleDriven() {
+        return Configuration.contains(PAR_CYCLES);
+    }
 
-	// Reading parameter
-	cycles = Configuration.getInt(PAR_CYCLES);
-	if (CommonState.getEndTime() < 0) // not initialized yet
-		CDState.setEndTime(cycles);
+// ---------------------------------------------------------------------
 
-	// initialization
-	CDState.setCycle(0);
-	CDState.setPhase(CDState.PHASE_UNKNOWN);
-	System.out.println("-------------------- CDSimulator: resetting");
-	controls = null;
-	ctrlSchedules = null;
-	Network.reset();
-	System.out.println("-------------------- CDSimulator: running initializers");
-	runInitializers();
+    /**
+     * Runs an experiment, resetting everything except the random seed.
+     */
+    public static final void nextExperiment() {
 
-	// main cycle
-	loadControls();
+        // Reading parameter
+        cycles = Configuration.getInt(PAR_CYCLES);
+        if (CommonState.getEndTime() < 0) // not initialized yet
+            CDState.setEndTime(cycles);
 
-	System.out.println("-------------------- CDSimulator: starting simulation");
+        // initialization
+        CDState.setCycle(0);
+        CDState.setPhase(CDState.PHASE_UNKNOWN);
+        System.out.println("-------------------- CDSimulator: resetting");
+        controls = null;
+        ctrlSchedules = null;
+        Network.reset();
+        System.out.println("-------------------- CDSimulator: running initializers");
+        runInitializers();
 
-	for (int j = 0; j < controls.length; ++j) {
-		if (controls[j] instanceof StaticGroupsMetrics) {
-			((StaticGroupsMetrics)controls[j]).executeOnStart();
-		}
-	}
+        // main cycle
+        loadControls();
 
-	for (int i = 0; i < cycles; ++i) {
-		CDState.setCycle(i);
+        System.out.println("-------------------- CDSimulator: starting simulation");
 
-		boolean stop = false;
-		for (int j = 0; j < controls.length; ++j) {
-			if (ctrlSchedules[j].active(i))
-				stop = stop || controls[j].execute();
-		}
-		if (stop)
-			break;
-		System.out.println("-------------------- CDSimulator: cycle " + i + " done");
-		Utils.cycle++;
-	}
+        for (int j = 0; j < controls.length; ++j) {
+            if (controls[j] instanceof StaticGroupsMetrics) {
+                ((StaticGroupsMetrics) controls[j]).executeOnStart();
+            }
+        }
 
-	CDState.setPhase(CDState.POST_SIMULATION);
+        for (int i = 0; i < cycles; ++i) {
+            CDState.setCycle(i);
 
-	// analysis after the simulation
-	for (int j = 0; j < controls.length; ++j) {
-		if (ctrlSchedules[j].fin)
-			controls[j].execute();
-	}
+            boolean stop = false;
+            for (int j = 0; j < controls.length; ++j) {
+                if (ctrlSchedules[j].active(i))
+                    stop = stop || controls[j].execute();
+            }
+            if (stop)
+                break;
+            System.out.println("-------------------- CDSimulator: cycle " + i + " done");
+            Utils.cycle++;
+        }
 
-	for (int j = 0; j < controls.length; ++j) {
-		if (controls[j] instanceof StaticGroupsMetrics) {
-			((StaticGroupsMetrics)controls[j]).executeOnEnd();
-		}
-	}
+        CDState.setPhase(CDState.POST_SIMULATION);
 
-}
+        // analysis after the simulation
+        for (int j = 0; j < controls.length; ++j) {
+            if (ctrlSchedules[j].fin)
+                controls[j].execute();
+        }
+
+        // testy na koniec, ale przed metrykami
+        for (int j = 0; j < controls.length; ++j) {
+            if (controls[j] instanceof StaticGroupsTests) {
+                ((StaticGroupsTests) controls[j]).executeOnEnd();
+            }
+        }
+
+        // metryki na samym koncu
+        for (int j = 0; j < controls.length; ++j) {
+            if (controls[j] instanceof StaticGroupsMetrics) {
+                ((StaticGroupsMetrics) controls[j]).executeOnEnd();
+            }
+        }
+
+    }
 
 }
