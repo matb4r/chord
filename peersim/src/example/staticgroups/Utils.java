@@ -131,7 +131,7 @@ public class Utils {
         BigInteger no;
         do {
             no = new BigInteger(idLength, CommonState.r);
-        } while (GROUPS.keySet().contains(no));
+        } while (GROUPS.keySet().contains(no) && GROUPS.get(no).size() != 0);
         return no;
     }
 }
