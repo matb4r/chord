@@ -5,6 +5,7 @@ import peersim.core.Control;
 import peersim.core.Network;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class StaticGroupsMetrics implements Control {
 
@@ -25,6 +26,10 @@ public class StaticGroupsMetrics implements Control {
     int maxNetSize = Integer.MIN_VALUE;
     int minNetSize = Integer.MAX_VALUE;
     static int exceptionsCounter = 0;
+    static int badPredecessorsCounter = 0;
+    static int badSuccessorsCounter = 0;
+
+    static ArrayList<StaticGroupsProtocol> badNodes = new ArrayList<>();
 
     public StaticGroupsMetrics(String prefix) {
         idLength = Configuration.getInt(prefix + "." + PAR_IDLENGTH);
@@ -62,6 +67,11 @@ public class StaticGroupsMetrics implements Control {
         System.out.println("Min net size: " + minNetSize);
         System.out.println("Max net size: " + maxNetSize);
         System.out.println("Exceptions count: " + exceptionsCounter);
+        if (StaticGroupsTests.test) {
+            System.out.println("bad nodes count: " + badNodes.size());
+            System.out.println("bad predecessor count: " + badPredecessorsCounter);
+            System.out.println("bad successors count: " + badSuccessorsCounter);
+        }
     }
 
 }
