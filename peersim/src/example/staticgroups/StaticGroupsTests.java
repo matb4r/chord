@@ -33,6 +33,11 @@ public class StaticGroupsTests implements Control {
                     if (!StaticGroupsMetrics.badNodes.contains(p))
                         StaticGroupsMetrics.badNodes.add(p);
                 }
+                if(fingersTest(p) == false) {
+                    StaticGroupsMetrics.badFingerTableCounter++;
+                    if (!StaticGroupsMetrics.badNodes.contains(p))
+                        StaticGroupsMetrics.badNodes.add(p);
+                }
             }
         }
     }
@@ -41,7 +46,7 @@ public class StaticGroupsTests implements Control {
         if (p.predecessor == null) {
             return true;
         }
-        if (Utils.isOnlyOneGroupInNetwork(0)) {
+        if (Utils.isOnlyOneGroupInNetwork(StaticGroupsProtocol.pid)) {
             return p.predecessor.no.equals(p.group.no);
         }
         if (p.group.no.equals(getLowestGroupNo())) {
@@ -63,7 +68,7 @@ public class StaticGroupsTests implements Control {
     }
 
     private boolean successorTest(StaticGroupsProtocol p) {
-        if (Utils.isOnlyOneGroupInNetwork(0)) {
+        if (Utils.isOnlyOneGroupInNetwork(StaticGroupsProtocol.pid)) {
             return p.successor.no.equals(p.group.no);
         }
         if (p.group.no.equals(getHighestGroupNo())) {
@@ -81,6 +86,35 @@ public class StaticGroupsTests implements Control {
 
         if (lowestBiggerThanP != p.successor.no)
             return false;
+        return true;
+    }
+
+    private boolean fingersTest(StaticGroupsProtocol p) {
+        if (Utils.isOnlyOneGroupInNetwork(StaticGroupsProtocol.pid)) {
+            for (int i = 0; i < p.m; i++) {
+                if (!p.fingerTable[i].group.no.equals(p.group.no))
+                    return false;
+            }
+            return true;
+        }
+        for (int i = 0; i < p.m; i++) {
+            if (p.fingerTable[i].start.compareTo(getHighestGroupNo())==1) {
+                if (!p.fingerTable[i].group.no.equals(getLowestGroupNo())) {
+                    return false;
+                }
+            } else {
+                BigInteger lowestGEThanStart = getHighestGroupNo();
+                for (StaticGroupsProtocol node : Utils.NODES) {
+                    if (node.group.no.compareTo(lowestGEThanStart) == -1
+                            && node.group.no.compareTo(p.fingerTable[i].start) >= 0) {
+                        lowestGEThanStart = node.group.no;
+                    }
+                }
+                if (!p.fingerTable[i].group.no.equals(lowestGEThanStart)) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 

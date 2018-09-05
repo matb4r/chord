@@ -28,6 +28,7 @@ public class StaticGroupsMetrics implements Control {
     static int exceptionsCounter = 0;
     static int badPredecessorsCounter = 0;
     static int badSuccessorsCounter = 0;
+    static int badFingerTableCounter = 0;
 
     static ArrayList<StaticGroupsProtocol> badNodes = new ArrayList<>();
 
@@ -71,6 +72,7 @@ public class StaticGroupsMetrics implements Control {
             System.out.println("bad nodes count: " + badNodes.size());
             System.out.println("bad predecessor count: " + badPredecessorsCounter);
             System.out.println("bad successors count: " + badSuccessorsCounter);
+            System.out.println("bad finger table count: " + badFingerTableCounter);
         }
     }
 

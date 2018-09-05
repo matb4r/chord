@@ -19,7 +19,7 @@ public class StaticGroupsProtocol implements CDProtocol {
     public int m;
     public int MAX_GROUP_SIZE;
 
-    public int pid;
+    public static int pid;
 
     public StaticGroupsProtocol(String prefix) {
     }
