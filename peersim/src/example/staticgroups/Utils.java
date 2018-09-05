@@ -131,7 +131,16 @@ public class Utils {
         BigInteger no;
         do {
             no = new BigInteger(idLength, CommonState.r);
-        } while (GROUPS.keySet().contains(no) && GROUPS.get(no).size() != 0);
+        } while (isNoInList(no));
         return no;
+    }
+
+    private static boolean isNoInList(BigInteger no) {
+        for (StaticGroupsProtocol cp : NODES) {
+            if (cp.group != null && cp.group.no != null && cp.group.no.equals(no)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
