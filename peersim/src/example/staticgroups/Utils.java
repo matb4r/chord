@@ -1,8 +1,6 @@
 package example.staticgroups;
 
 import peersim.core.CommonState;
-import peersim.core.Network;
-import peersim.core.Node;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -15,6 +13,27 @@ public class Utils {
     public static HashMap<BigInteger, ArrayList<StaticGroupsProtocol>> GROUPS = new HashMap<>();
 
     public static ArrayList<StaticGroupsProtocol> NODES = new ArrayList<>();
+
+    public static void addNode(StaticGroupsProtocol n) {
+        Utils.NODES.add(n);
+        ArrayList<StaticGroupsProtocol> g = Utils.GROUPS.get(n.group.no);
+        if (g == null) {
+            g = new ArrayList<>();
+        }
+        g.add(n);
+        Utils.GROUPS.put(n.group.no, g);
+    }
+
+    public static void removeNode(StaticGroupsProtocol n) {
+        ArrayList<StaticGroupsProtocol> g = Utils.GROUPS.get(n.group.no);
+        if (g.size() < 1) {
+            Utils.GROUPS.remove(n.group.no);
+        } else {
+            g.remove(n);
+            Utils.GROUPS.put(n.group.no, g);
+        }
+        Utils.NODES.remove(n);
+    }
 
     public static String generateIp(BigInteger groupNo, int m) {
         return "0.0." + groupNo + "." + new BigInteger(m, CommonState.r);

@@ -1,11 +1,13 @@
 package example.staticgroups;
 
 import peersim.cdsim.CDProtocol;
+import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Node;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 public class StaticGroupsProtocol implements CDProtocol {
 
@@ -22,7 +24,61 @@ public class StaticGroupsProtocol implements CDProtocol {
 
     public static int pid;
 
+    private static final String PAR_PROT = "protocol";
+    private static final String PAR_IDLENGTH = "idLength";
+    private static final String PAR_MAX_GROUP_SIZE = "maxGroupSize";
+    private static final String PAR_STABILITY_RESTRICTION = "stabilityRestriction";
+
+    private int idLength = 0;
+    private int maxGroupSize = 0;
+    private double stabilityRestriction = 0;
+
     public StaticGroupsProtocol(String prefix) {
+        pid = Configuration.getPid(prefix + "." + PAR_PROT);
+        idLength = Configuration.getInt(prefix + "." + PAR_IDLENGTH);
+        maxGroupSize = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
+        stabilityRestriction = Configuration.getDouble(prefix + "." + PAR_STABILITY_RESTRICTION);
+    }
+
+    public void start(StaticGroupsProtocol nodeInRing) {
+        next = 0;
+        m = idLength;
+        MAX_GROUP_SIZE = maxGroupSize;
+        fingerTable = new Finger[m];
+        group = new Group();
+
+        if (nodeInRing == null) {
+            create();
+        } else {
+            float stability = calculateStability();
+            if (stability >= stabilityRestriction) {
+                join(idLength);
+            } else {
+                Group g = nodeInRing.findGroupToJoin(stability);
+                if (g == null) {
+                    join(idLength);
+                } else {
+                    joinToGroup(g);
+                }
+            }
+        }
+        System.out.println("Node " + ip + " added");
+        Utils.addNode(this);
+    }
+
+    public void create() {
+        group.no = Utils.generateUniqueNo(idLength);
+        ip = Utils.generateIp(group.no, m);
+        group.ips.add(ip);
+        successor = group;
+        predecessor = group;
+        for (int j = 1; j <= m; j++) {
+            fingerTable[j - 1] = new Finger();
+            fingerTable[j - 1].i = j;
+            fingerTable[j - 1].start = (group.no.add(BigDecimal.valueOf(Math.pow(2, j - 1)).toBigInteger()).mod(BigDecimal.valueOf(Math.pow(2, m)).toBigInteger()));
+            fingerTable[j - 1].end = (group.no.add(BigDecimal.valueOf(Math.pow(2, j)).toBigInteger().subtract(BigInteger.ONE)).mod(BigDecimal.valueOf(Math.pow(2, m)).toBigInteger()));
+            fingerTable[j - 1].group = group;
+        }
     }
 
     public void join(Node n) {

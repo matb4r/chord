@@ -31,33 +31,7 @@ public class StaticGroupsInitializer implements NodeInitializer {
     public void initialize(Node n) {
         System.out.println("executing StaticGroupsInitializer");
         cp = (StaticGroupsProtocol) n.getProtocol(pid);
-        cp.next = 0;
-        cp.pid = pid;
-        cp.m = idLength;
-        cp.MAX_GROUP_SIZE = maxGroupSize;
-        cp.fingerTable = new Finger[cp.m];
-        cp.group = new Group();
-
-
-        float stability = cp.calculateStability();
-        if (stability >= stabilityRestriction) {
-            cp.join(idLength);
-        } else {
-            Group g = Utils.getAnyCP(pid).findGroupToJoin(stability);
-            if (g == null) {
-                cp.join(idLength);
-            } else {
-                cp.joinToGroup(g);
-            }
-        }
-        System.out.println("Node " + cp.ip + " added");
-        Utils.NODES.add(cp);
-        ArrayList<StaticGroupsProtocol> group = Utils.GROUPS.get(cp.group.no);
-        if (group == null) {
-            group = new ArrayList<>();
-        }
-        group.add(cp);
-        Utils.GROUPS.put(cp.group.no, group);
+        cp.start(Utils.getRandomCP(cp, pid));
     }
 
 
