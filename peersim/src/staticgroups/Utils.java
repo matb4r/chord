@@ -48,7 +48,7 @@ public class Utils {
         return "0.0." + groupNo + "." + new BigInteger(m, CommonState.r);
     }
 
-    public static StaticGroupsProtocol getRandomCP(StaticGroupsProtocol n) {
+    public static StaticGroupsProtocol getRandomNode(StaticGroupsProtocol n) {
         if (n == null || n.group == null || n.group.no == null) {
             return NODES.get(CommonState.r.nextInt(NODES.size()));
         }

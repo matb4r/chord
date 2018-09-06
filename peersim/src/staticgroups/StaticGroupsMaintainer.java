@@ -15,16 +15,16 @@ public class StaticGroupsMaintainer implements Control {
     }
 
     public static void fixNodes() {
-        for (StaticGroupsProtocol cp : Utils.NODES) {
-            cp.checkSuccessor();
-            cp.checkPredecessor();
+        for (StaticGroupsProtocol node : Utils.NODES) {
+            node.checkSuccessor();
+            node.checkPredecessor();
             try {
-                cp.stabilize();
+                node.stabilize();
             } catch (Exception ex) {
                 StaticGroupsMetrics.exceptionsCounter++;
             }
-//            for (int i = 0; i < cp.m; i++)
-            cp.fixFingers();
+//            for (int i = 0; i < cp.M; i++)
+            node.fixFingers();
         }
     }
 }

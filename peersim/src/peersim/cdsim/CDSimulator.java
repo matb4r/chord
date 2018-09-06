@@ -105,7 +105,7 @@ public class CDSimulator {
     /**
      * The maximum number of cycles to be performed
      */
-    private static int cycles;
+    public static int cycles;
 
     /**
      * holds the modifiers of this simulation

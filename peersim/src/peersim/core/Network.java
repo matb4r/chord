@@ -91,6 +91,8 @@ static Node[] node = null;
 */
 private static int len;
 
+public static int initialSize;
+
 /**
 * The prototype node which is used to populate the simulation via cloning.
 * After all the nodes have been cloned, {@link Control} components can be
@@ -118,6 +120,7 @@ public static void reset() {
 	}
 	
 	len = Configuration.getInt(PAR_SIZE);
+	initialSize = len;
 	int maxlen = Configuration.getInt(PAR_MAXSIZE,len);
 	if( maxlen < len ) throw new IllegalArgumentException(
 			PAR_MAXSIZE+" is less than "+PAR_SIZE);

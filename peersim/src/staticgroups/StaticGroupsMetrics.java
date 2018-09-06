@@ -1,6 +1,6 @@
 package staticgroups;
 
-import peersim.config.Configuration;
+import peersim.cdsim.CDSimulator;
 import peersim.core.Control;
 import peersim.core.Network;
 
@@ -9,36 +9,21 @@ import java.util.ArrayList;
 
 public class StaticGroupsMetrics implements Control {
 
-    private static final String PAR_IDLENGTH = "idLength";
-    private static final String PAR_MAX_GROUP_SIZE = "maxGroupSize";
-    private static final String PAR_CYCLES = "cycles";
-    private static final String PAR_INIT_NETWORK_SIZE = "networkInitSize";
-    private static final String PAR_STABILITY_RESTRICTION = "stabilityRestriction";
-
-    private int idLength = 0;
-    private int maxGroupSize = 0;
-    private int cycles = 0;
-    private int networkInitSize = 0;
-    private double stabilityRestriction = 0;
+    public static int exceptionsCounter = 0;
+    public static int badPredecessorsCounter = 0;
+    public static int badSuccessorsCounter = 0;
+    public static int badFingerTableCounter = 0;
     public static int actualCycle = 0;
 
-    LocalTime started;
-    LocalTime stopped;
-    int maxNetSize = Integer.MIN_VALUE;
-    int minNetSize = Integer.MAX_VALUE;
-    static int exceptionsCounter = 0;
-    static int badPredecessorsCounter = 0;
-    static int badSuccessorsCounter = 0;
-    static int badFingerTableCounter = 0;
+    public LocalTime started;
+    public LocalTime stopped;
+    public int maxNetSize = Integer.MIN_VALUE;
+    public int minNetSize = Integer.MAX_VALUE;
+
 
     static ArrayList<StaticGroupsProtocol> badNodes = new ArrayList<>();
 
     public StaticGroupsMetrics(String prefix) {
-        idLength = Configuration.getInt(prefix + "." + PAR_IDLENGTH);
-        maxGroupSize = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
-        cycles = Configuration.getInt(prefix + "." + PAR_CYCLES);
-        networkInitSize = Configuration.getInt(prefix + "." + PAR_INIT_NETWORK_SIZE);
-        stabilityRestriction = Configuration.getDouble(prefix + "." + PAR_STABILITY_RESTRICTION);
     }
 
     @Override
@@ -58,16 +43,16 @@ public class StaticGroupsMetrics implements Control {
 
     public void executeOnEnd() {
         stopped = LocalTime.now();
-        System.out.println("cycles: " + cycles);
-        System.out.println("network init size: " + networkInitSize);
-        System.out.println("m: " + idLength);
-        System.out.println("max group size: " + maxGroupSize);
-        System.out.println("stability restriction: " + stabilityRestriction);
+        System.out.println("cycles: " + CDSimulator.cycles);
+        System.out.println("network init size: " + Network.initialSize);
+        System.out.println("M: " + StaticGroupsProtocol.M);
+        System.out.println("max group size: " + StaticGroupsProtocol.MAX_GROUP_SIZE);
+        System.out.println("stability restriction: " + StaticGroupsProtocol.stabilityRestriction);
         System.out.println("started " + started);
         System.out.println("stopped " + stopped);
         System.out.println("time: " + stopped.minusNanos(started.toNanoOfDay()));
-        System.out.println("Min net size: " + minNetSize);
-        System.out.println("Max net size: " + maxNetSize);
+        System.out.println("min net size: " + minNetSize);
+        System.out.println("max net size: " + maxNetSize);
         System.out.println("Exceptions count: " + exceptionsCounter);
         if (StaticGroupsTests.test) {
             System.out.println("bad nodes count: " + badNodes.size());

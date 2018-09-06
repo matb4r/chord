@@ -33,7 +33,7 @@ public class StaticGroupsTests implements Control {
                     if (!StaticGroupsMetrics.badNodes.contains(p))
                         StaticGroupsMetrics.badNodes.add(p);
                 }
-                if(fingersTest(p) == false) {
+                if (fingersTest(p) == false) {
                     StaticGroupsMetrics.badFingerTableCounter++;
                     if (!StaticGroupsMetrics.badNodes.contains(p))
                         StaticGroupsMetrics.badNodes.add(p);
@@ -91,14 +91,14 @@ public class StaticGroupsTests implements Control {
 
     private boolean fingersTest(StaticGroupsProtocol p) {
         if (Utils.isOnlyOneGroupInNetwork()) {
-            for (int i = 0; i < p.m; i++) {
+            for (int i = 0; i < p.M; i++) {
                 if (!p.fingerTable[i].group.no.equals(p.group.no))
                     return false;
             }
             return true;
         }
-        for (int i = 0; i < p.m; i++) {
-            if (p.fingerTable[i].start.compareTo(getHighestGroupNo())==1) {
+        for (int i = 0; i < p.M; i++) {
+            if (p.fingerTable[i].start.compareTo(getHighestGroupNo()) == 1) {
                 if (!p.fingerTable[i].group.no.equals(getLowestGroupNo())) {
                     return false;
                 }
