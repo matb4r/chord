@@ -18,6 +18,7 @@
 
 package peersim.cdsim;
 
+import example.staticgroups.StaticGroupsMaintainer;
 import example.staticgroups.StaticGroupsMetrics;
 import example.staticgroups.StaticGroupsTests;
 import example.staticgroups.Utils;
@@ -225,7 +226,7 @@ public class CDSimulator {
             if (stop)
                 break;
             System.out.println("-------------------- CDSimulator: cycle " + i + " done");
-            Utils.cycle++;
+            StaticGroupsMetrics.actualCycle++;
         }
 
         CDState.setPhase(CDState.POST_SIMULATION);

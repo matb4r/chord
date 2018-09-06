@@ -46,7 +46,7 @@ public class StaticGroupsTests implements Control {
         if (p.predecessor == null) {
             return true;
         }
-        if (Utils.isOnlyOneGroupInNetwork(StaticGroupsProtocol.pid)) {
+        if (Utils.isOnlyOneGroupInNetwork()) {
             return p.predecessor.no.equals(p.group.no);
         }
         if (p.group.no.equals(getLowestGroupNo())) {
@@ -68,7 +68,7 @@ public class StaticGroupsTests implements Control {
     }
 
     private boolean successorTest(StaticGroupsProtocol p) {
-        if (Utils.isOnlyOneGroupInNetwork(StaticGroupsProtocol.pid)) {
+        if (Utils.isOnlyOneGroupInNetwork()) {
             return p.successor.no.equals(p.group.no);
         }
         if (p.group.no.equals(getHighestGroupNo())) {
@@ -90,7 +90,7 @@ public class StaticGroupsTests implements Control {
     }
 
     private boolean fingersTest(StaticGroupsProtocol p) {
-        if (Utils.isOnlyOneGroupInNetwork(StaticGroupsProtocol.pid)) {
+        if (Utils.isOnlyOneGroupInNetwork()) {
             for (int i = 0; i < p.m; i++) {
                 if (!p.fingerTable[i].group.no.equals(p.group.no))
                     return false;

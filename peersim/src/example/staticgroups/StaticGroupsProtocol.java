@@ -7,7 +7,6 @@ import peersim.core.Node;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 
 public class StaticGroupsProtocol implements CDProtocol {
 
@@ -52,11 +51,11 @@ public class StaticGroupsProtocol implements CDProtocol {
         } else {
             float stability = calculateStability();
             if (stability >= stabilityRestriction) {
-                join(idLength);
+                join();
             } else {
                 Group g = nodeInRing.findGroupToJoin(stability);
                 if (g == null) {
-                    join(idLength);
+                    join();
                 } else {
                     joinToGroup(g);
                 }
@@ -85,7 +84,7 @@ public class StaticGroupsProtocol implements CDProtocol {
         System.out.println("cp join");
     }
 
-    public void join(int idLength) {
+    public void join() {
         group.no = Utils.generateUniqueNo(idLength);
         ip = Utils.generateIp(group.no, m);
         group.ips.add(ip);
@@ -96,34 +95,33 @@ public class StaticGroupsProtocol implements CDProtocol {
         group = g;
         ip = Utils.generateIp(g.no, m);
         g.ips.add(ip);
-        Utils.updateIps(g.no, g.ips, pid);
-        StaticGroupsProtocol firstCPByNo = Utils.getFirstCPByNo(g.no, pid);
+        Utils.updateIps(g.no, g.ips);
+        StaticGroupsProtocol firstCPByNo = Utils.getFirstNodeByNo(g.no);
         fingerTable = firstCPByNo.fingerTable;
         predecessor = firstCPByNo.predecessor;
         successor = firstCPByNo.successor;
     }
 
     public void initFingerTable() {
-//        StaticGroupsProtocol randomCP = Utils.getRandomCP(this, pid);
-        StaticGroupsProtocol randomCP = Utils.getRandomCP(this, pid);
+        StaticGroupsProtocol randomCP = Utils.getRandomCP(this);
 
         // update newNode.succ
         successor = randomCP.findSuccessor(group.no);
-        Utils.updateSuccessor(group.no, successor, pid);
+        Utils.updateSuccessor(group.no, successor);
 
         // update newNode.pred
-        StaticGroupsProtocol succCP = Utils.getFirstCPByNo(successor.no, pid);
+        StaticGroupsProtocol succCP = Utils.getFirstNodeByNo(successor.no);
         predecessor = succCP.predecessor;
-        Utils.updatePredecessor(group.no, predecessor, pid);
+        Utils.updatePredecessor(group.no, predecessor);
 
         // update newNode.pred.succ
         if (predecessor != null) {
-            StaticGroupsProtocol predCP = Utils.getFirstCPByNo(predecessor.no, pid);
-            Utils.updateSuccessor(predCP.group.no, group, pid);
+            StaticGroupsProtocol predCP = Utils.getFirstNodeByNo(predecessor.no);
+            Utils.updateSuccessor(predCP.group.no, group);
         }
 
         // update newNode.succ.pred
-        Utils.updatePredecessor(succCP.group.no, group, pid);
+        Utils.updatePredecessor(succCP.group.no, group);
 
         fingerTable[0] = new Finger();
         fingerTable[0].i = 1;
@@ -154,7 +152,7 @@ public class StaticGroupsProtocol implements CDProtocol {
             if (g.no.equals(group.no)) {
                 return group;
             }
-            StaticGroupsProtocol firstCPByNo = Utils.getFirstCPByNo(g.no, pid);
+            StaticGroupsProtocol firstCPByNo = Utils.getFirstNodeByNo(g.no);
             if (firstCPByNo == null) {
                 return group;
             } else {
@@ -178,9 +176,9 @@ public class StaticGroupsProtocol implements CDProtocol {
     }
 
     public Group findGroupToJoin(float stability) {
-        Group smallestGroup = Utils.getFirstCPByNo(fingerTable[0].group.no, pid).smallestGroupFromFingerTable();
+        Group smallestGroup = Utils.getFirstNodeByNo(fingerTable[0].group.no).smallestGroupFromFingerTable();
         for (int i = 1; i < m; i++) {
-            Group g = Utils.getFirstCPByNo(fingerTable[i].group.no, pid).smallestGroupFromFingerTable();
+            Group g = Utils.getFirstNodeByNo(fingerTable[i].group.no).smallestGroupFromFingerTable();
             if (g.ips.size() < smallestGroup.ips.size()) {
                 smallestGroup = g;
             }
@@ -207,17 +205,17 @@ public class StaticGroupsProtocol implements CDProtocol {
     }
 
     public void stabilize() {
-        StaticGroupsProtocol firstCPByNo = Utils.getFirstCPByNo(successor.no, pid);
+        StaticGroupsProtocol firstCPByNo = Utils.getFirstNodeByNo(successor.no);
         Group p = firstCPByNo.predecessor;
         if (Utils.betweenAB(p.no, group.no, successor.no)) {
-            Utils.updateSuccessor(group.no, p, pid);
+            Utils.updateSuccessor(group.no, p);
         }
-        Utils.getFirstCPByNo(successor.no, pid).notify(group);
+        Utils.getFirstNodeByNo(successor.no).notify(group);
     }
 
     public void notify(Group g) {
         if (predecessor == null || Utils.betweenAB(g.no, predecessor.no, group.no)) {
-            Utils.updatePredecessor(group.no, g, pid);
+            Utils.updatePredecessor(group.no, g);
         }
     }
 
@@ -226,27 +224,27 @@ public class StaticGroupsProtocol implements CDProtocol {
             next = 0;
         }
         fingerTable[next].group = findSuccessor(fingerTable[next].start);
-        Utils.updateFingerTable(group.no, fingerTable, pid);
+        Utils.updateFingerTable(group.no, fingerTable);
         next++;
     }
 
     public void checkSuccessor() {
-        if (Utils.getFirstCPByNo(successor.no, pid) == null) {
-            StaticGroupsProtocol randomCP = Utils.getRandomCP(this, pid);
+        if (Utils.getFirstNodeByNo(successor.no) == null) {
+            StaticGroupsProtocol randomCP = Utils.getRandomCP(this);
             if (randomCP == null) {
                 // jesli ta grupa jest jedyna w sieci
                 successor = group;
             } else {
                 successor = randomCP.findSuccessor(group.no);
             }
-            Utils.updateSuccessor(group.no, successor, pid);
-            Utils.updatePredecessor(successor.no, group, pid);
+            Utils.updateSuccessor(group.no, successor);
+            Utils.updatePredecessor(successor.no, group);
         }
     }
 
     public void checkPredecessor() {
-        if (predecessor == null || Utils.getFirstCPByNo(predecessor.no, pid) == null) {
-            Utils.updatePredecessor(group.no, null, pid);
+        if (predecessor == null || Utils.getFirstNodeByNo(predecessor.no) == null) {
+            Utils.updatePredecessor(group.no, null);
         }
     }
 

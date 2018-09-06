@@ -8,11 +8,8 @@ import java.util.HashMap;
 
 public class Utils {
 
-    public static int cycle = 0;
-
-    public static HashMap<BigInteger, ArrayList<StaticGroupsProtocol>> GROUPS = new HashMap<>();
-
     public static ArrayList<StaticGroupsProtocol> NODES = new ArrayList<>();
+    public static HashMap<BigInteger, ArrayList<StaticGroupsProtocol>> GROUPS = new HashMap<>();
 
     public static void addNode(StaticGroupsProtocol n) {
         Utils.NODES.add(n);
@@ -26,7 +23,7 @@ public class Utils {
 
     public static void removeNode(StaticGroupsProtocol n) {
         ArrayList<StaticGroupsProtocol> g = Utils.GROUPS.get(n.group.no);
-        if (g.size() < 1) {
+        if (g.size() < 2) {
             Utils.GROUPS.remove(n.group.no);
         } else {
             g.remove(n);
@@ -35,74 +32,77 @@ public class Utils {
         Utils.NODES.remove(n);
     }
 
+    public static BigInteger generateUniqueNo(int idLength) {
+        BigInteger no;
+        do {
+            no = new BigInteger(idLength, CommonState.r);
+        } while (isNoInList(no));
+        return no;
+    }
+
+    public static boolean isNoInList(BigInteger no) {
+        return GROUPS.get(no) != null;
+    }
+
     public static String generateIp(BigInteger groupNo, int m) {
         return "0.0." + groupNo + "." + new BigInteger(m, CommonState.r);
     }
 
-    public static StaticGroupsProtocol getAnyCP(int pid) {
-        return NODES.get(CommonState.r.nextInt(NODES.size()));
-    }
-
-    public static StaticGroupsProtocol getRandomCP(StaticGroupsProtocol cp, int pid) {
-        if (cp == null || cp.group == null || cp.group.no == null) {
+    public static StaticGroupsProtocol getRandomCP(StaticGroupsProtocol n) {
+        if (n == null || n.group == null || n.group.no == null) {
             return NODES.get(CommonState.r.nextInt(NODES.size()));
         }
-        StaticGroupsProtocol n;
+        StaticGroupsProtocol randomNode;
         do {
-            n = NODES.get(CommonState.r.nextInt(NODES.size()));
-        } while (n.group.no.equals(cp.group.no));
-        return n;
+            randomNode = NODES.get(CommonState.r.nextInt(NODES.size()));
+        } while (randomNode.group.no.equals(n.group.no));
+        return randomNode;
     }
 
-    public static boolean isOnlyOneGroupInNetwork(int pid) {
-
-        BigInteger no = NODES.get(0).group.no;
-        for (StaticGroupsProtocol cp : NODES) {
-            if (!cp.group.no.equals(no)) {
-                return false;
-            }
-        }
-
-        return true;
+    public static boolean isOnlyOneGroupInNetwork() {
+        return Utils.GROUPS.size() < 2;
     }
 
-    public static StaticGroupsProtocol getFirstCPByNo(BigInteger no, int pid) {
-        ArrayList<StaticGroupsProtocol> cps = GROUPS.get(no);
-        if (cps.size() == 0) {
+    public static StaticGroupsProtocol getFirstNodeByNo(BigInteger no) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+        if (nodes == null) {
             return null;
         } else {
-            return cps.get(0);
+            return nodes.get(0);
         }
     }
 
-    public static void updateIps(BigInteger n, ArrayList<String> ips, int pid) {
-        for (StaticGroupsProtocol cp : NODES) {
-            if (cp.group.no.equals(n)) {
-                cp.group.ips = ips;
+    public static void updateIps(BigInteger no, ArrayList<String> ips) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+        if (nodes != null)
+            for (StaticGroupsProtocol n : nodes) {
+                n.group.ips = ips;
+            }
+    }
+
+    public static void updateSuccessor(BigInteger no, Group successor) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+        if (nodes != null) {
+            for (StaticGroupsProtocol n : nodes) {
+                n.successor = successor;
             }
         }
     }
 
-    public static void updateSuccessor(BigInteger n, Group successor, int pid) {
-        for (StaticGroupsProtocol cp : NODES) {
-            if (cp.group.no.equals(n)) {
-                cp.successor = successor;
+    public static void updatePredecessor(BigInteger no, Group predecessor) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+        if (nodes != null) {
+            for (StaticGroupsProtocol n : nodes) {
+                n.predecessor = predecessor;
             }
         }
     }
 
-    public static void updatePredecessor(BigInteger n, Group predecessor, int pid) {
-        for (StaticGroupsProtocol cp : NODES) {
-            if (cp.group.no.equals(n)) {
-                cp.predecessor = predecessor;
-            }
-        }
-    }
-
-    public static void updateFingerTable(BigInteger n, Finger[] fingerTable, int pid) {
-        for (StaticGroupsProtocol cp : NODES) {
-            if (cp.group.no.equals(n)) {
-                cp.fingerTable = fingerTable;
+    public static void updateFingerTable(BigInteger no, Finger[] fingerTable) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+        if (nodes != null) {
+            for (StaticGroupsProtocol n : nodes) {
+                n.fingerTable = fingerTable;
             }
         }
     }
@@ -141,20 +141,4 @@ public class Utils {
         return false;
     }
 
-    public static BigInteger generateUniqueNo(int idLength) {
-        BigInteger no;
-        do {
-            no = new BigInteger(idLength, CommonState.r);
-        } while (isNoInList(no));
-        return no;
-    }
-
-    private static boolean isNoInList(BigInteger no) {
-        for (StaticGroupsProtocol cp : NODES) {
-            if (cp.group != null && cp.group.no != null && cp.group.no.equals(no)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

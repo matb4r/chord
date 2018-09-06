@@ -20,6 +20,7 @@ public class StaticGroupsMetrics implements Control {
     private int cycles = 0;
     private int networkInitSize = 0;
     private double stabilityRestriction = 0;
+    public static int actualCycle = 0;
 
     LocalTime started;
     LocalTime stopped;

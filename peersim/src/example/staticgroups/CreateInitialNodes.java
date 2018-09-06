@@ -34,12 +34,12 @@ public class CreateInitialNodes implements Control {
         System.out.println("executing CreateInitialNodes");
         for (int i = 0; i < Network.size(); i++) {
             Node node = Network.get(i);
-            StaticGroupsProtocol cp = (StaticGroupsProtocol) node.getProtocol(pid);
+            StaticGroupsProtocol n = (StaticGroupsProtocol) node.getProtocol(pid);
 
             if (i == 0) {
-                cp.start(null);
+                n.start(null);
             } else {
-                cp.start(Utils.getRandomCP(cp, pid));
+                n.start(Utils.getRandomCP(n));
             }
 
             StaticGroupsMaintainer.fixNodes();

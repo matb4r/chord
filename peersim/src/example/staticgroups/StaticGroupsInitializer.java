@@ -4,8 +4,6 @@ import peersim.config.Configuration;
 import peersim.core.Node;
 import peersim.dynamics.NodeInitializer;
 
-import java.util.ArrayList;
-
 public class StaticGroupsInitializer implements NodeInitializer {
 
     private static final String PAR_PROT = "protocol";
@@ -18,7 +16,7 @@ public class StaticGroupsInitializer implements NodeInitializer {
     private int maxGroupSize = 0;
     private double stabilityRestriction = 0;
 
-    private StaticGroupsProtocol cp;
+    private StaticGroupsProtocol n;
 
     public StaticGroupsInitializer(String prefix) {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
@@ -28,10 +26,10 @@ public class StaticGroupsInitializer implements NodeInitializer {
     }
 
     @Override
-    public void initialize(Node n) {
+    public void initialize(Node node) {
         System.out.println("executing StaticGroupsInitializer");
-        cp = (StaticGroupsProtocol) n.getProtocol(pid);
-        cp.start(Utils.getRandomCP(cp, pid));
+        n = (StaticGroupsProtocol) node.getProtocol(pid);
+        n.start(Utils.getRandomCP(n));
     }
 
 
