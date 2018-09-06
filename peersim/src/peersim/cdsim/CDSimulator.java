@@ -200,18 +200,13 @@ public class CDSimulator {
         ctrlSchedules = null;
         Network.reset();
         System.out.println("-------------------- CDSimulator: running initializers");
+        StaticGroupsMetrics.executeOnStart();
         runInitializers();
 
         // main cycle
         loadControls();
 
         System.out.println("-------------------- CDSimulator: starting simulation");
-
-        for (int j = 0; j < controls.length; ++j) {
-            if (controls[j] instanceof StaticGroupsMetrics) {
-                ((StaticGroupsMetrics) controls[j]).executeOnStart();
-            }
-        }
 
         for (int i = 0; i < cycles; ++i) {
             CDState.setCycle(i);
@@ -243,12 +238,8 @@ public class CDSimulator {
         }
 
         // metryki na samym koncu
-        for (int j = 0; j < controls.length; ++j) {
-            if (controls[j] instanceof StaticGroupsMetrics) {
-                ((StaticGroupsMetrics) controls[j]).executeOnEnd();
-            }
-        }
-
+        StaticGroupsMetrics.executeOnEnd();
+        
     }
 
 }

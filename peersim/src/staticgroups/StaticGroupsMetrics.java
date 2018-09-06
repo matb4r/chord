@@ -15,10 +15,10 @@ public class StaticGroupsMetrics implements Control {
     public static int badFingerTableCounter = 0;
     public static int actualCycle = 0;
 
-    public LocalTime started;
-    public LocalTime stopped;
-    public int maxNetSize = Integer.MIN_VALUE;
-    public int minNetSize = Integer.MAX_VALUE;
+    public static LocalTime started;
+    public static LocalTime stopped;
+    public static int maxNetSize = Integer.MIN_VALUE;
+    public static int minNetSize = Integer.MAX_VALUE;
 
 
     static ArrayList<StaticGroupsProtocol> badNodes = new ArrayList<>();
@@ -37,11 +37,11 @@ public class StaticGroupsMetrics implements Control {
         return false;
     }
 
-    public void executeOnStart() {
+    public static void executeOnStart() {
         started = LocalTime.now();
     }
 
-    public void executeOnEnd() {
+    public static void executeOnEnd() {
         stopped = LocalTime.now();
         System.out.println("cycles: " + CDSimulator.cycles);
         System.out.println("network init size: " + Network.initialSize);

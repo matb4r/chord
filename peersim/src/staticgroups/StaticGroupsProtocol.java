@@ -37,6 +37,10 @@ public class StaticGroupsProtocol implements CDProtocol {
     }
 
     public void start(StaticGroupsProtocol nodeInRing) {
+        if (Utils.GROUPS.keySet().size() >= Math.pow(2, M)) {
+            throw new RuntimeException("Too many nodes: M exceeded!");
+        }
+
         next = 0;
         fingerTable = new Finger[M];
         group = new Group();

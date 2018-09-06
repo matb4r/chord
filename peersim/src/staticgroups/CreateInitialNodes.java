@@ -13,6 +13,7 @@ public class CreateInitialNodes implements Control {
     public boolean execute() {
         System.out.println("executing CreateInitialNodes");
         for (int i = 0; i < Network.size(); i++) {
+            System.out.print(i + " ");
             Node node = Network.get(i);
             StaticGroupsProtocol n = (StaticGroupsProtocol) node.getProtocol(StaticGroupsProtocol.pid);
 

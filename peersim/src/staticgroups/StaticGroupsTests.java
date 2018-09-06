@@ -3,9 +3,7 @@ package staticgroups;
 import peersim.config.Configuration;
 import peersim.core.Control;
 
-import java.io.UTFDataFormatException;
 import java.math.BigInteger;
-import java.util.Collections;
 
 public class StaticGroupsTests implements Control {
 
@@ -24,23 +22,26 @@ public class StaticGroupsTests implements Control {
 
     public void executeOnEnd() {
         if (test) {
-            for (StaticGroupsProtocol p : Utils.NODES) {
-                if (predecessorTest(p) == false) {
+            System.out.print("Tests: ");
+            for (int i = 0; i < Utils.NODES.size(); i++) {
+                System.out.print(i + ", ");
+                if (predecessorTest(Utils.NODES.get(i)) == false) {
                     StaticGroupsMetrics.badPredecessorsCounter++;
-                    if (!StaticGroupsMetrics.badNodes.contains(p))
-                        StaticGroupsMetrics.badNodes.add(p);
+                    if (!StaticGroupsMetrics.badNodes.contains(Utils.NODES.get(i)))
+                        StaticGroupsMetrics.badNodes.add(Utils.NODES.get(i));
                 }
-                if (successorTest(p) == false) {
+                if (successorTest(Utils.NODES.get(i)) == false) {
                     StaticGroupsMetrics.badSuccessorsCounter++;
-                    if (!StaticGroupsMetrics.badNodes.contains(p))
-                        StaticGroupsMetrics.badNodes.add(p);
+                    if (!StaticGroupsMetrics.badNodes.contains(Utils.NODES.get(i)))
+                        StaticGroupsMetrics.badNodes.add(Utils.NODES.get(i));
                 }
-                if (fingersTest(p) == false) {
+                if (fingersTest(Utils.NODES.get(i)) == false) {
                     StaticGroupsMetrics.badFingerTableCounter++;
-                    if (!StaticGroupsMetrics.badNodes.contains(p))
-                        StaticGroupsMetrics.badNodes.add(p);
+                    if (!StaticGroupsMetrics.badNodes.contains(Utils.NODES.get(i)))
+                        StaticGroupsMetrics.badNodes.add(Utils.NODES.get(i));
                 }
             }
+            System.out.println("done!");
         }
     }
 
@@ -106,7 +107,7 @@ public class StaticGroupsTests implements Control {
                 }
             } else {
                 BigInteger lowestGEThanStart = Utils.getHighestGroupNo();
-                for(BigInteger no : Utils.GROUPS.keySet()) {
+                for (BigInteger no : Utils.GROUPS.keySet()) {
                     if (no.compareTo(lowestGEThanStart) == -1
                             && no.compareTo(n.fingerTable[i].start) >= 0) {
                         lowestGEThanStart = no;
