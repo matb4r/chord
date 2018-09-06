@@ -1,4 +1,4 @@
-package example.staticgroups;
+package staticgroups;
 
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;

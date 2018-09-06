@@ -18,10 +18,8 @@
 
 package peersim.cdsim;
 
-import example.staticgroups.StaticGroupsMaintainer;
-import example.staticgroups.StaticGroupsMetrics;
-import example.staticgroups.StaticGroupsTests;
-import example.staticgroups.Utils;
+import staticgroups.StaticGroupsMetrics;
+import staticgroups.StaticGroupsTests;
 import peersim.config.Configuration;
 import peersim.core.*;
 

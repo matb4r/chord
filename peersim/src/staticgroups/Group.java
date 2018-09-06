@@ -1,4 +1,4 @@
-package example.staticgroups;
+package staticgroups;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

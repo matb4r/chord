@@ -1,4 +1,4 @@
-package example.staticgroups;
+package staticgroups;
 
 import peersim.core.Control;
 

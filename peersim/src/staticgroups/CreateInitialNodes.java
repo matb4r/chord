@@ -1,14 +1,9 @@
-package example.staticgroups;
+package staticgroups;
 
 import peersim.config.Configuration;
-import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
 
 public class CreateInitialNodes implements Control {
 
