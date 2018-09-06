@@ -9,8 +9,10 @@ import peersim.dynamics.DynamicNetwork;
 public class RandomDynamicNetwork extends DynamicNetwork {
 
     private static final String PAR_RANDOM = "random";
+    private static final String PAR_RANDOM_ADD_PROBABILITY = "randomAddProbability";
 
     private boolean random = false;
+    private double randomAddProbability;
 
     int addPositive = (int) add >= 0 ? (int) add : (int) -add;
     boolean isAddNow = (int) add >= 0;
@@ -21,12 +23,13 @@ public class RandomDynamicNetwork extends DynamicNetwork {
     public RandomDynamicNetwork(String prefix) {
         super(prefix);
         random = Configuration.contains(prefix + "." + PAR_RANDOM);
+        randomAddProbability = Configuration.getDouble(prefix + "." + PAR_RANDOM_ADD_PROBABILITY, 0.5);
     }
 
     public final boolean execute() {
         try {
             if (random) {
-                if (CommonState.r.nextBoolean()) {
+                if (CommonState.r.nextDouble() <= randomAddProbability) {
                     add(1);
                 } else {
                     if (Network.size() > 1) {
