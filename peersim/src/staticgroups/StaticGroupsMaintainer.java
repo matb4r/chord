@@ -10,11 +10,11 @@ public class StaticGroupsMaintainer implements Control {
     @Override
     public boolean execute() {
         System.out.println("executing maintaining");
-        fixNodes();
+        fixNodes(false);
         return false;
     }
 
-    public static void fixNodes() {
+    public static void fixNodes(boolean fixAllFingers) {
         for (StaticGroupsProtocol node : Utils.NODES) {
             node.checkSuccessor();
             node.checkPredecessor();
@@ -23,8 +23,12 @@ public class StaticGroupsMaintainer implements Control {
             } catch (Exception ex) {
                 StaticGroupsMetrics.exceptionsCounter++;
             }
-//            for (int i = 0; i < cp.M; i++)
-            node.fixFingers();
+            if (fixAllFingers) {
+                for (int i = 0; i < node.M; i++)
+                    node.fixFingers();
+            } else {
+                node.fixFingers();
+            }
         }
     }
 }
