@@ -21,23 +21,18 @@ public class Utils {
     }
 
     public static StaticGroupsProtocol getAnyCP(int pid) {
-        Node n;
-        do {
-            n = Network.get(CommonState.r.nextInt(Network.size()));
-        } while (n == null || n.isUp() == false);
-        return ((StaticGroupsProtocol) n.getProtocol(pid));
+        return NODES.get(CommonState.r.nextInt(NODES.size()));
     }
 
     public static StaticGroupsProtocol getRandomCP(StaticGroupsProtocol cp, int pid) {
-        if (isOnlyOneGroupInNetwork(pid)) {
-            return null;
+        if (cp == null || cp.group == null || cp.group.no == null) {
+            return NODES.get(CommonState.r.nextInt(NODES.size()));
         }
-        Node n;
+        StaticGroupsProtocol n;
         do {
-            n = Network.get(CommonState.r.nextInt(Network.size()));
-        }
-        while (n == null || n.isUp() == false || ((StaticGroupsProtocol) n.getProtocol(pid)).group.no.equals(cp.group.no));
-        return ((StaticGroupsProtocol) n.getProtocol(pid));
+            n = NODES.get(CommonState.r.nextInt(NODES.size()));
+        } while (n.group.no.equals(cp.group.no));
+        return n;
     }
 
     public static boolean isOnlyOneGroupInNetwork(int pid) {

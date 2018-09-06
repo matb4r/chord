@@ -24,7 +24,7 @@ public class StaticGroupsMaintainer implements Control {
             } catch (Exception ex) {
                 StaticGroupsMetrics.exceptionsCounter++;
             }
-            for (int i = 0; i < cp.m; i++)
+//            for (int i = 0; i < cp.m; i++)
             cp.fixFingers();
         }
         return false;

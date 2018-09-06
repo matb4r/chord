@@ -4,6 +4,7 @@ import peersim.cdsim.CDProtocol;
 import peersim.core.CommonState;
 import peersim.core.Node;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class StaticGroupsProtocol implements CDProtocol {
@@ -26,6 +27,65 @@ public class StaticGroupsProtocol implements CDProtocol {
 
     public void join(Node n) {
         System.out.println("cp join");
+    }
+
+    public void join(int idLength) {
+        group.no = Utils.generateUniqueNo(idLength);
+        ip = Utils.generateIp(group.no, m);
+        group.ips.add(ip);
+        initFingerTable();
+    }
+
+    public void joinToGroup(Group g) {
+        group = g;
+        ip = Utils.generateIp(g.no, m);
+        g.ips.add(ip);
+        Utils.updateIps(g.no, g.ips, pid);
+        StaticGroupsProtocol firstCPByNo = Utils.getFirstCPByNo(g.no, pid);
+        fingerTable = firstCPByNo.fingerTable;
+        predecessor = firstCPByNo.predecessor;
+        successor = firstCPByNo.successor;
+    }
+
+    public void initFingerTable() {
+//        StaticGroupsProtocol randomCP = Utils.getRandomCP(this, pid);
+        StaticGroupsProtocol randomCP = Utils.getRandomCP(this, pid);
+
+        // update newNode.succ
+        successor = randomCP.findSuccessor(group.no);
+        Utils.updateSuccessor(group.no, successor, pid);
+
+        // update newNode.pred
+        StaticGroupsProtocol succCP = Utils.getFirstCPByNo(successor.no, pid);
+        predecessor = succCP.predecessor;
+        Utils.updatePredecessor(group.no, predecessor, pid);
+
+        // update newNode.pred.succ
+        if (predecessor != null) {
+            StaticGroupsProtocol predCP = Utils.getFirstCPByNo(predecessor.no, pid);
+            Utils.updateSuccessor(predCP.group.no, group, pid);
+        }
+
+        // update newNode.succ.pred
+        Utils.updatePredecessor(succCP.group.no, group, pid);
+
+        fingerTable[0] = new Finger();
+        fingerTable[0].i = 1;
+        fingerTable[0].start = (group.no.add(BigDecimal.valueOf(Math.pow(2, 0)).toBigInteger()).mod(BigDecimal.valueOf(Math.pow(2, m)).toBigInteger()));
+        fingerTable[0].end = (group.no.add(BigDecimal.valueOf(Math.pow(2, 1)).toBigInteger().subtract(BigInteger.ONE)).mod(BigDecimal.valueOf(Math.pow(2, m)).toBigInteger()));
+        fingerTable[0].group = successor;
+
+        for (int i = 2; i <= m; i++) {
+            fingerTable[i - 1] = new Finger();
+            fingerTable[i - 1].i = i;
+            fingerTable[i - 1].start = (group.no.add(BigDecimal.valueOf(Math.pow(2, i - 1)).toBigInteger()).mod(BigDecimal.valueOf(Math.pow(2, m)).toBigInteger()));
+            fingerTable[i - 1].end = (group.no.add(BigDecimal.valueOf(Math.pow(2, i)).toBigInteger().subtract(BigInteger.ONE)).mod(BigDecimal.valueOf(Math.pow(2, m)).toBigInteger()));
+            if (Utils.inAB(fingerTable[i - 1].start, group.no, fingerTable[i - 2].group.no)) {
+                fingerTable[i - 1].group = fingerTable[i - 2].group;
+            } else {
+                fingerTable[i - 1].group = randomCP.findSuccessor(fingerTable[i - 1].start);
+            }
+        }
     }
 
     public Group findSuccessor(BigInteger id) {
@@ -64,7 +124,7 @@ public class StaticGroupsProtocol implements CDProtocol {
     public Group findGroupToJoin(float stability) {
         Group smallestGroup = Utils.getFirstCPByNo(fingerTable[0].group.no, pid).smallestGroupFromFingerTable();
         for (int i = 1; i < m; i++) {
-            Group g = smallestGroupFromFingerTable();
+            Group g = Utils.getFirstCPByNo(fingerTable[i].group.no, pid).smallestGroupFromFingerTable();
             if (g.ips.size() < smallestGroup.ips.size()) {
                 smallestGroup = g;
             }
