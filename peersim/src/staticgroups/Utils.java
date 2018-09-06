@@ -4,6 +4,7 @@ import peersim.core.CommonState;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class Utils {
@@ -46,6 +47,14 @@ public class Utils {
 
     public static String generateIp(BigInteger groupNo, int m) {
         return "0.0." + groupNo + "." + new BigInteger(m, CommonState.r);
+    }
+
+    public static BigInteger getLowestGroupNo() {
+        return Collections.min(Utils.GROUPS.keySet());
+    }
+
+    public static BigInteger getHighestGroupNo() {
+        return Collections.max(Utils.GROUPS.keySet());
     }
 
     public static StaticGroupsProtocol getRandomNode(StaticGroupsProtocol n) {
