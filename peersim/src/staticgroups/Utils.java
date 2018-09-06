@@ -68,6 +68,16 @@ public class Utils {
         return randomNode;
     }
 
+    public static StaticGroupsProtocol getNodeByNoAndIp(BigInteger no, String ip) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+        for (StaticGroupsProtocol n : nodes) {
+            if (n.ip.equals(ip)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
     public static boolean isOnlyOneGroupInNetwork() {
         return Utils.GROUPS.size() < 2;
     }

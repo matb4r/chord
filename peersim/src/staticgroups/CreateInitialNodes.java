@@ -23,7 +23,7 @@ public class CreateInitialNodes implements Control {
                 n.start(Utils.getRandomNode(n));
             }
 
-            StaticGroupsMaintainer.fixNodes(true);
+            StaticGroupsMaintainer.fixNodes(true, false);
         }
         return false;
     }

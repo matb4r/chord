@@ -45,6 +45,8 @@ public class StaticGroupsMetrics implements Control {
         stopped = LocalTime.now();
         System.out.println("cycles: " + CDSimulator.cycles);
         System.out.println("network init size: " + Network.initialSize);
+        System.out.println("random: " + RandomDynamicNetwork.random);
+        System.out.println("random add probability: " + RandomDynamicNetwork.randomAddProbability);
         System.out.println("M: " + StaticGroupsProtocol.M);
         System.out.println("max group size: " + StaticGroupsProtocol.MAX_GROUP_SIZE);
         System.out.println("stability restriction: " + StaticGroupsProtocol.stabilityRestriction);

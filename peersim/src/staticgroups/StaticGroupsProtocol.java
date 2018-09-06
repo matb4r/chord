@@ -7,6 +7,7 @@ import peersim.core.Node;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Iterator;
 
 public class StaticGroupsProtocol implements CDProtocol {
 
@@ -216,6 +217,16 @@ public class StaticGroupsProtocol implements CDProtocol {
         fingerTable[next].group = findSuccessor(fingerTable[next].start);
         Utils.updateFingerTable(group.no, fingerTable);
         next++;
+    }
+
+    public void checkGroup() {
+        Iterator<String> it = group.ips.iterator();
+        while (it.hasNext()) {
+            if (Utils.getNodeByNoAndIp(group.no, it.next()) == null) {
+                it.remove();
+            }
+        }
+        Utils.updateIps(group.no, group.ips);
     }
 
     public void checkSuccessor() {

@@ -10,14 +10,16 @@ public class StaticGroupsMaintainer implements Control {
     @Override
     public boolean execute() {
         System.out.println("executing maintaining");
-        fixNodes(false);
+        fixNodes(false, false);
         return false;
     }
 
-    public static void fixNodes(boolean fixAllFingers) {
+    public static void fixNodes(boolean fixAllFingers, boolean checkSuccessor) {
         for (StaticGroupsProtocol node : Utils.NODES) {
-            node.checkSuccessor();
+            if (checkSuccessor)
+                node.checkSuccessor();
             node.checkPredecessor();
+            node.checkGroup();
             try {
                 node.stabilize();
             } catch (Exception ex) {

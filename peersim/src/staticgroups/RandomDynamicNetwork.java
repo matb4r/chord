@@ -11,8 +11,8 @@ public class RandomDynamicNetwork extends DynamicNetwork {
     private static final String PAR_RANDOM = "random";
     private static final String PAR_RANDOM_ADD_PROBABILITY = "randomAddProbability";
 
-    private boolean random = false;
-    private double randomAddProbability;
+    public static boolean random = false;
+    public static double randomAddProbability;
 
     int addPositive = (int) add >= 0 ? (int) add : (int) -add;
     boolean isAddNow = (int) add >= 0;
