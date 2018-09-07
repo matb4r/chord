@@ -68,7 +68,7 @@ public class RandomDynamicNetwork extends DynamicNetwork {
         StaticGroupsProtocol n = (StaticGroupsProtocol) node.getProtocol(0);
         Utils.removeNode(n);
         Network.remove(index);
-        System.out.println("Node " + n.ip + " died");
+        System.out.println("Node " + n.address + " died");
     }
 
 }

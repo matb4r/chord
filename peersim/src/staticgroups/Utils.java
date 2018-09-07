@@ -41,12 +41,21 @@ public class Utils {
         return no;
     }
 
+    public static String generateUniqueAddress(BigInteger groupNo, int m) {
+        String addr;
+        do {
+            addr = "0.0." + groupNo + "." + new BigInteger(m, CommonState.r);
+        } while (isAddressInGroup(groupNo, addr));
+        return addr;
+    }
+
     public static boolean isNoInList(BigInteger no) {
         return GROUPS.get(no) != null;
     }
 
-    public static String generateIp(BigInteger groupNo, int m) {
-        return "0.0." + groupNo + "." + new BigInteger(m, CommonState.r);
+    public static boolean isAddressInGroup(BigInteger groupNo, String addr) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(groupNo);
+        return nodes != null && nodes.contains(addr);
     }
 
     public static BigInteger getLowestGroupNo() {
@@ -71,7 +80,7 @@ public class Utils {
     public static StaticGroupsProtocol getNodeByNoAndIp(BigInteger no, String ip) {
         ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
         for (StaticGroupsProtocol n : nodes) {
-            if (n.ip.equals(ip)) {
+            if (n.address.equals(ip)) {
                 return n;
             }
         }
@@ -95,7 +104,7 @@ public class Utils {
         ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
         if (nodes != null)
             for (StaticGroupsProtocol n : nodes) {
-                n.group.ips = ips;
+                n.group.addresses = ips;
             }
     }
 

@@ -6,10 +6,10 @@ import java.util.ArrayList;
 public class Group {
 
     public Group() {
-        ips = new ArrayList<>();
+        addresses = new ArrayList<>();
     }
 
     public BigInteger no;
-    public ArrayList<String> ips;
+    public ArrayList<String> addresses;
 
 }
