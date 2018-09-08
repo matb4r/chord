@@ -11,7 +11,7 @@ public class GraphDrawer implements Control {
 
     private static final String PAR_DRAW = "draw";
 
-    private static final String PATH = "../master-thesis/graph.tikz";
+    private static final String PATH = "../master-thesis/graph.tex";
     private static final double R = 7;
     private static final double NODE_SIZE = 0.05;
     private static final String NODE_COLOR = "teal";
