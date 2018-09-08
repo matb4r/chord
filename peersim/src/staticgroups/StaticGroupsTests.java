@@ -20,7 +20,7 @@ public class StaticGroupsTests implements Control {
         return false;
     }
 
-    public void executeOnEnd() {
+    public static void executeTests() {
         if (test) {
             System.out.print("Tests: ");
             for (int i = 0; i < Utils.NODES.size(); i++) {
@@ -45,7 +45,7 @@ public class StaticGroupsTests implements Control {
         }
     }
 
-    private boolean predecessorTest(StaticGroupsProtocol n) {
+    private static boolean predecessorTest(StaticGroupsProtocol n) {
         if (n.predecessor == null) {
             return true;
         }
@@ -70,7 +70,7 @@ public class StaticGroupsTests implements Control {
         return true;
     }
 
-    private boolean successorTest(StaticGroupsProtocol n) {
+    private static boolean successorTest(StaticGroupsProtocol n) {
         if (Utils.isOnlyOneGroupInNetwork()) {
             return n.successor.no.equals(n.group.no);
         }
@@ -92,7 +92,7 @@ public class StaticGroupsTests implements Control {
         return true;
     }
 
-    private boolean fingersTest(StaticGroupsProtocol n) {
+    private static boolean fingersTest(StaticGroupsProtocol n) {
         if (Utils.isOnlyOneGroupInNetwork()) {
             for (int i = 0; i < n.M; i++) {
                 if (!n.fingerTable[i].group.no.equals(n.group.no))

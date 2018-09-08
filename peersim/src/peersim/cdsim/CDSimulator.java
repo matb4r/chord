@@ -18,6 +18,7 @@
 
 package peersim.cdsim;
 
+import staticgroups.GraphDrawer;
 import staticgroups.StaticGroupsMetrics;
 import staticgroups.StaticGroupsTests;
 import peersim.config.Configuration;
@@ -231,15 +232,12 @@ public class CDSimulator {
         }
 
         // testy na koniec, ale przed metrykami
-        for (int j = 0; j < controls.length; ++j) {
-            if (controls[j] instanceof StaticGroupsTests) {
-                ((StaticGroupsTests) controls[j]).executeOnEnd();
-            }
-        }
-
+        StaticGroupsTests.executeTests();
         // metryki na samym koncu
         StaticGroupsMetrics.executeOnEnd();
-        
+        // stworz graf i zapisz do pliku
+        GraphDrawer.drawGraph();
+
     }
 
 }

@@ -1,4 +1,116 @@
 package staticgroups;
 
-public class GraphDrawer {
+import peersim.config.Configuration;
+import peersim.core.Control;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.ArrayList;
+
+public class GraphDrawer implements Control {
+
+    private static final String PAR_DRAW = "draw";
+
+    private static final String PATH = "../master-thesis/graph.tikz";
+    private static final double R = 7;
+    private static final double NODE_SIZE = 0.05;
+    private static final String NODE_COLOR = "teal";
+    private static final String CONNECTIONS_COLOR = "gray";
+    private static final String NEIGH_COLOR = "red";
+
+    private static boolean draw = false;
+
+    public GraphDrawer(String prefix) {
+        draw = Configuration.contains(prefix + "." + PAR_DRAW);
+    }
+
+    @Override
+    public boolean execute() {
+        return false;
+    }
+
+    public static void drawGraph() {
+        if (draw) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("\\begin{tikzpicture}\n");
+            sb.append(ringStr());
+            sb.append(connectionsStr());
+            sb.append(neighStr());
+            sb.append("\\end{tikzpicture}\n");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(PATH))) {
+                writer.write(sb.toString());
+            } catch (Exception ex) {
+            }
+        }
+    }
+
+    private static String ringStr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\\filldraw[fill=" + NODE_COLOR + ", draw=black]\n");
+        for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
+            try {
+                StaticGroupsProtocol n = l.get(0);
+                Coord c = nodeToCoord(n);
+                sb.append("(" + c.x + "," + c.y + ") circle (" + c.size + ")");
+            } catch (Exception ex) {
+            }
+        }
+        sb.append(";\n");
+        return sb.toString();
+    }
+
+    private static String connectionsStr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\\draw [" + CONNECTIONS_COLOR + "]\n");
+        for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
+            try {
+                StaticGroupsProtocol n = l.get(0);
+                Coord c = nodeToCoord(n);
+                for (int i = 0; i < n.M; i++) {
+                    Coord f = nodeToCoord(Utils.getFirstNodeByNo(n.fingerTable[i].group.no));
+                    sb.append("(" + c.x + "," + c.y + ") -- " + "(" + f.x + "," + f.y + ")\n");
+                }
+            } catch (Exception ex) {
+            }
+        }
+        sb.append(";\n");
+        return sb.toString();
+    }
+
+    private static String neighStr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\\draw [" + NEIGH_COLOR + "]\n");
+        for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
+            try {
+                StaticGroupsProtocol n = l.get(0);
+                Coord c = nodeToCoord(n);
+                Coord pred = nodeToCoord(Utils.getFirstNodeByNo(n.predecessor.no));
+                Coord succ = nodeToCoord(Utils.getFirstNodeByNo(n.successor.no));
+                sb.append("(" + c.x + "," + c.y + ") -- " + "(" + pred.x + "," + pred.y + ")\n");
+                sb.append("(" + c.x + "," + c.y + ") -- " + "(" + succ.x + "," + succ.y + ")\n");
+            } catch (Exception ex) {
+                StaticGroupsMetrics.exceptionsCounter++;
+            }
+        }
+        sb.append(";\n");
+        return sb.toString();
+    }
+
+    private static Coord nodeToCoord(StaticGroupsProtocol n) throws Exception {
+        double maxId = Math.pow(2, n.M);
+        Coord coord = new Coord();
+        coord.id = n.group.no.intValue();
+        coord.x = R * Math.sin(Math.toRadians((360 / maxId) * coord.id));
+        coord.y = R * Math.cos(Math.toRadians((360 / maxId) * coord.id));
+        coord.size = NODE_SIZE * n.group.addresses.size();
+        return coord;
+    }
+
+    static class Coord {
+        int id;
+        double x;
+        double y;
+        double size;
+    }
+
 }
