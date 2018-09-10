@@ -16,7 +16,10 @@ public class GraphDrawer implements Control {
     private static final double NODE_SIZE = 0.05;
     private static final String NODE_COLOR = "teal";
     private static final String CONNECTIONS_COLOR = "gray";
-    private static final String NEIGH_COLOR = "red";
+    private static final String BAD_CONNECTIONS_COLOR = "red";
+    private static final String BAD_PREDECESSORS_COLOR = "magenta";
+    private static final String BAD_SUCCESSORS_COLOR = "orange";
+    private static final String NEIGH_COLOR = "gray";
 
     private static boolean draw = false;
 
@@ -36,27 +39,15 @@ public class GraphDrawer implements Control {
             sb.append(ringStr());
             sb.append(connectionsStr());
             sb.append(neighStr());
+            sb.append(wrongConnectionsStr());
+            sb.append(wrongPredecessorsStr());
+            sb.append(wrongSuccessorsStr());
             sb.append("\\end{tikzpicture}\n");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(PATH))) {
                 writer.write(sb.toString());
             } catch (Exception ex) {
             }
         }
-    }
-
-    private static String ringStr() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\\filldraw[fill=" + NODE_COLOR + ", draw=black]\n");
-        for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
-            try {
-                StaticGroupsProtocol n = l.get(0);
-                Coord c = nodeToCoord(n);
-                sb.append("(" + c.x + "," + c.y + ") circle (" + c.size + ")");
-            } catch (Exception ex) {
-            }
-        }
-        sb.append(";\n");
-        return sb.toString();
     }
 
     private static String connectionsStr() {
@@ -77,6 +68,21 @@ public class GraphDrawer implements Control {
         return sb.toString();
     }
 
+    private static String ringStr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\\filldraw[fill=" + NODE_COLOR + ", draw=black]\n");
+        for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
+            try {
+                StaticGroupsProtocol n = l.get(0);
+                Coord c = nodeToCoord(n);
+                sb.append("(" + c.x + "," + c.y + ") circle (" + c.size + ")");
+            } catch (Exception ex) {
+            }
+        }
+        sb.append(";\n");
+        return sb.toString();
+    }
+
     private static String neighStr() {
         StringBuilder sb = new StringBuilder();
         sb.append("\\draw [" + NEIGH_COLOR + "]\n");
@@ -89,7 +95,62 @@ public class GraphDrawer implements Control {
                 sb.append("(" + c.x + "," + c.y + ") -- " + "(" + pred.x + "," + pred.y + ")\n");
                 sb.append("(" + c.x + "," + c.y + ") -- " + "(" + succ.x + "," + succ.y + ")\n");
             } catch (Exception ex) {
-                StaticGroupsMetrics.exceptionsCounter++;
+            }
+        }
+        sb.append(";\n");
+        return sb.toString();
+    }
+
+    private static String wrongConnectionsStr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\\draw [" + BAD_CONNECTIONS_COLOR + "]\n");
+        for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
+            try {
+                StaticGroupsProtocol n = l.get(0);
+                Coord c = nodeToCoord(n);
+                for (int i = 0; i < n.M; i++) {
+                    if (StaticGroupsTests.fingersTest(n, i) == false) {
+                        Coord bad = nodeToCoord(Utils.getFirstNodeByNo(n.fingerTable[i].group.no));
+                        sb.append("(" + c.x + "," + c.y + ") -- " + "(" + bad.x + "," + bad.y + ")\n");
+                    }
+                }
+            } catch (Exception ex) {
+            }
+        }
+        sb.append(";\n");
+        return sb.toString();
+    }
+
+    private static String wrongPredecessorsStr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\\draw [" + BAD_PREDECESSORS_COLOR + "]\n");
+        for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
+            try {
+                StaticGroupsProtocol n = l.get(0);
+                Coord c = nodeToCoord(n);
+                if (StaticGroupsTests.predecessorTest(n) == false) {
+                    Coord bad = nodeToCoord(Utils.getFirstNodeByNo(n.predecessor.no));
+                    sb.append("(" + c.x + "," + c.y + ") -- " + "(" + bad.x + "," + bad.y + ")\n");
+                }
+            } catch (Exception ex) {
+            }
+        }
+        sb.append(";\n");
+        return sb.toString();
+    }
+
+    private static String wrongSuccessorsStr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\\draw [" + BAD_SUCCESSORS_COLOR + "]\n");
+        for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
+            try {
+                StaticGroupsProtocol n = l.get(0);
+                Coord c = nodeToCoord(n);
+                if (StaticGroupsTests.successorTest(n) == false) {
+                    Coord bad = nodeToCoord(Utils.getFirstNodeByNo(n.successor.no));
+                    sb.append("(" + c.x + "," + c.y + ") -- " + "(" + bad.x + "," + bad.y + ")\n");
+                }
+            } catch (Exception ex) {
             }
         }
         sb.append(";\n");
