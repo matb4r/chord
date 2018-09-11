@@ -14,71 +14,71 @@ public class Utils {
 
     public static void addNode(StaticGroupsProtocol n) {
         Utils.NODES.add(n);
-        ArrayList<StaticGroupsProtocol> g = Utils.GROUPS.get(n.group.no);
+        ArrayList<StaticGroupsProtocol> g = Utils.GROUPS.get(n.group.id);
         if (g == null) {
             g = new ArrayList<>();
         }
         g.add(n);
-        Utils.GROUPS.put(n.group.no, g);
+        Utils.GROUPS.put(n.group.id, g);
     }
 
     public static void removeNode(StaticGroupsProtocol n) {
-        ArrayList<StaticGroupsProtocol> g = Utils.GROUPS.get(n.group.no);
+        ArrayList<StaticGroupsProtocol> g = Utils.GROUPS.get(n.group.id);
         if (g.size() < 2) {
-            Utils.GROUPS.remove(n.group.no);
+            Utils.GROUPS.remove(n.group.id);
         } else {
             g.remove(n);
-            Utils.GROUPS.put(n.group.no, g);
+            Utils.GROUPS.put(n.group.id, g);
         }
         Utils.NODES.remove(n);
     }
 
-    public static BigInteger generateUniqueNo(int idLength) {
-        BigInteger no;
+    public static BigInteger generateUniqueId(int idLength) {
+        BigInteger id;
         do {
-            no = new BigInteger(idLength, CommonState.r);
-        } while (isNoInList(no));
-        return no;
+            id = new BigInteger(idLength, CommonState.r);
+        } while (isIdInList(id));
+        return id;
     }
 
-    public static String generateUniqueAddress(BigInteger groupNo, int m) {
+    public static String generateUniqueAddress(BigInteger groupId, int m) {
         String addr;
         do {
-            addr = "0.0." + groupNo + "." + new BigInteger(m, CommonState.r);
-        } while (isAddressInGroup(groupNo, addr));
+            addr = "0.0." + groupId + "." + new BigInteger(m, CommonState.r);
+        } while (isAddressInGroup(groupId, addr));
         return addr;
     }
 
-    public static boolean isNoInList(BigInteger no) {
-        return GROUPS.get(no) != null;
+    public static boolean isIdInList(BigInteger id) {
+        return GROUPS.get(id) != null;
     }
 
-    public static boolean isAddressInGroup(BigInteger groupNo, String addr) {
-        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(groupNo);
+    public static boolean isAddressInGroup(BigInteger groupId, String addr) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(groupId);
         return nodes != null && nodes.contains(addr);
     }
 
-    public static BigInteger getLowestGroupNo() {
+    public static BigInteger getLowestGroupId() {
         return Collections.min(Utils.GROUPS.keySet());
     }
 
-    public static BigInteger getHighestGroupNo() {
+    public static BigInteger getHighestGroupId() {
         return Collections.max(Utils.GROUPS.keySet());
     }
 
     public static StaticGroupsProtocol getRandomNode(StaticGroupsProtocol n) {
-        if (n == null || n.group == null || n.group.no == null) {
+        if (n == null || n.group == null || n.group.id == null) {
             return NODES.get(CommonState.r.nextInt(NODES.size()));
         }
         StaticGroupsProtocol randomNode;
         do {
             randomNode = NODES.get(CommonState.r.nextInt(NODES.size()));
-        } while (randomNode.group.no.equals(n.group.no));
+        } while (randomNode.group.id.equals(n.group.id));
         return randomNode;
     }
 
-    public static StaticGroupsProtocol getNodeByNoAndIp(BigInteger no, String ip) {
-        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+    public static StaticGroupsProtocol getNodeByGroupIdAndIp(BigInteger id, String ip) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(id);
         for (StaticGroupsProtocol n : nodes) {
             if (n.address.equals(ip)) {
                 return n;
@@ -91,8 +91,8 @@ public class Utils {
         return Utils.GROUPS.size() < 2;
     }
 
-    public static StaticGroupsProtocol getFirstNodeByNo(BigInteger no) {
-        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+    public static StaticGroupsProtocol getFirstNodeById(BigInteger id) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(id);
         if (nodes == null) {
             return null;
         } else {
@@ -100,16 +100,16 @@ public class Utils {
         }
     }
 
-    public static void updateIps(BigInteger no, ArrayList<String> ips) {
-        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+    public static void updateIps(BigInteger id, ArrayList<String> ips) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(id);
         if (nodes != null)
             for (StaticGroupsProtocol n : nodes) {
                 n.group.addresses = ips;
             }
     }
 
-    public static void updateSuccessor(BigInteger no, Group successor) {
-        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+    public static void updateSuccessor(BigInteger id, Group successor) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(id);
         if (nodes != null) {
             for (StaticGroupsProtocol n : nodes) {
                 n.successor = successor;
@@ -117,8 +117,8 @@ public class Utils {
         }
     }
 
-    public static void updatePredecessor(BigInteger no, Group predecessor) {
-        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+    public static void updatePredecessor(BigInteger id, Group predecessor) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(id);
         if (nodes != null) {
             for (StaticGroupsProtocol n : nodes) {
                 n.predecessor = predecessor;
@@ -126,8 +126,8 @@ public class Utils {
         }
     }
 
-    public static void updateFingerTable(BigInteger no, Finger[] fingerTable) {
-        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(no);
+    public static void updateFingerTable(BigInteger id, Finger[] fingerTable) {
+        ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(id);
         if (nodes != null) {
             for (StaticGroupsProtocol n : nodes) {
                 n.fingerTable = fingerTable;

@@ -53,61 +53,61 @@ public class StaticGroupsTests implements Control {
             return true;
         }
         if (Utils.isOnlyOneGroupInNetwork()) {
-            return n.predecessor.no.equals(n.group.no);
+            return n.predecessor.id.equals(n.group.id);
         }
-        if (n.group.no.equals(Utils.getLowestGroupNo())) {
-            return n.predecessor.no.equals(Utils.getHighestGroupNo());
+        if (n.group.id.equals(Utils.getLowestGroupId())) {
+            return n.predecessor.id.equals(Utils.getHighestGroupId());
         }
 
-        BigInteger highestLowerThan = Utils.getLowestGroupNo();
+        BigInteger highestLowerThan = Utils.getLowestGroupId();
 
-        for (BigInteger no : Utils.GROUPS.keySet()) {
-            if (no.compareTo(highestLowerThan) == 1
-                    && no.compareTo(n.group.no) == -1) {
-                highestLowerThan = no;
+        for (BigInteger id : Utils.GROUPS.keySet()) {
+            if (id.compareTo(highestLowerThan) == 1
+                    && id.compareTo(n.group.id) == -1) {
+                highestLowerThan = id;
             }
         }
 
-        return highestLowerThan == n.predecessor.no;
+        return highestLowerThan == n.predecessor.id;
     }
 
     public static boolean successorTest(StaticGroupsProtocol n) {
         if (Utils.isOnlyOneGroupInNetwork()) {
-            return n.successor.no.equals(n.group.no);
+            return n.successor.id.equals(n.group.id);
         }
-        if (n.group.no.equals(Utils.getHighestGroupNo())) {
-            return n.successor.no.equals(Utils.getLowestGroupNo());
+        if (n.group.id.equals(Utils.getHighestGroupId())) {
+            return n.successor.id.equals(Utils.getLowestGroupId());
         }
 
-        BigInteger lowestBiggerThanP = Utils.getHighestGroupNo();
+        BigInteger lowestBiggerThanP = Utils.getHighestGroupId();
 
-        for (BigInteger no : Utils.GROUPS.keySet()) {
-            if (no.compareTo(lowestBiggerThanP) == -1
-                    && no.compareTo(n.group.no) == 1) {
-                lowestBiggerThanP = no;
+        for (BigInteger id : Utils.GROUPS.keySet()) {
+            if (id.compareTo(lowestBiggerThanP) == -1
+                    && id.compareTo(n.group.id) == 1) {
+                lowestBiggerThanP = id;
             }
         }
 
-        return lowestBiggerThanP == n.successor.no;
+        return lowestBiggerThanP == n.successor.id;
     }
 
     public static boolean fingersTest(StaticGroupsProtocol n, int i) {
         if (Utils.isOnlyOneGroupInNetwork()) {
-            return n.fingerTable[i].group.no.equals(n.group.no);
+            return n.fingerTable[i].group.id.equals(n.group.id);
         }
-        if (n.fingerTable[i].start.compareTo(Utils.getHighestGroupNo()) == 1) {
-            if (!n.fingerTable[i].group.no.equals(Utils.getLowestGroupNo())) {
+        if (n.fingerTable[i].start.compareTo(Utils.getHighestGroupId()) == 1) {
+            if (!n.fingerTable[i].group.id.equals(Utils.getLowestGroupId())) {
                 return false;
             }
         } else {
-            BigInteger lowestGEThanStart = Utils.getHighestGroupNo();
-            for (BigInteger no : Utils.GROUPS.keySet()) {
-                if (no.compareTo(lowestGEThanStart) == -1
-                        && no.compareTo(n.fingerTable[i].start) >= 0) {
-                    lowestGEThanStart = no;
+            BigInteger lowestGEThanStart = Utils.getHighestGroupId();
+            for (BigInteger id : Utils.GROUPS.keySet()) {
+                if (id.compareTo(lowestGEThanStart) == -1
+                        && id.compareTo(n.fingerTable[i].start) >= 0) {
+                    lowestGEThanStart = id;
                 }
             }
-            if (!n.fingerTable[i].group.no.equals(lowestGEThanStart)) {
+            if (!n.fingerTable[i].group.id.equals(lowestGEThanStart)) {
                 return false;
             }
         }

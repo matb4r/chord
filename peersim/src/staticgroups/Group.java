@@ -9,7 +9,7 @@ public class Group {
         addresses = new ArrayList<>();
     }
 
-    public BigInteger no;
+    public BigInteger id;
     public ArrayList<String> addresses;
 
 }

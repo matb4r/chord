@@ -58,7 +58,7 @@ public class GraphDrawer implements Control {
                 StaticGroupsProtocol n = l.get(0);
                 Coord c = nodeToCoord(n);
                 for (int i = 0; i < n.M; i++) {
-                    Coord f = nodeToCoord(Utils.getFirstNodeByNo(n.fingerTable[i].group.no));
+                    Coord f = nodeToCoord(Utils.getFirstNodeById(n.fingerTable[i].group.id));
                     sb.append("(" + c.x + "," + c.y + ") -- " + "(" + f.x + "," + f.y + ")\n");
                 }
             } catch (Exception ex) {
@@ -90,8 +90,8 @@ public class GraphDrawer implements Control {
             try {
                 StaticGroupsProtocol n = l.get(0);
                 Coord c = nodeToCoord(n);
-                Coord pred = nodeToCoord(Utils.getFirstNodeByNo(n.predecessor.no));
-                Coord succ = nodeToCoord(Utils.getFirstNodeByNo(n.successor.no));
+                Coord pred = nodeToCoord(Utils.getFirstNodeById(n.predecessor.id));
+                Coord succ = nodeToCoord(Utils.getFirstNodeById(n.successor.id));
                 sb.append("(" + c.x + "," + c.y + ") -- " + "(" + pred.x + "," + pred.y + ")\n");
                 sb.append("(" + c.x + "," + c.y + ") -- " + "(" + succ.x + "," + succ.y + ")\n");
             } catch (Exception ex) {
@@ -110,7 +110,7 @@ public class GraphDrawer implements Control {
                 Coord c = nodeToCoord(n);
                 for (int i = 0; i < n.M; i++) {
                     if (StaticGroupsTests.fingersTest(n, i) == false) {
-                        Coord bad = nodeToCoord(Utils.getFirstNodeByNo(n.fingerTable[i].group.no));
+                        Coord bad = nodeToCoord(Utils.getFirstNodeById(n.fingerTable[i].group.id));
                         sb.append("(" + c.x + "," + c.y + ") -- " + "(" + bad.x + "," + bad.y + ")\n");
                     }
                 }
@@ -129,7 +129,7 @@ public class GraphDrawer implements Control {
                 StaticGroupsProtocol n = l.get(0);
                 Coord c = nodeToCoord(n);
                 if (StaticGroupsTests.predecessorTest(n) == false) {
-                    Coord bad = nodeToCoord(Utils.getFirstNodeByNo(n.predecessor.no));
+                    Coord bad = nodeToCoord(Utils.getFirstNodeById(n.predecessor.id));
                     sb.append("(" + c.x + "," + c.y + ") -- " + "(" + bad.x + "," + bad.y + ")\n");
                 }
             } catch (Exception ex) {
@@ -147,7 +147,7 @@ public class GraphDrawer implements Control {
                 StaticGroupsProtocol n = l.get(0);
                 Coord c = nodeToCoord(n);
                 if (StaticGroupsTests.successorTest(n) == false) {
-                    Coord bad = nodeToCoord(Utils.getFirstNodeByNo(n.successor.no));
+                    Coord bad = nodeToCoord(Utils.getFirstNodeById(n.successor.id));
                     sb.append("(" + c.x + "," + c.y + ") -- " + "(" + bad.x + "," + bad.y + ")\n");
                 }
             } catch (Exception ex) {
@@ -160,7 +160,7 @@ public class GraphDrawer implements Control {
     private static Coord nodeToCoord(StaticGroupsProtocol n) throws Exception {
         double maxId = Math.pow(2, n.M);
         Coord coord = new Coord();
-        coord.id = n.group.no.intValue();
+        coord.id = n.group.id.intValue();
         coord.x = R * Math.sin(Math.toRadians((360 / maxId) * coord.id));
         coord.y = R * Math.cos(Math.toRadians((360 / maxId) * coord.id));
         coord.size = NODE_SIZE * n.group.addresses.size();
