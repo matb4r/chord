@@ -1,0 +1,5 @@
+n.stabilize():
+	p = successor->predecessor
+	if p.id $\in$ (group.id, successor.id)
+		successor = p
+	successor->notify(group)

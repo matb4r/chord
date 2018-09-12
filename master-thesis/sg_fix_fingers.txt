@@ -1,0 +1,5 @@
+n.fix_fingers():
+	next = next + 1
+	if next > m
+		next = 1
+	fingerTable[next].group = find_successor(fingerTable[next].start)

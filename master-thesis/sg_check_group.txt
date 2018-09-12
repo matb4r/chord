@@ -1,0 +1,4 @@
+n.check_group():
+	for a in group.addresses:
+		if a failed
+			group.addresses.remove(a)

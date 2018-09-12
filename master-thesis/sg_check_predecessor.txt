@@ -1,0 +1,3 @@
+n.check_predecessor():
+	if predecessor failed
+		predecessor = null

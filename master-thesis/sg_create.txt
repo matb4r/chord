@@ -1,0 +1,3 @@
+n.create():
+    predecessor = group
+    successor = group

@@ -1,0 +1,3 @@
+n.join(addr):
+	predecessor = null
+	successor = addr->find_successor(group.id)

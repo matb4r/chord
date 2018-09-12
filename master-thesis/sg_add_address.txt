@@ -1,0 +1,2 @@
+n.add_address(addr):
+	group.addresses.add(addr)

@@ -1,0 +1,6 @@
+n.smallest_group_from_fingertable():
+	smallestGroup = fingerTable[1].group
+	for i = 2 to M
+		if size(fingerTable[i].group.addresses) < size(smallestGroup.addresses)
+			smallestGroup = fingerTable[i].group
+	return smallestGroup

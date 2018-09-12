@@ -1,0 +1,5 @@
+n.closest_preceding_group(id):
+	for i = M downto 1
+		if fingerTable[i].group.id $\in$ (group.id, id)
+			return fingerTable[i].group
+	return group

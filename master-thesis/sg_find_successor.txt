@@ -1,0 +1,6 @@
+n.find_successor(id):
+	if id $\in$ (group.id, successor.id$>$
+		return successor
+	else
+		g = closest_preceding_node(id)
+		return g->find_successor(id)

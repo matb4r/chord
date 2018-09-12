@@ -1,0 +1,3 @@
+n.notify(g):
+	if predecessor is null or g.id $\in$ (predecessor.id, group.id)
+		predecessor = g

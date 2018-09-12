@@ -1,0 +1,3 @@
+n.join_to_group(g):
+	group = g
+	g->add_address(address)

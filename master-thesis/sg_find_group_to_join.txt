@@ -1,0 +1,10 @@
+n.find_group_to_join():
+	smallestGroup = fingerTable[1].group->smallest_group_from_fingertable()
+	for i = 2 to M
+		g = fingerTable[1].group->smallest_group_from_fingertable()
+		if size(g.addresses) < size(smallestGroup.addresses)
+			smallestGroup = g
+	if size(group.addresses) is MAX_GROUP_SIZE
+		return null
+	else
+		return smallestGroup

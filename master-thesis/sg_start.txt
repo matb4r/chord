@@ -1,0 +1,13 @@
+n.start(addr):
+    if addr is null
+        create()
+    else
+        stability = get_stability()
+        if stability $\ge$ STABILITY_REQUIREMENT
+            join(addr)
+        else
+            g = addr->find_group_to_join()
+            if g is null
+                join(addr)
+            else
+                join_to_group(g)

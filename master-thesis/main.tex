@@ -250,6 +250,7 @@ Identyfikatory są ułożone kolejno według wartości na \textit{okręgu identy
 Utrzymywanie pierścienia odbywa się w następujący sposób: gdy węzeł \textit{n} dołączy do sieci, odpowiednie klucze, poprzednio przypisane następnikowi węzła \textit{n}, zostają przypisane do \textit{n}. Kiedy węzeł \textit{n} opuści sieć, wszystkie klucze za które był odpowiedzialny są przypisane na nowo do następnika \textit{n}. Dla przykładu, jeśli do sieci reprezentowanej przez pierścień na rysunku \ref{fig:pierscien} dołączyłby węzeł o identyfikatorze 26, to klucz 24 zostałby przeniesiony z węzła 32 do nowo dołączonego węzła.
 
 \subsection{Odnajdywanie lokalizacji klucza}
+\label{odnajdywanie_lokalizacji_klucza}
 
 Każdy węzeł posiada wskaźnik na swojego następnika. Dzięki temu w prosty sposób możliwe jest odnalezienie węzła odpowiedzialnego za dany klucz poprzez rekurencyjne odpytywanie się kolejnych następników. Posiadanie aktualnego wskaźnika na swojego następnika jest warunkiem koniecznym otrzymania poprawnego wyniku. Aczkolwiek aby zmniejszyć liczbę komunikatów podczas operacji lookup, każdy węzeł posiada dodatkowe informacje trasowania. Informacje te przechowywanie są w specjalnej tablicy trasowania, którą określa się mianem \textit{finger table}. Niech \textit{m} będzie liczbą bitów używanych do zapisywania identyfikatorów kluczy i węzłów. Wtenczas tablica trasowania posiada \textit{m} wpisów. Każdy \textit{i}-ty wpis tej tablicy węzła \textit{n} posiada informacje o pierwszym węźle \textit{s} (jego identyfikator oraz adres, który służy do komunikacji - jest nim najczęściej adres IP), który jest za \textit{n} o przynajmniej $2^{i-1}$ na okręgu identyfikatorów. Wzór na identyfikator węzła \textit{s} w \textit{i}-tym wpisie węzła \textit{n}, gdzie $1\leq i \leq m$:
 
@@ -270,7 +271,7 @@ Warto zwrócić uwagę, że pierwszy wpis w tablicy trasowania węzła \textit{n
 
 Schemat ten posiada dwie cechy. Po pierwsze, każdy węzeł posiada informację o małej liczbie węzłów, z czego większość tych węzłów znajduje się w małej odległości od niego na pierścieniu. Po drugie, korzystając z tablicy trasowania z reguły nie można bezpośrednio określić następnika dowolnego klucza. Dla przykładu, węzeł 8 na rysunku \ref{fig:finger_table} nie może samodzielnie ustalić bezpośredniego następnika klucza 34, gdyż następnik ten (węzeł 38) nie znajduje się w tablicy trasowania węzła 8.
 
-Listing \ref{lst:find_successor} pokazuje pseudokod funkcji \textit{find\_successor}, która jest odpowiednikiem operacji lookup, czyli odnalezienia węzła odpowiedzialnego za dany klucz. Jeżeli identyfikator \textit{id} znajduje się pomiędzy identyfikatorem aktualnego węzła \textit{n} a identyfikatorem następnika \textit{successor} tego węzła, to funkcja ta zwraca wskaźnik na następnik węzła \textit{n}. W przeciwnym wypadku, wykorzystując funkcję \textit{closest\_preceding\_node} pokazaną na listingu \ref{lst:closest_preceding_node}, węzeł \textit{n} przeszukuje tablice trasowania, aby znaleźć taki węzeł \textit{n'}, którego identyfikator jest najbliższy lecz mniejszy od \textit{id}; i następnie wywołuje zdalną metodę \textit{find\_succesor} węzła \textit{n'}. Wybieranie węzła \textit{n'} odbywa się w taki sposób, ponieważ im węzeł znajduje się bliżej \textit{id} na pierścieniu, tym posiada więcej informacji o obszarze pierścienia wokół \textit{id}.
+Listing \ref{lst:find_successor} pokazuje pseudokod funkcji \texttt{find\_successor}, która jest odpowiednikiem operacji lookup, czyli odnalezienia węzła odpowiedzialnego za dany klucz. Jeżeli identyfikator \texttt{id} znajduje się pomiędzy identyfikatorem aktualnego węzła \texttt{n} a identyfikatorem następnika \texttt{successor} tego węzła, to funkcja ta zwraca wskaźnik na następnik węzła \texttt{n}. W przeciwnym wypadku, wykorzystując funkcję \texttt{closest\_}-\texttt{preceding\_node} pokazaną na listingu \ref{lst:closest_preceding_node}, węzeł \texttt{n} przeszukuje tablicę trasowania, aby znaleźć taki węzeł \texttt{n'}, którego identyfikator jest najbliższy lecz mniejszy od \texttt{id}; i następnie wywołuje zdalną metodę \texttt{find\_succesor} węzła \texttt{n'}. Wybieranie węzła \texttt{n'} odbywa się w taki sposób, ponieważ im węzeł znajduje się bliżej \texttt{id} na pierścieniu, tym posiada więcej informacji o obszarze pierścienia wokół \texttt{id}.
 
 \lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie następnika obiektu o danym identyfikatorze.}, captionpos=b, label={lst:find_successor}, float=h]{find_successor.txt}
 
@@ -289,25 +290,26 @@ Przykładowo węzeł 8 chciałby znaleźć następnika klucza 54. Sytuacja ta po
 Twórcy protokołu Chord udowadniają \cite{bib:chord}, iż złożoność komunikacyjna operacji lookup, w sieci składającej się z \textit{N} węzłów, z dużym prawdopodobieństwem wynosi $\mathcal{O}(\log{}N)$. A średni czas odnalezienia węzła odpowiedzialnego za dany klucz podczas eksperymentów wyniósł $\frac{1}{2} \log{} N$.
 
 \subsection{Zmiany w sieci}
+\label{zmiany_w_sieci}
 
 W praktyce, Chord musi radzić sobie z ciągłym dołączaniem węzłów oraz ich nieprzewidywalnym odłączaniem. Aby operacja lookup zawsze zwracała poprawny wynik mimo zmian w sieci, protokół Chord musi zapewnić, aby w każdym węźle wskaźniki na następnika były aktualne. Dbają o to specjalne procedury wykonywane cyklicznie przez wszystkie węzły, które uaktualniają tablice trasowania oraz wskaźniki na następnika i poprzednika. 
 
-Pseudokod procedury odpowiedzialnej za dołączanie węzła pokazuje listing \ref{lst:join}. Węzeł \textit{n} dołącza się do istniejącego pierścienia przy pomocy innego węzła \textit{n'}, który tworzy owy pierścień. Jeżeli jednak węzeł \textit{n} ma zamiar stworzyć nowy pierścień, wywołuje procedurę \textit{create} pokazaną na listingu \ref{lst:create}. Samo dołączenie do sieci nie sprawia, iż reszta węzłów w sieci wie o nowym węźle. Dopiero procedura stabilizacji \textit{stabilize}, pokazana na listingu \ref{lst:stabilize} i uruchamiana cyklicznie przez każdy węzeł, uaktualnia informacje o węzłach w sieci. Za każdym razem, gdy węzeł \textit{n} uruchomi stabilizację, sprawdzane jest czy to poprzednik \textit{p} następnika \textit{successor} węzła \textit{n} nie powinien być jego następnikiem. Będzie tak, jeśli \textit{p} jest nowo dołączonym węzłem. Dodatkowo, wywołując procedurę \textit{notify} pokazaną na listingu \ref{lst:notify}, stabilizacja powiadamia następnika węzła \textit{n} o istnieniu węzła \textit{n} w sieci, dając szansę na uaktualnienie wskaźnika na poprzednika.
+Pseudokod procedury odpowiedzialnej za dołączanie węzła pokazuje listing \ref{lst:join}. Węzeł \texttt{n} dołącza się do istniejącego pierścienia przy pomocy innego węzła \texttt{n'}, który tworzy owy pierścień. Jeżeli jednak węzeł \texttt{n} ma zamiar stworzyć nowy pierścień, wywołuje procedurę \texttt{create} pokazaną na listingu \ref{lst:create}. Samo dołączenie do sieci nie sprawia, iż reszta węzłów w sieci wie o nowym węźle. Dopiero procedura stabilizacji \texttt{stabilize}, pokazana na listingu \ref{lst:stabilize} i uruchamiana cyklicznie przez każdy węzeł, uaktualnia informacje o węzłach w sieci. Za każdym razem, gdy węzeł \texttt{n} uruchomi stabilizację, sprawdzane jest czy to poprzednik \texttt{p} następnika \texttt{successor} węzła \texttt{n} nie powinien być jego następnikiem. Będzie tak, jeśli \texttt{p} jest nowo dołączonym węzłem. Dodatkowo, wywołując procedurę \texttt{notify} pokazaną na listingu \ref{lst:notify}, stabilizacja powiadamia następnika węzła \texttt{n} o istnieniu węzła \texttt{n} w sieci, dając szansę na uaktualnienie wskaźnika na poprzednika.
 
 
 \lstinputlisting[caption={Pseudokod procedury odpowiedzialnej za utworzenie nowego pierścienia Chord.}, captionpos=b, label={lst:create}, float=!h]{create.txt}
 
-\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej dołączenie węzła do pierścienia Chord zawierającego węzeł \textit{n'}.}, captionpos=b, label={lst:join}, float=!h]{join.txt}
+\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej dołączenie węzła do pierścienia Chord zawierającego węzeł \texttt{n'}.}, captionpos=b, label={lst:join}, float=!h]{join.txt}
 
-\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za weryfikację bezpośredniego następnika \textit{successor} węzła \textit{n} oraz powiadomienie go o \textit{n}.}, captionpos=b, label={lst:stabilize}, float=!h]{stabilize.txt}
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za weryfikację bezpośredniego następnika \texttt{successor} węzła \texttt{n} oraz powiadomienie go o \texttt{n}.}, captionpos=b, label={lst:stabilize}, float=!h]{stabilize.txt}
 
-\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej za ewentualną aktualizację wskaźnika na poprzednika \textit{predecessor}.}, captionpos=b, label={lst:notify}, float=!h]{notify.txt}
+\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej za ewentualną aktualizację wskaźnika na poprzednika \texttt{predecessor}.}, captionpos=b, label={lst:notify}, float=!h]{notify.txt}
 
 \lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za aktualizację wpisów w tablicy trasowania.}, captionpos=b, label={lst:fix_fingers}, float=!h]{fix_fingers.txt}
 
-\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za wyzerowanie wskaźnika na poprzednika \textit{predecessor} w przypadku jego awarii.}, captionpos=b, label={lst:check_predecessor}, float=!h]{check_predecessor.txt}
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za wyzerowanie wskaźnika na poprzednika \texttt{predecessor} w przypadku jego awarii.}, captionpos=b, label={lst:check_predecessor}, float=!h]{check_predecessor.txt}
 
-Każdy węzeł okresowo uruchamia procedurę \textit{fix\_fingers} pokazaną na listingu \ref{lst:fix_fingers}, która uaktualnia wpisy w tablicy trasowania. Dzięki temu nowe węzły wypełniają swoje tablice, a węzły będące wcześniej w sieci, aktualizują je o ewentualne nowe węzły. Ponadto każdy węzeł wykonuje cyklicznie procedurę \textit{check\_predecessor} pokazaną na listingu \ref{lst:check_predecessor}, która zeruje wskaźnik na poprzednika, jeśli uległ on awarii. Wskaźniki te uaktualniane są podczas cyklicznej operacji \textit{notify}.
+Każdy węzeł okresowo uruchamia procedurę \texttt{fix\_fingers} pokazaną na listingu \ref{lst:fix_fingers}, która uaktualnia wpisy w tablicy trasowania. Dzięki temu nowe węzły wypełniają swoje tablice, a węzły będące wcześniej w sieci, aktualizują je o ewentualne nowe węzły. Ponadto każdy węzeł wykonuje cyklicznie procedurę \\\texttt{check\_predecessor} pokazaną na listingu \ref{lst:check_predecessor}, która zeruje wskaźnik na poprzednika, jeśli uległ on awarii. Wskaźniki te uaktualniane są podczas cyklicznej operacji \texttt{notify}.
 
 W praktyce, przez ciągłe przypływy oraz odpływy węzłów, stan pierścienia Chord nigdy nie będzie stabilny. Dołączenia, rozłączenia i cykliczny algorytm stabilizacji będą się przeplatały bez końca. Pierścień nie będzie miał czasu, aby ustabilizować się w pełni, nim nastąpi zmiana w zbiorze węzłów sieci. Jednakże autorzy protokołu zapewniają, że jeśli protokół stabilizacji będzie uruchamiany z odpowiednią częstotliwością, to pierścień będzie utrzymywał się w stanie ,,prawie stabilnym'', w którym to operacje lookup wykonują się sprawnie i zwracają poprawne wyniki \cite{bib:chord}.
 
@@ -340,7 +342,7 @@ Chord został tak zaprojektowany, aby rozszerzanie go nie stanowiło problemu. D
 Zapewnianie istotnych własności systemów rozproszonych, takich jak skalowalność, czy dostępność, jest ważnym zagadnieniem, nad którym ciągle trwają badania. W wyniku prac badawczych, powstaje wiele konceptów. Mechanizm grupowania węzłów w zbiory jest jednym z takich pomysłów. Sugeruje on, aby podstawowym komponentem w sieci P2P nie był węzeł, lecz grupa węzłów, każda odpowiedzialna za dany zbiór kluczy. Komunikacja w sieci odbywałaby się na dwóch poziomach: międzygrupowym, oraz wewnątrzgrupowym. Pomysł ten jest bezpośrednią inspiracją dla protokołu Statycznych Grup. Dlatego też, mechanizmowi temu został poświęcony niniejszy rozdział, opisując jego ideę, sposób działania, oraz wyszczególniając co zapewnia, a co pomija.
 
 \section{System Scatter}
-
+\label{subch_scatter}
 Idea grupowania węzłów w środowisku DHT została wypromowana przez autorów systemu Scatter \cite{bib:scatter}. System ten powstał jako próba zapewnienia silnej spójności rozproszonych danych,
 zachowując jednocześnie dużą skalowalność. Osiągnięcie zadowalającej spójności, dla operacji na pojedynczej parze klucz-wartość pomimo zmiennych opóźnień w sieci, przypływów i odpływów, oraz błędów komunikacyjnych, przy jednoczesnym zapewnieniu dobrej skalowalności, w której to system sprawnie działa w niestabilnym środowisku nawet z ponad milionem węzłów, wydaje się być zadaniem nietrywialnym. Mimo tego autorzy twierdzą, że ich system zapewnia te własności, co popierają eksperymentami.
 
@@ -400,13 +402,90 @@ Polityka nazwana \textit{Hotter-on-Ephemeral} polega na dołączaniu najbardziej
 
 \chapter{Zaproponowane rozwiązanie}
 \label{rozdzial_rozwiazanie}
-\begin{itemize}
-\item ogolny opis
-\item do czego dążę
-\item od czego abstrachuję
-\item szczegolowy opis, pseudokod
-\end{itemize}
 
+%\item ogolny opis
+%\item do czego dążę
+%\item od czego abstrachuję
+%\item szczegolowy opis, pseudokod
+
+Motywem przewodnim owej pracy jest protokół Statycznych Grup, który rozszerza protokoł Chord o mechanizm grupowania węzłów. Niniejszy rozdział opisuje owy protokół, wskazuje jego zalety, wady i aspekty, które pomija, oraz przedstawia pseudokod, szczegółowo opisując działanie protokołu.............
+
+\section{Opis ogólny}
+Protokół Statycznych Grup (w skrócie SG) powstał na bazie protokołu Chord, który dostarcza operację zlokalizowania żądanego zasobu. Chord jednak sam w sobie nie specyfikuje replikowania danych, które tak jak zostało wspomniane w podrozdziale \ref{replikacja}, jest istotne, aby móc zapewnić w systemie dostępność, czy odporność na awarię. Mimo, że protokół Statycznych Grup nie specyfikuje konkretnego sposóbu powielania danych, to motywem przewodnim jego powstania jest zapewnienie dobrego środowiska do implementacji replikacji. Daje to duże pole do eksperymentowania z różnymi sposobami replikowania danych w systemach P2P korzystających z DHT.
+
+\subsection{Grupy statyczne}
+Aby zapewnić środowisko sprzyjające replikacji, protokół Statycznych Grup używa podejścia opartego na agregowaniu węzłów w grupy. Sam mechanizm grupowania opisany został w rozdziale \ref{rozdzial_grupowanie}. Jakkolwiek SG korzysta z ogólnego podejścia opartego na grupowaniu, to nie implementuje kosztownych operacji międzygrupowych, wykorzystywanych m.in. w protokołach Scatter (patrz podrozdzial \ref{subch_scatter}), czy Rollerchain (patrz podrozdział \ref{subch_rollerchain}) - stąd też określenie \textit{statyczny}. Grupy w SG są statyczne, ponieważ nie łączą się wzajemnie, gdy jest w nich zamało węzłów, ani nie dzielą na kilka mniejszych grup, gdy jest w nich zbyt dużo węzłów, lecz każda grupa, ma określony maksymalny rozmiar oraz istnieje tak długo, dopóki jest w sieci przynajmniej jeden poprawny węzeł będący jej członkiem. Jeżeli jedyny członek opuści sieć, to również owa grupa w naturalny sposób zanika z sieci. Dzięki takiemu podejściu, nieponosimy kosztów operacji międzygrupowych, które są bardzo wymagające (patrz zagnieżdżony konsensus w podrozdziale \ref{subch_scatter}). Narażamy się jednak na sytuację, w której to tworzona jest nowa grupa za pomocą węzła, który po chwili może odejść; a po jego odejściu może dołączyć do sieci nowy węzeł i ponownie utworzyć grupe, lecz po chwili i on może opuścić sieć; i tak w kółko. Owa sytuacja jest niepożądana, gdyż każdemu utworzeniu nowej grupy, towarzyszy przeniesienie części danych z innej grupy. Również przy zaniknięciu grupy ponoszone są koszty: jeżeli węzeł uległ awarii, bądź rozłączył się nie informując innych, dane za które odpowiadał mogą zaginąć\footnote{Sytuacji w której część danych ginie może zapobiec podejście, w którym to grupa poprzednio odpowiedzialna za owe dane (jeszcze przed powstaniem zaginionej grupy) zachowa je u siebie i odtworzy.}; a jeżeli nie uległ awarii i przed odejściem wykonał operację przeniesienia danych do innej grupy\footnote{Operacji przeniesienia danych nie specyfikuje protokoł Statycznych Grup. Podobnie jak w przypadku protokołu Chord, za ową, ewntualną operację przeniesienia odpowiedzialna jest aplikacja.}, ponoszone są koszty owego przeniesienia. 
+
+\subsection{Stabilność węzła}
+\label{stabilnosc_wezla}
+
+Aby uniknąć sytuacji opisanej w powyższym paragrafie, w której to nowe węzły tworzą nową grupę, by po chwili opuścić sieć, protokół Statycznych Grup stosuje politykę, która nakłada ograniczenie na powoływanie do życia nowych grup. Mianowicie, tylko węzły określone jako stabilne mogą tworzyć nowe grupy. Reszta węzłów może jedynie dołączać do grup już istniejących. Wyjątkiem jest sytuacja, gdy wszystkie grupy w sieci są już przepełnione, tzn. posiadają maksymalną liczbę członków, która jest określona odpowiednim parametrem. Protokół Statycznych Grup nie specyfikuje sposobu określania stabilności węzła, pozostawiając wolność w tej kwestii. Przykładowo, stabilność węzła mogła by być określana na podstawie jego historii bycia członkiem sieci, która mogła by być zapisywana u niego lokalnie, na innych węzłach (sąsiednich, lub specjalnych - wyróżnionych), bądź przy użyciu jakiegoś serwisu zewnętrznego. Ponadto, do określania stabilności, mogłyby być brane pod uwagę parametry węzła, takie jak jego opóźnienia komunikacyjne, przepustowość jaką dysponuje, czy nawet sposób łączenia się do sieci (połączenia bezprzewodowe z reguły są mniej stabilne).
+
+\subsection{Replikacja}
+Głównym celem grupowania węzłów jest replikacja danych między nimi. Dzięki abstrakcji, którą zapewniają grupy węzłów, SG może działać na wzór Chorda, jednocześnie zapewniając środowisko do replikacji, lecz abstrachując od konkretnego sposobu powielania danych. Zalecane jest, aby wszystkie węzły danej grupy, replikowały wszystkie dane, za które są odpowiedzialne, aczkolwiek nie jest to wymagane. Również sposób uspójniania danych pomiędzy replikami nie jest wyspecyfikowany i zależy od konkretnej implementacji. Dzięki temu, można dostrajać różne parametry systemu, takie jak skalowalność, czy koszty związane z utrzymywaniem replik.
+
+\section{Opis szczegółowy}
+
+Aby szczegółowiej opisać działanie protokołu Statycznych Grup, w podrozdziale tym przedstawiony i omówiony jest pseudokod opisujący logikę działania protokołu. Schemat działania zbliżony jest do omówionego już protokołu Chord i w dużej mierze się pokrywa. Istotne różnice pojawiają się w momencie dołączania węzła do sieci, gdzie potrzebna jest dodatkowa logika oraz funkcje odpowiedzialne za znalezienie odpowiedniej grupy. Zmiany wprowadza również dodatkowa struktura reprezentująca grupę węzłów, przez którą można wywoływać zdalne metody. Ponadto dochodzi okresowe sprawdzanie poprawności członków grupy.
+
+\subsection{Struktury i parametry}
+
+Bardzo ważnym elementem w SG jest przedstawiona na listingu \ref{lst:sg_group} struktura \texttt{Group}. Reprezentuje ona zbiór węzłów tworzących jedną grupę. Składa się z identyfikatora grupy \texttt{id}, oraz listy adresów \texttt{addresses} wszystkich jej członków. Poprzez obiekt owej struktury, można odwołać się do węzła danej grupy. W listingach wywołanie zdalnej metody na którymś członku grupy\footnote{Wybór członka, który wykona zdalną metodę zależny jest od implementacji. Sugerowane jest aby był to czlonek losowy. Możliwa jest również taka implementacja, w której to wszyscy członkowie grupy wykonują zdalną metodę.} oznaczane jest symbolem \texttt{->}. Przykładowo \texttt{group->find\_successor(3)} oznacza wywołanie zdalej metody \texttt{find\_successor(3)} na członku grupy \texttt{group}.
+
+Istotnym, w kontekście protokołu Chord, typem złożonym, jest struktura \texttt{Finger} przedstawiona na listingu \ref{lst:sg_finger}. Reprezentuje ona pojedynczy wpis w tablicy trasowania, który składa się z numeru \texttt{i}, początku zakresu kluczy \texttt{start}, końcu zakresu kluczy \texttt{end} oraz grupy \texttt{group} odpowiedzialnej za dany zakres kluczy.
+
+\lstinputlisting[caption={Pseudokod struktury reprezentującej grupę węzłów.}, captionpos=b, label={lst:sg_group}, float=h]{sg_group.txt}
+
+\lstinputlisting[caption={Pseudokod struktury reprezentującej pojedynczy wpis w tablicy trasowania.}, captionpos=b, label={lst:sg_finger}, float=h]{sg_finger.txt}
+
+\lstinputlisting[caption={Pseudokod struktury reprezentującej węzeł.}, captionpos=b, label={lst:sg_node}, float=h]{sg_node.txt}
+
+Główną jednostką protokołu jest struktura węzła, której pseudokod przedstawiony jest na listingu \ref{lst:sg_node}. Widać, że węzeł składa się ze zmiennej \texttt{next}, adresu \texttt{address}, obiektów grupy \texttt{group}, poprzednika \texttt{predecessor} i następnika \texttt{succe}-\texttt{ssor}, oraz tablicy trasowania \texttt{fingerTable}. Zmienna \texttt{next} wykorzystywana jest w procedurze \texttt{fixFingers} (listing x) i oznacza indeks następnego wpisu w tablicy trasowania do sprawdzenia. Adres zawiera unikalny adres danego węzła, przez który inne węzły mogą się z nim komunikować (najczęściej jest to adres IP). Węzły należące do tej samej grupy uspójniają między sobą pola \texttt{fingerTable}, \texttt{group}, \texttt{successor} i \texttt{predecessor}.
+
+Istotnym elementem wpływającym na działanie protokołu Statycznych Grup są trzy parametry: \texttt{M} - oznaczający, podobnie jak w protokole Chord, liczbę bitów przeznaczonych na pojedynczy identyfikator oraz liczbę wpisów w tablicy trasowania, \texttt{MAX\_GROUP\_SIZE} - mówiący o maksymalnej liczbie węzłów, które mogą tworzyć jedną grupę, oraz \texttt{STABILITY\_REQUIREMENT} - wymagany poziom stabilności do utworzenia nowej grupy.
+
+\subsection{Lokalizacja grupy odpowiedzialnej za klucz}
+
+Podobnie jak w protokole Chord, główną operacją SG jest lookup, czyli odnalezienie lokalizacji określonego obiektu. Operacja ta różni się jednak od tej z protokołu Chord (patrz paragraf \ref{odnajdywanie_lokalizacji_klucza}) tym, że szukana jest grupa węzłów, a nie pojedynczy węzeł. Za operację lookup odpowiedzialna jest funkcja \texttt{find\_successor} pokazana na listingu \ref{lst:sg_find_successor}. Działa ona analogicznie jak jej odpowiednik w protokole Chord i korzysta z funkcji \texttt{closest\_preceding\_group} pokazanej na listingu \ref{lst:sg_closest_preceding_group}, która również ma swojego odpowiednika w protokole Chord (\texttt{closest\_preceding\_node}).
+
+\lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie lokalizacji obiektu o danym identyfikatorze.}, captionpos=b, label={lst:sg_find_successor}, float=h]{sg_find_successor.txt}
+
+\lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie najwyższego poprzednika obiektu o danym identfikatorze z tablicy trasowania.}, captionpos=b, label={lst:sg_closest_preceding_group}, float=h]{sg_closest_preceding_group.txt}
+
+\subsection{Dołączanie do sieci}
+
+Węzeł chcąc być członkiem pierścienia SG, może stworzyć własny, bądź połączyć się poprzez węzeł będący już w istniejącym pierścieniu. Pokazuje to listing \ref{lst:sg_start}, na którym przedstawiona jest procedura \texttt{start}, która działa w nastepujący sposób: jeżeli nie podano adresu \texttt{addr}, z którym węzeł \texttt{n} ma się połączyć, to wywołuje on procedurę \texttt{create} (listing \ref{lst:sg_create}), tworząc nowy pierścień; w przeciwnym wypadku określana jest stabilność węzła \texttt{stability} (patrz paragraf \ref{stabilnosc_wezla}) i jeżeli jest wystarczająca (porównanie z parametrem \texttt{STABILITY\_REQUIREMENT} w lini 6), to węzeł dołącza do istniejącej sieci tworząc nową grupę przy pomocy procedury \texttt{join} (listing \ref{lst:sg_join}); jeżeli jednak węzeł nie spełnia wymogów stabilności, to wywołuje zdalną procedurę \texttt{find\_group\_to\_join} (listing \ref{lst:sg_find_group_to_join}) na węźle reprezentowanym przez adres \texttt{addr}, która zwraca obiekt grupy, do której węzeł \texttt{n} może się dołączyć, używając do tego procedury \texttt{join\_to\_group}; jeśli jednak węzeł \texttt{addr} zwróci pusty obiekt \texttt{null}, to \texttt{n} wywołuje procedurę \texttt{join}, tworząc nową grupę. 
+
+\lstinputlisting[caption={Pseudokod procedury dołączania węzła do istniejącego pierścienia, bądź utworzenie własnego.}, captionpos=b, label={lst:sg_start}, float=h]{sg_start.txt}
+
+\lstinputlisting[caption={Pseudokod procedury utworzenia własnego pierścienia.}, captionpos=b, label={lst:sg_create}, float=h]{sg_create.txt}
+
+\lstinputlisting[caption={Pseudokod procedury dołączenia do istniejącej sieci, przy pomocy węzła reprezentowanego przez adres \texttt{addr}, tworząc nową grupę.}, captionpos=b, label={lst:sg_join}, float=h]{sg_join.txt}
+
+\lstinputlisting[caption={Pseudokod procedury dołączenia węzła do istniejącej grupy \texttt{g}.}, captionpos=b, label={lst:sg_join_to_group}, float=h]{sg_join_to_group.txt}
+
+\lstinputlisting[caption={Pseudokod procedury dodania adresu do listy adresów węzłów w grupie.}, captionpos=b, label={lst:sg_add_address}, float=h]{sg_add_address.txt}
+
+Wartą omówienia jest funkcja \texttt{find\_group\_to\_join}, która zwraca wolną grupę do dołączenia. Zaimplementowana jest w taki sposób, aby znaleźć w obrębie zbioru grup, grupę najmniejszą. Owy zbiór składa się z grup będących w tablicach trasowania tych grup, które posiada w swojej tablicy trasowania węzeł \texttt{n}. Funkcja ta oczywiście mogła by być zaimplementowana w inny sposób, aby wybierała grupę na odmiennej zasadzie, biorąc pod uwagę inne parametry niż wielkość grupy, np. stabilność węzła, który ubiega się o dołączenie.
+
+\lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za zwrócenie grupy do dołączenia.}, captionpos=b, label={lst:sg_find_group_to_join}, float=h]{sg_find_group_to_join.txt}
+
+\lstinputlisting[caption={Pseudokod funkcji zwracającej najmniejszą grupę z grup w tablicy trasowania węzła \texttt{n}.}, captionpos=b, label={lst:sg_smallest_group_from_fingertable}, float=h]{sg_smallest_group_from_fingertable.txt}
+
+
+\subsection{Stabilizacja}
+
+Stablizacja węzłów, aby miały aktualne wskaźniki na następników, poprzedników oraz świeżą tablicę trasowania, przebiega w sposób analogiczny do protokołu Chord (patrz paragraf \ref{zmiany_w_sieci}). Dochodzi jednak procedura \texttt{check\_group} pokazana na listingu \ref{lst:sg_check_group}, w której to sprawdzana jest poprawność węzłów w grupie, aby mieć ich aktualną listę. 
+
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za weryfikację bezpośredniego nastepnika \texttt{successor} grupy węzła \texttt{n}, oraz powiadomienie jej o jego grupie \texttt{group}.}, captionpos=b, label={lst:sg_stabilize}, float=h]{sg_stabilize.txt}
+
+\lstinputlisting[caption={Pseudokod procedury odpowiedzialnej za ewentualną aktualizację poprzednika grupy.}, captionpos=b, label={lst:sg_notify}, float=h]{sg_notify.txt}
+
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za aktualizację wpisów w tablicy trasowania.}, captionpos=b, label={lst:sg_fix_fingers}, float=h]{sg_fix_fingers.txt}
+
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za wyzerowanie wskaźnika na poprzednika \texttt{predecessor} w przypadku braku odpowiedzi od jakiegokolwiek węzła tej grupy.}, captionpos=b, label={lst:sg_check_predecessor}, float=h]{sg_check_predecessor.txt}
+
+\lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za weryfikację poprawności węzłów tworzących grupę.}, captionpos=b, label={lst:sg_check_group}, float=h]{sg_check_group.txt}
 
 \chapter{Testy symulacyjne}
 
@@ -417,7 +496,7 @@ Polityka nazwana \textit{Hotter-on-Ephemeral} polega na dołączaniu najbardziej
 \item analiza
 \end{itemize}
 
-%\begin{comment}
+\begin{comment}
 \begin{figure}[H]
 \floatstyle{boxed}
 \centering
@@ -425,13 +504,13 @@ Polityka nazwana \textit{Hotter-on-Ephemeral} polega na dołączaniu najbardziej
 \caption{Przykładowa sieć.}
 \label{fig:links}
 \end{figure}
-%\end{comment}
+\end{comment}
 
 
 \chapter{Podsumowanie}
 
 \begin{itemize}
-\item o czym byla praca, czy cel osiagniety, czy spoko wyniki, dalsze rozwiazania
+\item o czym byla praca, czy cel osiagniety, czy spoko wyniki, dalsze rozwiazania, co można ulepszyc (parametr stability żeby znalesc dobrą grupę; inaczej szukac grupy do dolaczenia)
 \end{itemize}
 
 

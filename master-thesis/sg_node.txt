@@ -1,0 +1,7 @@
+Node:
+	Int next
+	String address
+	Finger[] fingerTable
+	Group group
+	Group successor
+	Group predecessor

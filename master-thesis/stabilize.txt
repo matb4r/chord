@@ -1,5 +1,5 @@
 n.stabilize():
-	x = successor.predecessor
-	if x $\in$ (n, successor)
-		successor = x
+	p = successor.predecessor
+	if p $\in$ (n, successor)
+		successor = p
 	successor.notify(n)
