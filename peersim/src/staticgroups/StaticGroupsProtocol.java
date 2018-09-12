@@ -16,13 +16,13 @@ public class StaticGroupsProtocol implements CDProtocol {
     private static final String PAR_PROT = "protocol";
     private static final String PAR_M = "M";
     private static final String PAR_MAX_GROUP_SIZE = "MAX_GROUP_SIZE";
-    private static final String PAR_STABILITY_RESTRICTION = "STABILITY_RESTRICTION";
+    private static final String PAR_STABILITY_REQUIREMENT = "STABILITY_REQUIREMENT";
     private static final String PAR_UPDATING_WHOLE_GROUP = "UPDATING_WHOLE_GROUP";
 
     public static int pid;
     public static int M = 0;
     public static int MAX_GROUP_SIZE = 0;
-    public static double STABILITY_RESTRICTION = 0;
+    public static double STABILITY_REQUIREMENT = 0;
     public static boolean UPDATING_WHOLE_GROUP = false;
 
     public String address;
@@ -38,7 +38,7 @@ public class StaticGroupsProtocol implements CDProtocol {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         M = Configuration.getInt(prefix + "." + PAR_M);
         MAX_GROUP_SIZE = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
-        STABILITY_RESTRICTION = Configuration.getDouble(prefix + "." + PAR_STABILITY_RESTRICTION);
+        STABILITY_REQUIREMENT = Configuration.getDouble(prefix + "." + PAR_STABILITY_REQUIREMENT);
         UPDATING_WHOLE_GROUP = Configuration.contains(prefix + "." + PAR_UPDATING_WHOLE_GROUP);
     }
 
@@ -55,7 +55,7 @@ public class StaticGroupsProtocol implements CDProtocol {
             create();
         } else {
             float stability = calculateStability();
-            if (stability >= STABILITY_RESTRICTION) {
+            if (stability >= STABILITY_REQUIREMENT) {
                 join();
             } else {
                 Group g = nodeInRing.findGroupToJoin(stability);

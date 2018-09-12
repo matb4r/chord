@@ -49,7 +49,7 @@ public class StaticGroupsMetrics implements Control {
         System.out.println("random add probability: " + RandomDynamicNetwork.randomAddProbability);
         System.out.println("M: " + StaticGroupsProtocol.M);
         System.out.println("max group size: " + StaticGroupsProtocol.MAX_GROUP_SIZE);
-        System.out.println("stability restriction: " + StaticGroupsProtocol.STABILITY_RESTRICTION);
+        System.out.println("stability requirement: " + StaticGroupsProtocol.STABILITY_REQUIREMENT);
         System.out.println("started " + started);
         System.out.println("stopped " + stopped);
         System.out.println("time: " + stopped.minusNanos(started.toNanoOfDay()));
