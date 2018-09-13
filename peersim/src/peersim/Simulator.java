@@ -24,6 +24,7 @@ import peersim.cdsim.*;
 import peersim.config.*;
 import peersim.core.*;
 import peersim.edsim.*;
+import staticgroups.StaticGroupsMetrics;
 
 
 /**
@@ -171,6 +172,7 @@ public static void main(String[] args)
 
 		for(int k=0; k<exps; ++k)
 		{
+			StaticGroupsMetrics.actualExperiment = k;
 			if( k>0 )
 			{
 				long seed = CommonState.r.nextLong();

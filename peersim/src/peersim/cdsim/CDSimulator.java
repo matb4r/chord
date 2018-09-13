@@ -18,13 +18,13 @@
 
 package peersim.cdsim;
 
-import staticgroups.GraphDrawer;
-import staticgroups.StaticGroupsMetrics;
-import staticgroups.StaticGroupsTests;
 import peersim.config.Configuration;
 import peersim.core.*;
+import staticgroups.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * This is the cycle driven simulation engine. It is a fully static
@@ -203,6 +203,7 @@ public class CDSimulator {
         System.out.println("-------------------- CDSimulator: running initializers");
         StaticGroupsMetrics.executeOnStart();
         runInitializers();
+        nextExperimentChanges();
 
         // main cycle
         loadControls();
@@ -237,7 +238,25 @@ public class CDSimulator {
         StaticGroupsMetrics.executeOnEnd();
         // stworz graf i zapisz do pliku
         GraphDrawer.drawGraph();
+        // zresetuj przed uruchomieniem nastepnego eksperymentu
+        resetSimulation();
+    }
 
+    private static void resetSimulation() {
+        Utils.NODES = new ArrayList<>();
+        Utils.GROUPS = new HashMap<>();
+        StaticGroupsMetrics.badFingerTableCounter = 0;
+        StaticGroupsMetrics.badPredecessorsCounter = 0;
+        StaticGroupsMetrics.badSuccessorsCounter = 0;
+        StaticGroupsMetrics.exceptionsCounter = 0;
+        StaticGroupsMetrics.actualCycle = 0;
+        StaticGroupsMetrics.maxNetSize = Integer.MIN_VALUE;
+        StaticGroupsMetrics.minNetSize = Integer.MAX_VALUE;
+        StaticGroupsMetrics.badNodes = new ArrayList<>();
+    }
+
+    private static void nextExperimentChanges() {
+        StaticGroupsProtocol.STABILITY_REQUIREMENT += 0.1 * StaticGroupsMetrics.actualExperiment;
     }
 
 }

@@ -4,6 +4,7 @@ import peersim.cdsim.CDSimulator;
 import peersim.core.Control;
 import peersim.core.Network;
 
+import java.math.BigInteger;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ public class StaticGroupsMetrics implements Control {
     public static int badSuccessorsCounter = 0;
     public static int badFingerTableCounter = 0;
     public static int actualCycle = 0;
+    public static int actualExperiment = 0;
 
     public static LocalTime started;
     public static LocalTime stopped;
@@ -21,7 +23,7 @@ public class StaticGroupsMetrics implements Control {
     public static int minNetSize = Integer.MAX_VALUE;
 
 
-    static ArrayList<StaticGroupsProtocol> badNodes = new ArrayList<>();
+    public static ArrayList<StaticGroupsProtocol> badNodes = new ArrayList<>();
 
     public StaticGroupsMetrics(String prefix) {
     }
@@ -62,6 +64,21 @@ public class StaticGroupsMetrics implements Control {
             System.out.println("bad successors count: " + badSuccessorsCounter);
             System.out.println("bad finger table count: " + badFingerTableCounter);
         }
+        System.out.println(avgGroupSizeToStabilityRequirement());
+    }
+
+    private static String avgGroupSizeToStabilityRequirement() {
+        return "(" + StaticGroupsProtocol.STABILITY_REQUIREMENT + "," + calculateAvgGroupSize() + ")";
+    }
+
+    private static double calculateAvgGroupSize() {
+        double sum = 0;
+        int i = 0;
+        for (BigInteger id : Utils.GROUPS.keySet()) {
+            sum += Utils.GROUPS.get(id).size();
+            i++;
+        }
+        return sum / i;
     }
 
 }
