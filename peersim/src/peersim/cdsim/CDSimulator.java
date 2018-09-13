@@ -203,7 +203,7 @@ public class CDSimulator {
         System.out.println("-------------------- CDSimulator: running initializers");
         StaticGroupsMetrics.executeOnStart();
         runInitializers();
-        nextExperimentChanges();
+        if (StaticGroupsMetrics.actualExperiment > 0) nextExperimentChanges();
 
         // main cycle
         loadControls();

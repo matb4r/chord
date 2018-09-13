@@ -2,6 +2,8 @@ package staticgroups;
 
 import peersim.core.Control;
 
+import java.math.BigInteger;
+
 public class StaticGroupsMaintainer implements Control {
 
     public StaticGroupsMaintainer(String prefix) {
@@ -15,7 +17,8 @@ public class StaticGroupsMaintainer implements Control {
     }
 
     public static void fixNodes(boolean fixAllFingers, boolean checkSuccessor) {
-        for (StaticGroupsProtocol node : Utils.NODES) {
+        for (BigInteger id : Utils.GROUPS.keySet()) {
+            StaticGroupsProtocol node = Utils.getFirstNodeById(id);
             if (checkSuccessor)
                 node.checkSuccessor();
             node.checkPredecessor();

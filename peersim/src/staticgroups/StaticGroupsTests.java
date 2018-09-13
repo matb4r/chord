@@ -27,17 +27,23 @@ public class StaticGroupsTests implements Control {
                 System.out.print(i + ", ");
                 if (predecessorTest(Utils.NODES.get(i)) == false) {
                     StaticGroupsMetrics.badPredecessorsCounter++;
+                    if (!StaticGroupsMetrics.badGroupes.contains(Utils.NODES.get(i).group))
+                        StaticGroupsMetrics.badGroupes.add(Utils.NODES.get(i).group);
                     if (!StaticGroupsMetrics.badNodes.contains(Utils.NODES.get(i)))
                         StaticGroupsMetrics.badNodes.add(Utils.NODES.get(i));
                 }
                 if (successorTest(Utils.NODES.get(i)) == false) {
                     StaticGroupsMetrics.badSuccessorsCounter++;
+                    if (!StaticGroupsMetrics.badGroupes.contains(Utils.NODES.get(i).group))
+                        StaticGroupsMetrics.badGroupes.add(Utils.NODES.get(i).group);
                     if (!StaticGroupsMetrics.badNodes.contains(Utils.NODES.get(i)))
                         StaticGroupsMetrics.badNodes.add(Utils.NODES.get(i));
                 }
                 for (int j = 0; j < StaticGroupsProtocol.M; j++) {
                     if (fingersTest(Utils.NODES.get(i), j) == false) {
                         StaticGroupsMetrics.badFingerTableCounter++;
+                        if (!StaticGroupsMetrics.badGroupes.contains(Utils.NODES.get(i).group))
+                            StaticGroupsMetrics.badGroupes.add(Utils.NODES.get(i).group);
                         if (!StaticGroupsMetrics.badNodes.contains(Utils.NODES.get(i)))
                             StaticGroupsMetrics.badNodes.add(Utils.NODES.get(i));
                         break;

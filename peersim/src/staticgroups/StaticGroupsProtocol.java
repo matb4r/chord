@@ -54,17 +54,26 @@ public class StaticGroupsProtocol implements CDProtocol {
         if (nodeInRing == null) {
             create();
         } else {
+//            float stability = calculateStability();
+//            if (stability >= STABILITY_REQUIREMENT) {
+//                join();
+//            } else {
+//                Group g = nodeInRing.findGroupToJoin(stability);
+//                if (g == null) {
+//                    join();
+//                } else {
+//                    joinToGroup(g);
+//                }
+//            }
+
             float stability = calculateStability();
-            if (stability >= STABILITY_REQUIREMENT) {
+            Group g = nodeInRing.findGroupToJoin();
+            if (g == null || (stability >= STABILITY_REQUIREMENT && g.addresses.size() >= 8)) {
                 join();
             } else {
-                Group g = nodeInRing.findGroupToJoin(stability);
-                if (g == null) {
-                    join();
-                } else {
-                    joinToGroup(g);
-                }
+                joinToGroup(g);
             }
+
         }
         addNode(this);
         System.out.println("Node " + address + " added");
@@ -89,7 +98,7 @@ public class StaticGroupsProtocol implements CDProtocol {
         return CommonState.r.nextFloat();
     }
 
-    public Group findGroupToJoin(float stability) {
+    public Group findGroupToJoin() {
         Group smallestGroup = getFirstNodeById(fingerTable[0].group.id).smallestGroupFromFingerTable();
         for (int i = 1; i < M; i++) {
             Group g = getFirstNodeById(fingerTable[i].group.id).smallestGroupFromFingerTable();
@@ -125,7 +134,7 @@ public class StaticGroupsProtocol implements CDProtocol {
         group = g;
         address = generateUniqueAddress(g.id, M);
         g.addresses.add(address);
-        updateIps(g.id, g.addresses);
+        updateAddresses(g.id, g.addresses);
         StaticGroupsProtocol firstNodeById = getFirstNodeById(g.id);
         fingerTable = firstNodeById.fingerTable;
         predecessor = firstNodeById.predecessor;
@@ -229,7 +238,7 @@ public class StaticGroupsProtocol implements CDProtocol {
                 it.remove();
             }
         }
-        if (UPDATING_WHOLE_GROUP) updateIps(group.id, group.addresses);
+        if (UPDATING_WHOLE_GROUP) updateAddresses(group.id, group.addresses);
     }
 
     public void checkSuccessor() {

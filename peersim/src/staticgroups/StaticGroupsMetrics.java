@@ -24,6 +24,7 @@ public class StaticGroupsMetrics implements Control {
 
 
     public static ArrayList<StaticGroupsProtocol> badNodes = new ArrayList<>();
+    public static ArrayList<Group> badGroupes = new ArrayList<>();
 
     public StaticGroupsMetrics(String prefix) {
     }
@@ -51,6 +52,8 @@ public class StaticGroupsMetrics implements Control {
         System.out.println("random add probability: " + RandomDynamicNetwork.randomAddProbability);
         System.out.println("M: " + StaticGroupsProtocol.M);
         System.out.println("max group size: " + StaticGroupsProtocol.MAX_GROUP_SIZE);
+        System.out.println("average group size: " + calculateAvgGroupSize());
+        System.out.println("number of groups: " + Utils.GROUPS.size());
         System.out.println("stability requirement: " + StaticGroupsProtocol.STABILITY_REQUIREMENT);
         System.out.println("started " + started);
         System.out.println("stopped " + stopped);
@@ -59,12 +62,13 @@ public class StaticGroupsMetrics implements Control {
         System.out.println("max net size: " + maxNetSize);
         System.out.println("Exceptions count: " + exceptionsCounter);
         if (StaticGroupsTests.test) {
+            System.out.println("bad groupes count: " + badGroupes.size());
             System.out.println("bad nodes count: " + badNodes.size());
             System.out.println("bad predecessor count: " + badPredecessorsCounter);
             System.out.println("bad successors count: " + badSuccessorsCounter);
             System.out.println("bad finger table count: " + badFingerTableCounter);
         }
-        System.out.println(avgGroupSizeToStabilityRequirement());
+//        System.out.println(avgGroupSizeToStabilityRequirement());
     }
 
     private static String avgGroupSizeToStabilityRequirement() {

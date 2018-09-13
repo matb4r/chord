@@ -100,7 +100,7 @@ public class Utils {
         }
     }
 
-    public static void updateIps(BigInteger id, ArrayList<String> ips) {
+    public static void updateAddresses(BigInteger id, ArrayList<String> ips) {
         ArrayList<StaticGroupsProtocol> nodes = GROUPS.get(id);
         if (nodes != null)
             for (StaticGroupsProtocol n : nodes) {
