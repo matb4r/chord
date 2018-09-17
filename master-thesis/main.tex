@@ -438,7 +438,7 @@ Podobnie jak w protokole Chord, główną operacją SG jest lookup, czyli odnale
 
 \subsection{Dołączanie do sieci}
 
-Węzeł może dołączyć do istniejącego pierścienia Statycznych Grup dzięki węzłowi będącemu już w istniejącym pierścieniu, bądź może stworzyć nowy pierścień. Pokazuje to listing \ref{lst:sg_start}, na którym przedstawiona jest procedura \texttt{start}, która działa w następujący sposób: jeżeli nie podano adresu \texttt{addr}, z którym węzeł \texttt{n} ma się połączyć, to wywołuje on procedurę \texttt{create} (listing \ref{lst:sg_create}), tworząc nowy pierścień. W przeciwnym wypadku, węzeł \texttt{n} wywołuje zdalną procedurę \texttt{find\_group\_to\_join} (listing \ref{lst:sg_find_group_to_join}) na węźle reprezentowanym przez adres \texttt{addr}, która zwraca obiekt grupy \texttt{g}. Węzeł \texttt{n} tworzy nową grupę, jeżeli węzeł \texttt{addr} zwróci pusty obiekt \texttt{null}, lub gdy wartość stabilności \texttt{stability} węzła \texttt{n} jest większa lub równa parametrowi \texttt{STABILITY\_REQUIREMENT} i jednocześnie rozmiar grupy \texttt{g} jest większy lub równy połowie wartości parametru \texttt{MAX\_GROUP\_SIZE}. Jeżeli tak nie jest, to węzeł \texttt{n} dołącza do grupy \texttt{g}. Dzięki takiej logice, nowe grupy tworzone są tylko przez węzły stabilne, lub gdy nie ma wolnej grupy do dołączenia; jednocześnie, jeżeli zaproponowana grupa \texttt{g} jest mała (jej rozmiar jest mniejszy od połowy wartości parametru \texttt{MAX\_GROUP\_SIZE}) to węzeł stabilny zamiast stworzyć nową grupę, dołaczą do \texttt{g}.
+Węzeł może dołączyć do istniejącego pierścienia Statycznych Grup dzięki węzłowi będącemu już w istniejącym pierścieniu, bądź może stworzyć nowy pierścień. Pokazuje to listing \ref{lst:sg_start}, na którym przedstawiona jest procedura \texttt{start}, która działa w następujący sposób: jeżeli nie podano adresu \texttt{addr}, z którym węzeł \texttt{n} ma się połączyć, to wywołuje on procedurę \texttt{create} (listing \ref{lst:sg_create}), tworząc nowy pierścień. W przeciwnym wypadku, węzeł \texttt{n} wywołuje zdalną procedurę \texttt{find\_group\_to\_join} (listing \ref{lst:sg_find_group_to_join}) na węźle reprezentowanym przez adres \texttt{addr}, która zwraca obiekt grupy \texttt{g}. Węzeł \texttt{n} tworzy nową grupę, jeżeli węzeł \texttt{addr} zwróci pusty obiekt \texttt{null}, lub gdy wartość stabilności \texttt{stability} węzła \texttt{n} jest większa lub równa parametrowi \texttt{STABILITY\_REQUIREMENT} i jednocześnie rozmiar grupy \texttt{g} jest większy lub równy połowie wartości parametru \texttt{MAX\_GROUP\_SIZE}. Jeżeli tak nie jest, to węzeł \texttt{n} dołącza do grupy \texttt{g}. Dzięki takiej logice, nowe grupy tworzone są tylko przez węzły stabilne, lub gdy nie ma wolnej grupy do dołączenia; jednocześnie, jeżeli zaproponowana grupa \texttt{g} jest mała (jej rozmiar jest mniejszy od połowy wartości parametru \texttt{MAX\_GROUP\_SIZE}) to węzeł stabilny zamiast stworzyć nową grupę, dołaczą do \texttt{g}. Zapobiega to tworzeniu nowych grup w przypadku, gdy inne grupy są małe.
 
 \lstinputlisting[caption={Pseudokod procedury dołączania węzła do istniejącego pierścienia, bądź utworzenie własnego pierścienia.}, captionpos=b, label={lst:sg_start}, float=!h]{sg_start.txt}
 
@@ -480,6 +480,8 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 \item wyniki
 \item analiza
 \end{itemize}
+
+\begin{comment}
 
 \begin{figure}[H]
 \captionsetup{labelformat=empty}
@@ -612,6 +614,7 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 \caption{Wykres x.y: Czas potrzebny na obsłużenie zmian w sieci w stosunku do liczby węzłów.}
 \end{figure}
 
+\end{comment}
 
 \begin{comment}
 \begin{figure}[H]
