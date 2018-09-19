@@ -146,16 +146,16 @@ English abstract
 
 System Peer-to-Peer (P2P) \cite{bib:martins, bib:jeyasheeli, bib:chord} jest z definicji systemem w którym wszystkie węzły tworzące sieć są równoważne w sensie funkcjonalnym i pełnią rolę zarówno klienta jak i serwera. Każdy węzeł może bezpośrednio nawiązywać połączenie z innym. Brak jest centralnego serwera który np. byłby głównym magazynem danych, bądź pośredniczyłby w komunikacji. Założenia te rodzą wiele problemów i ograniczeń, dlatego też budując komercyjne systemy P2P często odchodzi się od tej definicji wyróżniając specjalne węzły, które pełnią dodatkowe funkcje.
 
-Rozdział ten pokazuje tło, na którym powstał protokół Statycznych Grup, wskazuje na pojawiające się problemy i wyzwania które należy podjąć, wskazuje istotność replikacji oraz opisuje różne budowy systemów P2P.
+Rozdział ten opisuje model systemu, dla którego powstał zaproponowany w niniejszej pracy magisterskiej protokół Statycznych Grup, wskazuje na pojawiające się problemy i wyzwania które należy podjąć, wskazuje istotność replikacji oraz opisuje różne budowy systemów P2P.
 
 \section{Problemy i wyzwania}
 
-Każdy system dużej skali stoi przed wieloma problemami. Jednym z bardziej istotnych jest problem awarii różnych części systemu. W odróżnieniu od wysoce niezawodnych systemów rozproszonych, systemy P2P często składają się z niepewnych węzłów, które nieraz pracują w niestabilnych warunkach (np. łączą się z siecią poprzez niestabilne łącze), czy dołączają do sieci tylko na pewien okres czasu \cite{bib:paiva}. W owej pracy zjawisko częstego rozłączania węzłów z sieci będzie nazywane \textit{odpływem}, natomiast zjawisko częstego dołączania węzłów do sieci \textit{przypływem}.
+Każdy system dużej skali stoi przed wieloma problemami. Jednym z bardziej istotnych jest problem awarii różnych części systemu. W odróżnieniu od wysoce niezawodnych systemów rozproszonych, systemy P2P często składają się z niepewnych węzłów, które nieraz pracują w niestabilnych warunkach (np. łączą się z siecią poprzez niestabilne łącze), czy dołączają do sieci tylko na pewien okres czasu \cite{bib:paiva}. W owej pracy zjawisko częstego odłączania węzłów od sieci będzie nazywane \textit{odpływem}, natomiast zjawisko częstego dołączania węzłów do sieci \textit{przypływem}.
 
-Systemy Peer-to-Peer różnią się od systemów rozproszonych tym, że przypływy i odpływy są w nich częstym zjawiskiem, a więc topologia sieci, która składa się z węzłów, nieustannie się zmienia. Skonstruowanie więc poprawnego i efektywnego systemu P2P jest zadaniem trudnym. System taki powinien spełniać szereg własności. Wybrane własności ważne z perspektywy zarządzania danymi \cite{bib:martins} są następujące:
+Systemy Peer-to-Peer różnią się od systemów rozproszonych tym, że przypływy i odpływy są w nich częstym zjawiskiem, a więc topologia sieci, która składa się z wielu węzłów, nieustannie się zmienia. Skonstruowanie poprawnego i efektywnego systemu P2P jest zadaniem trudnym. System taki powinien spełniać szereg własności. Wybrane własności ważne z perspektywy zarządzania danymi \cite{bib:martins} są następujące:
 \begin{itemize}
 \item Dostępność: węzły powinny w każdym momencie mieć dostęp do potrzebnych danych.
-\item Autonomia: węzły powinny móc dołączać i rozłączać się z sieci w każdej chwili, nie tworząc przy tym dodatkowych problemów, takich jak ograniczanie dostępności do danych.
+\item Autonomia: węzły powinny móc dołączać do sieci i odłączać od sieci w każdej chwili, nie tworząc przy tym dodatkowych problemów, takich jak ograniczanie dostępności do danych.
 \item Wydajność: system powinien efektywnie wykorzystywać dostępne zasoby sieci (np. przepustowość, czy moc obliczeniową).
 \item Jakość usług: z perspektywy użytkownika system powinien być wysokiej jakości, tzn. wyniki winne być kompletne, dane spójne i zawsze dostępne, a czas odpowiedzi powinien być krótki.
 \item Odporność na awarie: ewentualne awarie, które się zdarzają, nie powinny mieć wpływu na wydajność, czy jakość usługi.
@@ -187,7 +187,7 @@ Systemy P2P wykorzystują do działania sieć nakładkową (ang. \textit{overlay
 W sieciach nieustrukturyzowanych, sieć nakładkowa jest budowana ad hoc w sposób niedeterministyczny. Rozmieszczenie danych jest zupełnie niezależne od topologii sieci nakładkowej, a każdy węzeł wie jedynie o swoich sąsiadach, aczkolwiek nie jest poinformowany o zasobach jakie posiadają. Mechanizmy wyszukiwania są z reguły proste, acz kosztowne. Przykładem może być mechanizm zalewania sieci zapytaniami o dany zasób, które krążą po sieci dopóki żądany zasób nie zostanie odnaleziony. Innym, nieco bardziej wyrafinowanym i wydajnym sposobem jest przesyłanie kilku równoległych zapytań, które każde jest przesyłane między węzłami w taki sposób, że jeden węzeł przesyła dalej zapytanie tylko do swojego jednego sąsiada. Z tego typu sieci nakładkowej korzystają m.in. takie systemy P2P jak Gnutella \cite{bib:gnutella}, Kazaa \cite{bib:kazaa}, czy FreeHaven \cite{bib:freehaven}. Jednym z największych wad sieci nieustrukturalizowanych jest niska skalowalności, gdyż przy coraz to większej ilości węzłów w sieci, znalezienie danego zasobu jest coraz bardziej kosztowne. Odpowiedzią na ten problem jest sieć ustrukturalizowana.
 
 \subsection{Sieci ustrukturyzowane}
-W sieciach ustrukturalizowanych, lokalizacja zasobów w sieci jest deterministyczna. Każdy zasób posiada swój identyfikator, który jednocześnie wskazuje miejsce w sieci, w którym się znajduje. W sieciach tych często korzysta się z rozproszonych tablic mieszających (ang. \textit{distributed hash tables}, w skrócie DHT), które udostępniają interfejs do przechowywania i pobierania danych. Każdy obiekt danych posiada swój klucz, który jest jego identyfikatorem i jest zależny od wartości tego obiektu. Każdy węzeł odpowiedzialny jest za przechowywanie tych danych, których wartość kluczy mieści się w odpowiednim dla niego, ściśle określonym zakresie. Ponadto każdy węzeł ma informacje o pewnej liczbie innych węzłów w sieci (sąsiadów): przechowuje specjalne tablice trasowania w której przypisane są identyfikatory sąsiadów do odpowiednich adresów. Większość operacji dostępu do danych to operacje \textit{lookup}, czyli próby znalezienia lokalizacji jakiegoś obiektu. Operacja lookup najczęściej wykorzystywana jest do znalezienia adresu węzła odpowiedzialnego za dany zasób, dzięki czemu węzeł pytający może bezpośrednio nawiązać z nim komunikację. Aby skutecznie odnaleźć węzeł odpowiedzialny, pojedyncze wywołanie tej operacji może skutkować kilkoma przeskokami żądania pomiędzy sąsiadami. Ponieważ każdy węzeł jest odpowiedzialny za pewien zakres kluczy oraz współtworzy system trasowania, autonomia pojedynczego węzła jest mocno ograniczona. Jest to największą wadą sieci ustrukturalizowanych, gdyż każde dołączenie, bądź rozłączenie węzła zaburza strukturę sieci, co skutkuje potrzebą przeprowadzenia jej rekonstrukcji. Przykładami tego typu sieci są takie systemy jak Chord (więcej o protokole Chord w rozdziale \ref{rozdzial_chord}), Pastry \cite{bib:pastry}, czy Pier \cite{bib:pier}. Zaproponowany w tej pracy protokół Statycznych Grup opiera się na rozszerzeniu protokołu Chord, a więc jest przykładem sieci ustrukturyzowanej.
+W sieciach ustrukturalizowanych, lokalizacja zasobów w sieci jest deterministyczna. Każdy zasób posiada swój identyfikator, który jednocześnie wskazuje miejsce w sieci, w którym się znajduje. W sieciach tych często korzysta się z rozproszonych tablic mieszających (ang. \textit{distributed hash tables}, w skrócie DHT), które udostępniają interfejs do przechowywania i pobierania danych. Każdy obiekt danych posiada swój klucz, który jest jego identyfikatorem i jest zależny od wartości tego obiektu. Każdy węzeł odpowiedzialny jest za przechowywanie tych danych, których wartość kluczy mieści się w odpowiednim dla niego, ściśle określonym zakresie. Ponadto każdy węzeł ma informacje o pewnej liczbie innych węzłów w sieci (sąsiadów): przechowuje specjalne tablice trasowania w której przypisane są identyfikatory sąsiadów do odpowiednich adresów. Większość operacji dostępu do danych to operacje \textit{lookup}, czyli próby znalezienia lokalizacji jakiegoś obiektu. Operacja lookup najczęściej wykorzystywana jest do znalezienia adresu węzła odpowiedzialnego za dany zasób, dzięki czemu węzeł pytający może bezpośrednio nawiązać z nim komunikację. Aby skutecznie odnaleźć węzeł odpowiedzialny, pojedyncze wywołanie tej operacji może skutkować kilkoma przeskokami żądania pomiędzy sąsiadami. Ponieważ każdy węzeł jest odpowiedzialny za pewien zakres kluczy oraz współtworzy system trasowania, autonomia pojedynczego węzła jest mocno ograniczona. Jest to największą wadą sieci ustrukturalizowanych, gdyż każde dołączenie, bądź odłączenie węzła zaburza strukturę sieci, co skutkuje potrzebą przeprowadzenia jej rekonstrukcji. Przykładami tego typu sieci są takie systemy jak Chord (więcej o protokole Chord w rozdziale \ref{rozdzial_chord}), Pastry \cite{bib:pastry}, czy Pier \cite{bib:pier}. Zaproponowany w tej pracy protokół Statycznych Grup opiera się na rozszerzeniu protokołu Chord, a więc jest przykładem sieci ustrukturyzowanej.
 
 \subsection{Sieci z super-węzłem}
 W sieciach ustrukturalizowanych oraz nieustrukturalizowanych wszystkie węzły są takie same pod względem funkcjonalności. Inaczej się ma sprawa z sieciami super-peer (sieci z super-węzłami), które stanowią klasę pośrednią, między modelem P2P a modelem klient-serwer. W sieciach tej klasy niektóre węzły pełnią specjalne role w sieci, spełniając takie dodatkowe funkcje jak indeksowanie, przetwarzanie zapytań, kontrola dostępu, czy zarządzanie metadanymi. W przypadku awarii, rolę super-węzłów mogą dynamicznie przejmować inne węzły. Działanie tych sieci przeważnie polega na wysyłaniu zapytań do super-węzła, który posiada informacje o położeniu żądanych obiektów. Dlatego też zaletami sieci super-peer są wydajność oraz jakość usługi. Czas potrzebny na znalezienie żądanego obiektu jest zazwyczaj krótszy, niż w przypadku zalewania sieci. Ponadto heterogeniczność węzłów w sensie ich zasobów i wydajności można wykorzystać do wyróżnionych zadań, obierając je za super-węzły. Jednakże autonomia węzłów w owych sieciach jest ograniczona, a odporność na awarie jest niska, gdyż super-węzły stają się pojedynczymi punktami awarii (skutki tego problemu można załagodzić dynamicznie wybierając nowe super-węzły). Z tego typu sieci korzystają m.in. takie systemy jak Edutella \cite{bib:edutella}, czy JXTA \cite{bib:jxta}.
@@ -196,7 +196,7 @@ W sieciach ustrukturalizowanych oraz nieustrukturalizowanych wszystkie węzły s
 \chapter{Protokół Chord}
 \label{rozdzial_chord}
 
-Fundamentalnym problemem z którym należy się zmierzyć tworząc system P2P jest efektywne znalezienie węzła odpowiedzialnego za dany zasób. Jednym z bardziej znanych protokołów, które rozwiązują ten problem jest Chord, na którym opiera się protokół Statycznych Grup. Chord dostarcza operację wyznaczenia węzła na podstawie klucza. Dzięki temu można odnaleźć żądany zasób (który jest reprezentowany przez odpowiedni klucz). Chord dostosowywuje się do dynamicznego dołączania oraz rozłączania węzłów z systemu, i nawet podczas tych zmian systemu działa w prawidłowy sposób, zachowując przy tym dobrą skalowalność \cite{bib:chord}. Tak jak wspomniano w paragrafie \ref{paragraf_sieci_ustrukturyzowane}, Chord jest przykładem sieci ustrukturyzowanej korzystającej z DHT.
+Fundamentalnym problemem z którym należy się zmierzyć tworząc system P2P jest efektywne znalezienie węzła odpowiedzialnego za dany zasób. Jednym z bardziej znanych protokołów, które rozwiązują ten problem jest Chord, na którym opiera się zaproponowany w niniejszej pracy magisterskiej protokół Statycznych Grup. Chord dostarcza operację wyznaczenia węzła na podstawie klucza. Dzięki temu można odnaleźć żądany zasób (który jest reprezentowany przez odpowiedni klucz). Chord dostosowywuje się do dynamicznego dołączania oraz odłączania węzłów z systemu, i nawet podczas tych zmian systemu działa w prawidłowy sposób, zachowując przy tym dobrą skalowalność \cite{bib:chord}. Tak jak wspomniano w paragrafie \ref{paragraf_sieci_ustrukturyzowane}, Chord jest przykładem sieci ustrukturyzowanej korzystającej z DHT.
 
 \section{Opis}
 Chord dostarcza operację \textit{lookup}, która mapuje klucz na węzeł. Upraszcza konstrukcję systemu P2P i aplikacji bazującej na nim zapewniając następujące własności \cite{bib:chord}:
@@ -210,7 +210,7 @@ Chord dostarcza operację \textit{lookup}, która mapuje klucz na węzeł. Upras
 
 \item Dostępność: Chord automatycznie dostraja się do ciągłych zmian w sieci, zapewniając, że węzeł odpowiedzialny za dany klucz może w każdej chwili zostać odnaleziony.
 
-\item Elastyczne nazewnictwo: Chord nie wymusza struktury nazewniczej kluczy -- przestrzeń kluczy jest płaska. Aplikacja korzystająca z tego protokołu ma dużą swobodę w sposobie mapowania własnych nazw na klucze.
+\item Elastyczne nazewnictwo: Chord nie wymusza struktury nazewniczej kluczy --- przestrzeń kluczy jest płaska. Aplikacja korzystająca z tego protokołu ma dużą swobodę w sposobie mapowania własnych nazw na klucze.
 \end{itemize}
 
 W kontekście budowania aplikacji, o Chordzie można myśleć jak o bibliotece, która dostarcza tej aplikacji operację \texttt{lookup(key)}, oraz powiadamia ją na danym węźle o zmianie zbioru kluczy, za które ten węzeł jest odpowiedzialny. Dzięki temu, aplikacja może podjąć stosowne działania, jak np. przenieść odpowiednie wartości do nowo dołączonego węzła. Aplikacja używająca Chorda jest odpowiedzialna za ewentualną autoryzację, używanie pamięci podręcznej, replikację, czy przyjazne dla użytkownika nazewnictwo danych. Płaska przestrzeń
@@ -242,7 +242,7 @@ Utrzymywanie pierścienia odbywa się w następujący sposób: gdy węzeł \text
 \subsection{Odnajdywanie lokalizacji klucza}
 \label{odnajdywanie_lokalizacji_klucza}
 
-Każdy węzeł posiada wskaźnik na swojego następnika. Dzięki temu w prosty sposób możliwe jest odnalezienie węzła odpowiedzialnego za dany klucz poprzez rekurencyjne odpytywanie się kolejnych następników. Posiadanie aktualnego wskaźnika na swojego następnika jest warunkiem koniecznym otrzymania poprawnego wyniku. Aczkolwiek aby zmniejszyć liczbę komunikatów podczas operacji lookup, każdy węzeł posiada dodatkowe informacje trasowania. Informacje te przechowywanie są w specjalnej tablicy trasowania, którą autorzy nazywają \textit{finger table} \cite{bib:chord}. Niech \textit{m} będzie liczbą bitów używanych do zapisywania identyfikatorów kluczy i węzłów. Wtenczas tablica trasowania posiada \textit{m} wpisów. Każdy \textit{i}-ty wpis tej tablicy węzła \textit{n} posiada informacje o pierwszym węźle \textit{s} (jego identyfikator oraz adres, który służy do komunikacji -- jest nim najczęściej adres IP), który jest za \textit{n} o przynajmniej $2^{i-1}$ na okręgu identyfikatorów. Wzór na identyfikator węzła \textit{s} w \textit{i}-tym wpisie węzła \textit{n}, gdzie $1\leq i \leq m$:
+Każdy węzeł posiada wskaźnik na swojego następnika. Dzięki temu w prosty sposób możliwe jest odnalezienie węzła odpowiedzialnego za dany klucz poprzez rekurencyjne odpytywanie się kolejnych następników. Posiadanie aktualnego wskaźnika na swojego następnika jest warunkiem koniecznym otrzymania poprawnego wyniku. Aczkolwiek aby zmniejszyć liczbę komunikatów podczas operacji lookup, każdy węzeł posiada dodatkowe informacje trasowania. Informacje te przechowywanie są w specjalnej tablicy trasowania, którą autorzy nazywają \textit{finger table} \cite{bib:chord}. Niech \textit{m} będzie liczbą bitów używanych do zapisywania identyfikatorów kluczy i węzłów. Wtenczas tablica trasowania posiada \textit{m} wpisów. Każdy \textit{i}-ty wpis tej tablicy węzła \textit{n} posiada informacje o pierwszym węźle \textit{s} (jego identyfikator oraz adres, który służy do komunikacji --- jest nim najczęściej adres IP), który jest za \textit{n} o przynajmniej $2^{i-1}$ na okręgu identyfikatorów. Wzór na identyfikator węzła \textit{s} w \textit{i}-tym wpisie węzła \textit{n}, gdzie $1\leq i \leq m$:
 
 \begin{equation}
 \label{eq:start}
@@ -301,7 +301,7 @@ Pseudokod procedury odpowiedzialnej za dołączanie węzła pokazuje listing \re
 
 Każdy węzeł okresowo uruchamia procedurę \texttt{fix\_fingers} pokazaną na listingu \ref{lst:fix_fingers}, która uaktualnia wpisy w tablicy trasowania. Dzięki temu nowe węzły wypełniają swoje tablice, a węzły będące wcześniej w sieci, aktualizują je o ewentualne nowe węzły. Ponadto każdy węzeł wykonuje cyklicznie procedurę \\\texttt{check\_predecessor} pokazaną na listingu \ref{lst:check_predecessor}, która zeruje wskaźnik na poprzednika, jeśli uległ on awarii. Wskaźniki te uaktualniane są podczas cyklicznej operacji \texttt{notify}.
 
-W praktyce, przez ciągłe przypływy oraz odpływy węzłów, stan pierścienia Chord nigdy nie będzie stabilny. Dołączenia, rozłączenia i cykliczny algorytm stabilizacji będą się przeplatały bez końca. Pierścień nie będzie miał czasu, aby ustabilizować się w pełni, nim nastąpi zmiana w zbiorze węzłów sieci. Jednakże autorzy protokołu zapewniają, że jeśli protokół stabilizacji będzie uruchamiany z odpowiednią częstotliwością, to operacje lookup będą wykonywać się sprawnie, zwracając poprawne wyniki \cite{bib:chord}.
+W praktyce, przez ciągłe przypływy oraz odpływy węzłów, stan pierścienia Chord nigdy nie będzie stabilny. Dołączenia, odłączenia i cykliczny algorytm stabilizacji będą się przeplatały bez końca. Pierścień nie będzie miał czasu, aby ustabilizować się w pełni, nim nastąpi zmiana w zbiorze węzłów sieci. Jednakże autorzy protokołu zapewniają, że jeśli protokół stabilizacji będzie uruchamiany z odpowiednią częstotliwością, to operacje lookup będą wykonywać się sprawnie, zwracając poprawne wyniki \cite{bib:chord}.
 
 \section{Istniejące rozszerzenia}
 
@@ -309,7 +309,7 @@ Protokół Chord jest prosty w swojej idei. Jego konstrukcja pozostawia duże po
 
 \subsection{Usprawnienie działania}
 
-Aby poprawić działanie protokołu Chord, autorzy proponują dwa rozszerzenia. Po pierwsze, zamiast wskaźnika na następnika, każdy węzeł może utrzymywać listę następników. Dzięki temu mógłby odwołać się do innego następnika, jeżeli bliższy następnik uległ awarii. Poprawia to działanie protokołu, gdyż uodparnia na odpływy, zachowując wydajność operacji lookup na wysokim poziomie. Drugą rekomendacją autorów jest zaimplementowanie procedury odłączenia z sieci. W bazowej implementacji odejście węzła polega na jego nagłym rozłączeniu, bez informowania sieci i traktuje się je tak jak awarie. Zamiast tego, węzeł mógłby poinformować swojego następnika oraz poprzednika, że opuszcza sieć, dzięki czemu mogłyby one uaktualnić wskaźniki. Ponadto węzeł mógłby przed opuszczeniem przetransferować klucze za które jest odpowiedzialny, swojemu następnikowi. Zamiany ta zwiększyłyby dostępność systemu, oraz poprawiły jego wydajność.
+Aby poprawić działanie protokołu Chord, autorzy proponują dwa rozszerzenia. Po pierwsze, zamiast wskaźnika na następnika, każdy węzeł może utrzymywać listę następników. Dzięki temu mógłby odwołać się do innego następnika, jeżeli bliższy następnik uległ awarii. Poprawia to działanie protokołu, gdyż uodparnia na odpływy, zachowując wydajność operacji lookup na wysokim poziomie. Drugą rekomendacją autorów jest zaimplementowanie procedury odłączenia od sieci. W bazowej implementacji odejście węzła polega na jego nagłym odłączeniu, bez informowania sieci i traktuje się je tak jak awarie. Zamiast tego, węzeł mógłby poinformować swojego następnika oraz poprzednika, że opuszcza sieć, dzięki czemu mogłyby one uaktualnić wskaźniki. Ponadto węzeł mógłby przed opuszczeniem przetransferować klucze za które jest odpowiedzialny, swojemu następnikowi. Zamiany ta zwiększyłyby dostępność systemu, oraz poprawiły jego wydajność.
 
 \subsection{Replikacja}
 
@@ -323,21 +323,21 @@ Innym podejściem jest \textit{Multi-Publication} \cite{bib:paiva}. Rozwiązanie
 
 Istnieje też wiele innych rozwiązań mających u swego rdzenia mechanizm Chord. Dobrym przykładem jest algorytm \textit{Topology Aware Chord} \cite{bib:tac}, rozszerzający Chorda o mechanizmy kontrolujące topologię sieci nakładkowej w zależności od fizycznej sieci w której działa. Autorzy twierdzą, że dzięki temu uzyskali lepszą wydajność pod kątem trasowania wiadomości oraz zużycia pasma.
 
-Chord został tak zaprojektowany, aby rozszerzanie go nie stanowiło problemu. Dlatego powstało wiele pomysłów jak go zmienić, aby poprawić różne parametry systemu. Sam Protokół Statycznych Grup, jest w swojej istocie rozszerzeniem Chorda, ale ponieważ jest on tematem przewodnim tej pracy, został mu poświęcony osobny rozdział (\ref{rozdzial_rozwiazanie}).
+Chord został tak zaprojektowany, aby rozszerzanie go nie stanowiło problemu. Dlatego powstało wiele pomysłów jak go zmienić, aby poprawić różne parametry systemu. Sam Protokół Statycznych Grup, jest w swojej istocie rozszerzeniem Chorda, ale ponieważ jest on tematem przewodnim tej pracy, został mu poświęcony rozdział \ref{rozdzial_rozwiazanie}.
 
 
 \chapter{Grupowanie węzłów}
 \label{rozdzial_grupowanie}
 
-Zapewnianie istotnych własności systemów rozproszonych, takich jak skalowalność, czy dostępność, jest ważnym zagadnieniem, nad którym ciągle trwają badania. W wyniku prac badawczych, powstaje wiele konceptów. Mechanizm grupowania węzłów w zbiory jest jednym z takich pomysłów. Sugeruje on, aby podstawowym komponentem w sieci P2P nie był węzeł, lecz grupa węzłów, każda odpowiedzialna za dany zbiór kluczy. Komunikacja w sieci odbywałaby się na dwóch poziomach: międzygrupowym, oraz wewnątrzgrupowym. Pomysł ten jest bezpośrednią inspiracją dla protokołu Statycznych Grup. Dlatego też, mechanizmowi temu został poświęcony niniejszy rozdział, opisując jego ideę, sposób działania, oraz wyszczególniając co zapewnia, a co pomija.
+Zapewnianie istotnych własności systemów rozproszonych, takich jak skalowalność czy dostępność jest ważnym zagadnieniem, nad którym ciągle trwają badania. W wyniku prac badawczych powstaje wiele rozwiązań \cite{bib:martins, bib:jeyasheeli, bib:ye, bib:paiva, bib:chord, bib:knezevic, bib:rao, bib:tac, bib:scatter, bib:rollerchain}. Jednym z zaproponowanych podejść jest mechanizm grupowania węzłów w zbiory. Sugeruje on, aby podstawowym komponentem w sieci P2P nie był węzeł, lecz grupa węzłów, każda odpowiedzialna za dany zbiór kluczy. Komunikacja w sieci odbywałaby się na dwóch poziomach: międzygrupowym oraz wewnątrzgrupowym. Pomysł ten jest bezpośrednią inspiracją dla zaproponowanego w niniejszej pracy protokołu Statycznych Grup. Wprowadzenie do protokołu Statycznych Grup (rozdział \ref{rozdzial_rozwiazanie}) poprzedzone jest analizą istniejących rozwiązań grupowania węzłów w grupy. Dlatego też, mechanizmowi grupowania został poświęcony niniejszy rozdział, opisując jego ideę, sposób działania, oraz wyszczególniając co zapewnia, a co pomija.
 
 \section{System Scatter}
 \label{subch_scatter}
 Idea grupowania węzłów w środowisku DHT została wypromowana przez autorów systemu Scatter \cite{bib:scatter}. System ten powstał jako próba zapewnienia silnej spójności rozproszonych danych,
-zachowując jednocześnie dużą skalowalność. Osiągnięcie zadowalającej spójności, dla operacji na pojedynczej parze klucz-wartość pomimo zmiennych opóźnień w sieci, przypływów i odpływów, oraz błędów komunikacyjnych, przy jednoczesnym zapewnieniu dobrej skalowalności, w której to system sprawnie działa w niestabilnym środowisku nawet z ponad milionem węzłów, wydaje się być zadaniem nietrywialnym. Mimo tego autorzy twierdzą, że ich system zapewnia te własności, co popierają eksperymentami.
+zachowując jednocześnie dużą skalowalność. Autorzy twierdzą, że ich system osiąga zadowalającą spójność dla operacji na pojedynczej parze klucz-wartość pomimo zmiennych opóźnień w sieci, przypływów i odpływów oraz błędów komunikacyjnych. Twierdzą również, że ich system zapewnia dobrą skalowalność, w której to system sprawnie działa w niestabilnym środowisku nawet z ponad milionem węzłów. Zapewnienia te popierają eskperymentami.
 
 Podstawowym komponentem w systemie Scatter jest samoorganizująca się grupa węzłów. Grupa wewnętrznie używa mechanizmów replikacji opartych na algorytmie konsensusu Paxos jako podstawy do zapewnienia spójności oraz odporności na awarie. Sam Scatter implementuje również kilka rozszerzeń i optymalizacji do podstawowego algorytmu Paxos, takich jak wybieranie lidera grupy, czy algorytm rekonfiguracji po utracie lub zyskaniu członka grupy.
-Ponieważ grupy zarządzają wewnętrzną integralnością używając sprawdzonych protokołów konsensusu, prosty i agresywny detektor awarii wystarcza. Węzły, które zostały wyłączone z grupy, nie mogą brać udziału w jej akcjach. Gdyby jednak nie udało się dostatecznie szybko wykryć awarię węzła, grupa nadal mogłaby podejmować akcje, gdyż do działania potrzebne jest kworum węzłów.
+Ponieważ grupy zarządzają wewnętrzną integralnością używając sprawdzonych protokołów konsensusu, prosty i agresywny detektor awarii wystarcza. Węzły, które zostały wyłączone z grupy, nie mogą brać udziału w jej akcjach. Gdyby jednak nie udało się dostatecznie szybko wykryć awarie węzła, grupa nadal mogłaby podejmować akcje, gdyż do działania potrzebne jest kworum węzłów.
 
 \begin{figure}[H]
 \floatstyle{boxed}
@@ -347,35 +347,33 @@ Ponieważ grupy zarządzają wewnętrzną integralnością używając sprawdzony
 \label{fig:scatter}
 \end{figure}
 
-Scatter implementuje prosty model DHT z przestrzenią kluczy w formie okręgu, którą nazywamy, podobnie jak w protokole Chord , pierścieniem. Przestrzeń ta jednak różni się od tej w protokole Chord, iż jest podzielona pomiędzy grupy, a nie węzły. Każda grupa posiada aktualne informacje o dwóch sąsiednich grupach: tej która ją poprzedza na pierścieniu, oraz następnej.
+Scatter implementuje prosty model DHT z przestrzenią kluczy w formie okręgu, którą nazywamy, podobnie jak w protokole Chord, pierścieniem. Przestrzeń ta jednak różni się od zaproponowanej w protokole Chord, tym że jest podzielona pomiędzy grupy, a nie węzły. Każda grupa posiada aktualne informacje o dwóch sąsiednich grupach: tej która ją poprzedza w pierścieniu, oraz następnej.
 
-Sąsiednie grupy mogą wykonywać tzw. operacje międzygrupowe: podzielenie grupy na dwie mniejsze, połączenie dwóch grup, migracja członka z jednej grupy do drugiej oraz repartycja, czyli zmiana podziału odpowiedzialności za odpowiednie przedziały kluczy. Żeby nie było niespójności pomiędzy węzłami, operacje międzygrupowe powinny być atomowe. Dlatego też, wykonywane są w ramach rozproszonych transakcji, używając do tego protokołu zatwierdzania dwufazowego 2PC (ang. \textit{two-phase commit protocol}). Autorzy rozwiązanie te nazywają zagnieżdżonym konsensusem. Ilustruje to rysunek \ref{fig:scatter}, na którym widać, że operacje międzygrupowe wykonywane są przy pomocy 2PC (dzięki temu grupy ustalają "wspólną wersję wydarzeń"), a każdą decyzję, którą ma podjąć dana grupa ustalana jest pomiędzy węzłami należącymi do niej przy pomocy protokołu Paxos. W każdej grupie wyłaniany jest lider koordynujący akcje grupy. W przypadku jego awarii, inny węzeł może przejąć dowodzenie i kontynuować transakcję. Transakcja zakończy się pod warunkiem, że większość węzłów z każdej grupy pozostanie poprawna. W przeciwnym wypadku, po upływie ustalonego czasu, transakcja zostaje odrzucona. Ponadto, autorzy zachęcają do współbieżności, aby węzły wykonując operacje międzygrupowe, odpowiadały na żądania klientów. Jednak w przypadku takiej implementacji, po zatwierdzeniu transakcji potrzebna by była przerwa na rekonfigurację.
+Sąsiednie grupy mogą wykonywać tzw. operacje międzygrupowe: podzielenie grupy na dwie mniejsze, połączenie dwóch grup, migracja członka z jednej grupy do drugiej oraz repartycja, czyli zmiana podziału odpowiedzialności za odpowiednie przedziały kluczy. Żeby nie dopuścić do niespójności pomiędzy węzłami, operacje międzygrupowe powinny być atomowe. Dlatego też, wykonywane są one w ramach rozproszonych transakcji, używając do tego protokołu zatwierdzania dwufazowego 2PC (ang. \textit{two-phase commit protocol}). Autorzy rozwiązanie to nazywają zagnieżdżonym konsensusem. Ilustruje to rysunek \ref{fig:scatter}, na którym widać, że operacje międzygrupowe wykonywane są przy pomocy 2PC (dzięki temu grupy ustalają "wspólną wersję wydarzeń"), a każdą decyzję, którą ma podjąć dana grupa ustalana jest pomiędzy węzłami należącymi do niej przy pomocy protokołu Paxos. W każdej grupie wyłaniany jest lider koordynujący akcje grupy. W przypadku jego awarii, inny węzeł może przejąć dowodzenie i kontynuować transakcję. Transakcja zakończy się pod warunkiem, że większość węzłów z każdej grupy pozostanie poprawna. W przeciwnym wypadku, po upływie ustalonego czasu, transakcja zostaje odrzucona. Ponadto, autorzy zalecają współbieżne wykonywanie operacji międzygrupowych. Jednak w przypadku takiej implementacji, po zatwierdzeniu transakcji potrzebna jest przerwa na rekonfigurację.
 
-Aby cały system działał poprawnie, każdy sąsiad dowolnej grupy \textit{G}, musi posiadać najświeższą wiedzę o jakimś podzbiorze członków grupy \textit{G}. Aby to zapewnić, członkostwo grupy \textit{G} jest rozsyłane sąsiadom za każdym razem, gdy ulegnie ono zmianie. Ponadto Scatter sam w sobie nie gwarantuje niezawodnego dostarczania wiadomości oraz nie zapewnia uporządkowania dostarczania wiadomości FIFO (ang. \textit{First In, First Out} – pierwszy na wejściu, pierwszy na wyjściu).
+Aby cały system działał poprawnie, każda grupa musi posiadać najświeższą wiedzę o jakimś podzbiorze członków każdej z grup sąsiednich. Aby to zapewnić, członkostwo grup jest rozsyłane sąsiadom za każdym razem, gdy ulegnie ono zmianie. Ponadto Scatter sam w sobie nie gwarantuje niezawodnego dostarczania wiadomości oraz nie zapewnia uporządkowania dostarczania wiadomości FIFO (ang. \textit{First In, First Out} – pierwszy na wejściu, pierwszy na wyjściu).
 
 \section{System Rollerchain}
 \label{subch_rollerchain}
 
-Inną, wartą uwagi implementacją mechanizmu grupowania węzłów jest Rollerchain \cite{bib:rollerchain}. Jest to system DHT, dla powstania którego bezpośrednią inspiracją był Scatter. Rollerchain implementuje jednak kilka dodatkowych mechanizmów, doprecyzowując niektóre aspekty, których autorzy systemu Scatter celowo, zostawiając wolność, pominęli.
+Inną, wartą uwagi implementacją mechanizmu grupowania węzłów jest Rollerchain \cite{bib:rollerchain}. Jest to system DHT, dla powstania którego bezpośrednią inspiracją był Scatter. Rollerchain implementuje kilka dodatkowych mechanizmów, doprecyzowując niektóre aspekty, których autorzy systemu Scatter celowo pominęli.
 
-Rollerchain, w przeciwieństwie do Scatter, który przy wykonywaniu operacji opiera się na konsensusie, przez co są one kosztowne i mogą być blokowane przy dużych odpływach, bazuje na zalewaniu sieci wykorzystując mechanizmy plotkarskie\footnote{Mechanizmy plotkarskie (ang. \textit{gossiping}, \textit{rumor monegering}), czy też epidemiczne (ang. \textit{epidemic}) rozsyłają wiadomości w sposób zainspirowany rozchodzeniem się plotek między ludźmi, czy też rozprzestrzenianiem się epidemii na danym obszarze. Korzystają one z abstrakcji komunikacyjnej określanej jako probabilistyczne rozgłaszanie niezawodne (ang. \textit{probabilistic reliable broadcast}) \cite{bib:pr}.} (ang. \textit{gossip-based mechanism}). Przez to Rollerchain zapewnia słabsze gwarancje. Jednak autorzy twierdzą, że używając tych mechanizmów, system zachowuje się lepiej w przypadku dużych przypływów i odpływów niż systemy z silniejszymi gwarancjami, co popierają eksperymentami.
+Rollerchain, w przeciwieństwie do Scatter, który przy wykonywaniu operacji opiera się na konsensusie, przez co są one kosztowne i mogą być blokowane przy dużych odpływach, bazuje na zalewaniu sieci wykorzystując mechanizmy plotkowania\footnote{Mechanizmy plotkarskie (ang. \textit{gossiping}, \textit{rumor monegering}), czy też epidemiczne (ang. \textit{epidemic}) rozsyłają wiadomości w sposób zainspirowany rozchodzeniem się plotek między ludźmi, czy też rozprzestrzenianiem się epidemii na danym obszarze. Korzystają one z abstrakcji komunikacyjnej określanej jako probabilistyczne rozgłaszanie niezawodne (ang. \textit{probabilistic reliable broadcast}) \cite{bib:pr}.} (ang. \textit{gossip-based mechanism}). Jednym z celów systemu Rollerchain jest zachowanie równomiernego obciążenia między węzłami, dlatego też strategia dołączania nowych węzłów do sieci uwzględnia aktualne obciążenie węzłów kluczami. Gdy węzeł chce dołączyć do sieci, odpytywane są losowe grupy. Nowy węzeł wybiera z tych grup najbardziej obciążoną i do niej dołącza.
 
-Jednym z celów systemu Rollerchain jest zachowanie równomiernego obciążenia między węzłami, dlatego też strategia dołączania nowych węzłów do sieci uwzględnia aktualne obciążenie węzłów kluczami. Gdy węzeł chce dołączyć do sieci, odpytywane są losowe grupy. Nowy węzeł wybiera z tych grup tą najbardziej obciążoną i do niej dołącza.
-
-Grupy w Rollerchain są połączone tzw. wirtualnymi łączami (ang. \textit{virtual links}, patrz rysunek \ref{fig:links}a), które tworzą logiczny pierścień (na wzór pierścienia Scatter). Łącza te powstają w wyniku istnienia bezpośrednich połączeń między węzłami z różnych grup -- nazwijmy te połączenia \textit{łączami fizycznymi}. Ponieważ replikowanie wszystkich danych na wszystkich członkach grupy nie jest wymagane, zbiory łącz fizycznych (każdy przechowywany na innym węźle) mogą się od siebie różnić. A więc, aby zapewnić odporność na awarie oraz zrównoważenie obciążenia na poziomie grupy, łącza fizyczne powinny być równomiernie rozłożone pomiędzy węzłami. Dla przykładu, sytuacja pokazana na rysunku \ref{fig:links}b, w której tylko jeden węzeł jakiejś grupy posiada niepusty zbiór łącz fizycznych, jest silnie niepożądana. Podobnie niewskazana jest sytuacja, w której to wszystkie węzły jakiejś grupy posiadają jednakowy zbiór łącz fizycznych, z tylko jednym elementem (patrz rysunek \ref{fig:links}c). Idealną strukturę łącza wirtualnego pokazuje rysunek \ref{fig:links}d: każdy węzeł grupy \textit{A} posiada łącze fizyczne do innego węzła z grupy \textit{B}. Oczywiście zachowanie równomiernego rozłożenia łącz fizycznych wymaga dodatkowych operacji i monitoringu, lecz ze względu na ich nieistotność w kontekście protokołu Statycznych Grup, opis tych aspektów zostaje pominięty.
+Grupy w Rollerchain są połączone tzw. wirtualnymi łączami (ang. \textit{virtual links}, patrz rysunek \ref{fig:links}a), które tworzą logiczny pierścień (na wzór pierścienia Scatter). Łącza te powstają w wyniku istnienia bezpośrednich połączeń między węzłami z różnych grup --- nazwijmy te połączenia \textit{łączami fizycznymi}. Ponieważ replikowanie wszystkich danych na wszystkich członkach grupy nie jest wymagane, zbiory łączy fizycznych (każdy przechowywany na innym węźle) mogą się od siebie różnić. A więc, aby zapewnić odporność na awarie oraz zrównoważenie obciążenia na poziomie grupy, łącza fizyczne powinny być równomiernie rozłożone pomiędzy węzłami. Dla przykładu, sytuacja pokazana na rysunku \ref{fig:links}b, w której tylko jeden węzeł jakiejś grupy posiada niepusty zbiór łączy fizycznych, jest silnie niepożądana. Podobnie niewskazana jest sytuacja, w której to wszystkie węzły jakiejś grupy posiadają jednakowy zbiór łączy fizycznych, z tylko jednym elementem (patrz rysunek \ref{fig:links}c). Idealną strukturę łącza wirtualnego pokazuje rysunek \ref{fig:links}d: każdy węzeł grupy \textit{A} posiada łącze fizyczne do innego węzła z grupy \textit{B}. Oczywiście zachowanie równomiernego rozłożenia łączy fizycznych wymaga dodatkowych operacji i monitoringu, lecz ze względu na ich nieistotność w kontekście protokołu Statycznych Grup, opis tych aspektów zostaje pominięty.
 
 \begin{figure}[H]
 \floatstyle{boxed}
 \centering
 \includegraphics[width=0.7\textwidth,height=\textheight,keepaspectratio]{links.png}
-\caption{Przykłady łącz międzygrupowych.}
+\caption{Przykłady łączy międzygrupowych.}
 \label{fig:links}
 \end{figure}
 
 
 \section{Polityki}
 
-Sam mechanizm grupowania węzłów nie specyfikuje do której grupy trafi nowy węzeł, ani nie mówi o warunkach które muszą zajść, aby wykonać daną operację międzygrupową. Sposoby wybierania grup i warunki potrzebne do zajścia operacji międzygrupowych nazwijmy \textit{politykami}. Zależą one od danej implementacji i mogą mieć różne motywacje. Mają one jednak istotny wpływ na budowę całej sieci, a więc i zachowanie całego systemu. Mogą więc pozytywnie wpłynąć na system, poprawiając niektóre parametry, lecz źle przemyślane mogą je tylko pogorszyć. Dla przykładu wspomniany w podrozdziale \ref{subch_rollerchain} Rollerchain stosuje opisaną tam politykę, aby zagwarantować równowagę obciążenia między grupami. Z kolei autorzy systemu Scatter nie specyfikują konkretnej polityki, pozostawiając wolność w tej kwestii. Poniżej przedstawione jest kilka przykładowych polityk, które zostały zaproponowane jako warte uwagi \cite{bib:paiva}.
+Sam mechanizm grupowania węzłów nie specyfikuje do której grupy trafi nowy węzeł, ani nie mówi o warunkach które muszą zajść, aby wykonać daną operację międzygrupową. Sposoby wybierania grup i warunki potrzebne do zajścia operacji międzygrupowych nazwijmy \textit{politykami}. Zależą one od danej implementacji i mogą mieć różne motywacje. Mają one jednak istotny wpływ na budowę całej sieci, a więc i zachowanie całego systemu. Mogą więc pozytywnie wpłynąć na system, poprawiając niektóre parametry, lecz źle przemyślane mogą je tylko pogorszyć. Dla przykładu wspomniany w podrozdziale \ref{subch_rollerchain} Rollerchain stosuje opisaną tam politykę, aby zagwarantować równowagę obciążenia między grupami. Z kolei autorzy systemu Scatter nie specyfikują konkretnej polityki, pozostawiając swobodę w tej kwestii. Poniżej przedstawione jest kilka przykładowych polityk, które zostały zaproponowane jako warte uwagi \cite{bib:paiva}.
 
 \subsection{Żywotność i równowaga obciążenia}
 Polityka nazwana przez autorów R-LB (ang. \textit{Resilient Load-Balancing}), oprócz zrównoważenia obciążenia ma na celu zagwarantowanie żywotności grup. Aby zapewnić tą pierwszą własność, nowy węzeł dołącza do grup w których obciążenie przypadające na jeden węzeł jest największe, a gdy grupa musi się podzielić na dwie mniejsze (bo np. stała się zbyt duża), to klucze są tak rozdzielone, aby obciążenie przypadające na węzeł było możliwie równe w obu grupach. Oprócz tego, polityka R-LB gwarantuje jeszcze własność żywotności grup. Aby ją zapewnić, nowe węzły wybierają z najbardziej obciążonych grup te najmniejsze i do nich dołączają. Ponadto grupy niebezpiecznie małe inicjują operację połączenia się z grupami sąsiednimi.
@@ -392,29 +390,29 @@ Polityka nazwana \textit{Hotter-on-Ephemeral} polega na dołączaniu najbardziej
 
 \chapter{Zaproponowane rozwiązanie}
 \label{rozdzial_rozwiazanie}
-Celem niniejszej pracy magisterskiej jest zaproponowanie implementacji rozszerzenia protokołu Chord. Rozszerzeniem tym jest protokół Statycznych Grup, rozszerzający protokół Chord o mechanizm grupowania węzłów. Niniejszy rozdział opisuje zaproponowany protokół, wskazuje jego zalety, wady, aspekty które pomija, oraz przedstawia pseudokod, szczegółowo opisując działanie protokołu.
+Celem niniejszej pracy magisterskiej jest zaproponowanie implementacji rozszerzenia protokołu Chord. Rozszerzeniem tym jest protokół Statycznych Grup (SG), rozszerzający protokół Chord o mechanizm grupowania węzłów. Niniejszy rozdział opisuje zaproponowany protokół, wskazuje jego zalety, wady, aspekty które pomija, oraz przedstawia pseudokod, szczegółowo opisując działanie protokołu.
 
 \section{Opis ogólny}
-Głównym celem protokołu Statycznych Grup jest zapewnienie infrastruktury dla replikacji. Dlatego też, zdecydowano się na strukturę grup, w której to węzły replikują dane między sobą. Podobnie jak węzły w protokole Chord tworzą pierścień Chord (patrz paragraf \ref{ch_ch_id}), tak grupy w protokole Statycznych Grup, tworzą \textit{pierścień Statycznych Grup}. Istotnym zagadanienim, opisanym w tym podrozdziale, jest stabilności pojedynczych węzłów, która pozwala na podejmowanie decyzji odnośnie członkostwa węzłów w grupach.
+Głównym celem protokołu Statycznych Grup jest zapewnienie infrastruktury dla replikacji. Dlatego też, zdecydowano się na strukturę grup, w której węzły replikują dane między sobą. Podobnie jak węzły w protokole Chord tworzą pierścień Chord (patrz paragraf \ref{ch_ch_id}), tak grupy w protokole Statycznych Grup, tworzą \textit{pierścień Statycznych Grup}. Istotnym zagadanienim, opisanym w tym podrozdziale, jest stabilności pojedynczych węzłów, która pozwala na podejmowanie decyzji odnośnie członkostwa węzłów w grupach.
 
 \subsection{Grupy statyczne}
-Aby zapewnić infrastrukturę sprzyjającą replikacji, protokół Statycznych Grup używa podejścia opartego na agregowaniu węzłów w grupy. Sam mechanizm grupowania opisany został w rozdziale \ref{rozdzial_grupowanie}. Jakkolwiek SG korzysta z ogólnego podejścia opartego na grupowaniu, to nie implementuje kosztownych operacji międzygrupowych, wykorzystywanych m.in. w protokołach Scatter (patrz podrozdział \ref{subch_scatter}), czy Rollerchain (patrz podrozdział \ref{subch_rollerchain}) -- stąd też określenie \textit{statyczny}. Grupy w protokole Statycznych Grup są statyczne, ponieważ nie łączą się wzajemnie, gdy jest w nich za mało węzłów, ani nie dzielą na kilka mniejszych grup, gdy jest w nich zbyt dużo węzłów, lecz każda grupa, ma określony maksymalny rozmiar oraz istnieje tak długo, dopóki jest w sieci przynajmniej jeden poprawny węzeł będący jej członkiem. Jeżeli jedyny członek opuści sieć, to również owa grupa w naturalny sposób zniknie z sieci. Dzięki takiemu podejściu, nie ponosimy kosztów operacji międzygrupowych, które są bardzo wymagające (patrz zagnieżdżony konsensus w podrozdziale \ref{subch_scatter}). Narażamy się jednak na sytuację, w której tworzona jest nowa grupa za pomocą węzła, który po chwili może odejść; a po jego odejściu może dołączyć do sieci nowy węzeł i ponownie utworzyć grupę, lecz po chwili i on może opuścić sieć. Owa sytuacja jest niepożądana, gdyż każdemu utworzeniu nowej grupy, towarzyszy przesłanie części danych z innej grupy. Również przy zniknięciu grupy ponoszone są koszty: jeżeli węzeł uległ awarii, bądź rozłączył się nie informując innych, dane za które odpowiadał mogą zaginąć\footnote{Sytuacji w której część danych ginie może zapobiec podejście, w którym to grupa poprzednio odpowiedzialna za owe dane (jeszcze przed powstaniem zaginionej grupy) zachowa je u siebie i odtworzy.}; a jeżeli nie uległ awarii i przed odejściem wykonał operację przeniesienia danych do innej grupy\footnote{Operacji przeniesienia danych nie specyfikuje protokół Statycznych Grup. Podobnie jak w przypadku protokołu Chord, za ową, ewentualną operację przeniesienia odpowiedzialna jest aplikacja korzystająca z protokołu.}, ponoszone są koszty owego przeniesienia.
+Aby zapewnić infrastrukturę sprzyjającą replikacji, protokół Statycznych Grup używa podejścia opartego na agregowaniu węzłów w grupy. Mechanizm grupowania opisany został w rozdziale \ref{rozdzial_grupowanie}. Jakkolwiek SG korzysta z ogólnego podejścia opartego na grupowaniu, to nie implementuje kosztownych operacji międzygrupowych, wykorzystywanych m.in. w protokołach Scatter (patrz podrozdział \ref{subch_scatter}), czy Rollerchain (patrz podrozdział \ref{subch_rollerchain}) --- stąd też określenie \textit{statyczny}. Grupy w protokole Statycznych Grup są statyczne, ponieważ nie łączą się wzajemnie, gdy jest w nich za mało węzłów, ani nie dzielą na kilka mniejszych grup, gdy jest w nich zbyt dużo węzłów, lecz każda grupa, ma określony maksymalny rozmiar oraz istnieje tak długo, dopóki jest w sieci przynajmniej jeden poprawny węzeł będący jej członkiem. Jeżeli jedyny członek opuści sieć, to owa grupa w naturalny sposób przestaje istnieć w sieci. Dzięki takiemu podejściu, nie ponosimy kosztów operacji międzygrupowych, które są bardzo wymagające (patrz zagnieżdżony konsensus w podrozdziale \ref{subch_scatter}). Narażamy się jednak na sytuację, w której tworzona jest nowa grupa za pomocą węzła, który po chwili może odejść; a po jego odejściu może dołączyć do sieci nowy węzeł i ponownie utworzyć grupę, lecz po chwili i on może opuścić sieć. Owa sytuacja jest niepożądana, gdyż każdemu utworzeniu nowej grupy, towarzyszy przesłanie części danych z innej grupy. Również przy zniknięciu grupy ponoszone są koszty: jeżeli węzeł uległ awarii, bądź odłączył się nie informując innych, dane za które odpowiadał mogą zaginąć\footnote{Sytuacji w której część danych ginie może zapobiec podejście, w którym to grupa poprzednio odpowiedzialna za owe dane (jeszcze przed powstaniem zaginionej grupy) zachowa je u siebie i odtworzy.}; a jeżeli nie uległ awarii i przed odejściem wykonał operację przeniesienia danych do innej grupy\footnote{Operacji przeniesienia danych nie specyfikuje protokół Statycznych Grup. Podobnie jak w przypadku protokołu Chord, za ową, ewentualną operację przeniesienia odpowiedzialna jest aplikacja korzystająca z protokołu.}, ponoszone są koszty owego przeniesienia.
 
 \subsection{Stabilność węzła}
 \label{stabilnosc_wezla}
 
-Aby uniknąć sytuacji opisanej w powyższym paragrafie, w której to nowe węzły tworzą nową grupę, by po chwili opuścić sieć, protokół Statycznych Grup stosuje politykę, która nakłada ograniczenie na powoływanie do życia nowych grup. Mianowicie, tylko węzły określone jako stabilne mogą tworzyć nowe grupy. Reszta węzłów może jedynie dołączać do grup już istniejących. Wyjątkiem jest sytuacja, gdy wszystkie grupy w sieci są już przepełnione, tzn. posiadają maksymalną liczbę członków, która jest określona odpowiednim parametrem. Protokół Statycznych Grup nie specyfikuje sposobu określania stabilności węzła, pozostawiając wolność w tej kwestii. Przykładowo, stabilność węzła mogła by być określana na podstawie jego historii bycia członkiem sieci, która mogłaby być zapisywana u niego lokalnie, na innych węzłach (sąsiednich, lub specjalnych -- wyróżnionych), bądź przy użyciu jakiegoś serwisu zewnętrznego. Ponadto, do określania stabilności, mogłyby być brane pod uwagę parametry węzła, takie jak jego opóźnienia komunikacyjne, przepustowość jaką dysponuje, czy nawet sposób łączenia się do sieci (połączenia bezprzewodowe z reguły są mniej stabilne).
+Aby uniknąć sytuacji opisanej w powyższym paragrafie, w której to nowe węzły tworzą nową grupę, by po chwili opuścić sieć, protokół Statycznych Grup stosuje politykę, która nakłada ograniczenie na powoływanie do życia nowych grup. Mianowicie, tylko węzły określone jako stabilne mogą tworzyć nowe grupy. Reszta węzłów może jedynie dołączać do grup już istniejących. Wyjątkiem jest sytuacja, gdy wszystkie grupy w sieci są już przepełnione, tzn. posiadają maksymalną liczbę członków, która jest określona odpowiednim parametrem. Protokół Statycznych Grup nie specyfikuje sposobu określania stabilności węzła, pozostawiając wolność w tej kwestii. Przykładowo, stabilność węzła mogła by być określana na podstawie jego historii bycia członkiem sieci, która mogłaby być zapisywana u niego lokalnie, na innych węzłach (sąsiednich, lub specjalnych --- wyróżnionych), bądź przy użyciu jakiegoś serwisu zewnętrznego. Ponadto, do określania stabilności, mogłyby być brane pod uwagę parametry węzła, takie jak jego opóźnienia komunikacyjne, przepustowość jaką dysponuje, czy nawet sposób łączenia się do sieci (połączenia bezprzewodowe z reguły są mniej stabilne).
 
 \subsection{Replikacja}
 Głównym celem grupowania węzłów jest replikacja danych między nimi. Dzięki abstrakcji, którą zapewniają grupy węzłów, protokół Statycznych Grup może działać na wzór Chorda, jednocześnie zapewniając środowisko do replikacji, lecz abstrahując od konkretnego sposobu powielania danych. Zalecane jest, aby repliki danych, za które odpowiedzialna jest grupa, były na każdym węźle będącym członkiej danej grupy. Sposób uspójniania replik nie jest wyspecyfikowany w protokole Statycznych Grup i zależy od konkretnej implementacji.
 
 \section{Opis szczegółowy}
 
-Aby szczegółowo opisać działanie protokołu Statycznych Grup, w podrozdziale tym przedstawiony i omówiony jest pseudokod opisujący logikę działania protokołu. Schemat działania zbliżony jest do omówionego już protokołu Chord i w dużej mierze się pokrywa. Dlatego też w podrozdziale tym pominięto kwestie, które zostały już opisane w podrozdziale \ref{protokol_chord}. Istotne różnice pojawiają się w momencie dołączania węzła do sieci, gdzie potrzebna jest dodatkowa logika oraz funkcje odpowiedzialne za znalezienie odpowiedniej grupy. Zmiany wprowadza również dodatkowa struktura reprezentująca grupę węzłów, przez którą można wywoływać zdalne metody. Ponadto dochodzi okresowe sprawdzanie poprawności członków grupy.
+Aby szczegółowo opisać działanie protokołu Statycznych Grup, w podrozdziale tym przedstawiony i omówiony jest pseudokod opisujący logikę działania protokołu. Ponieważ SG rozszerza protokół Chord, w wielu miejscach działając w taki sam sposób --- w podrozdziale tym pominięto kwestie, które zostały już opisane w podrozdziale \ref{protokol_chord}. Istotne różnice pojawiają się w momencie dołączania węzła do sieci, gdzie potrzebna jest dodatkowa logika oraz funkcje odpowiedzialne za znalezienie odpowiedniej grupy. Zmiany wprowadza również dodatkowa struktura reprezentująca grupę węzłów, przez którą można wywoływać zdalne metody. Ponadto dochodzi okresowe sprawdzanie poprawności członków grupy.
 
 \subsection{Struktury i parametry}
 
-Bardzo ważnym elementem w protokole Statycznych Grup jest przedstawiona na listingu \ref{lst:sg_group} struktura \texttt{Group}. Reprezentuje ona zbiór węzłów tworzących jedną grupę. Składa się z identyfikatora grupy \texttt{id}, oraz listy adresów \texttt{addresses} wszystkich jej członków. Poprzez obiekt owej struktury, można odwołać się do węzła danej grupy. W listingach wywołanie zdalnej metody na którymś członku grupy\footnote{Wybór członka, który wykona zdalną metodę zależny jest od implementacji. Sugerowane jest aby był to członek losowy. Możliwa jest również taka implementacja, w której to wszyscy członkowie grupy wykonują zdalną metodę.} oznaczane jest symbolem \texttt{->}. Przykładowo \texttt{group->find\_successor(3)} oznacza wywołanie zdalnej metody \texttt{find\_successor(3)} na członku grupy \texttt{group}. W podobny sposób można odwołać się do konkretnego węzła, żądając wykonania zdalnej metody, np. \texttt{group.address[2]->find\_successor(3)}.
+Bardzo ważnym elementem w protokole Statycznych Grup jest przedstawiona na listingu \ref{lst:sg_group} struktura \texttt{Group}. Reprezentuje ona zbiór węzłów tworzących jedną grupę. Składa się z identyfikatora grupy \texttt{id}, oraz listy adresów \texttt{addresses} wszystkich jej członków. Poprzez obiekt owej struktury, można odwołać się do węzła danej grupy. W listingach wywołanie zdalnej metody dla dowolnego członka grupy\footnote{Wybór członka, który wykona zdalną metodę zależny jest od implementacji. Sugerowane jest aby był to członek losowy. Możliwa jest również taka implementacja, w której to wszyscy członkowie grupy wykonują zdalną metodę.} oznaczane jest symbolem \texttt{->}. Przykładowo \texttt{group->find\_successor(3)} oznacza wywołanie zdalnej metody \texttt{find\_successor(3)} dla członka grupy \texttt{group}. W podobny sposób można odwołać się do konkretnego węzła, żądając wykonania zdalnej metody, np. \texttt{group.address[2]->find\_successor(3)}.
 
 Istotnym, w kontekście protokołu Chord, typem złożonym jest struktura \texttt{Finger}, przedstawiona na listingu \ref{lst:sg_finger}. Reprezentuje ona pojedynczy wpis w tablicy trasowania, który składa się z numeru \texttt{i}, początku zakresu kluczy \texttt{start}, końca zakresu kluczy \texttt{end} oraz grupy \texttt{group} odpowiedzialnej za dany zakres kluczy.
 
@@ -426,11 +424,11 @@ Istotnym, w kontekście protokołu Chord, typem złożonym jest struktura \textt
 
 Główną jednostką protokołu jest struktura węzła, której pseudokod przedstawiony jest na listingu \ref{lst:sg_node}. Widać, że węzeł składa się ze zmiennej \texttt{next}, adresu \texttt{address}, pola określającego stabilność węzła \texttt{stability}, obiektów grupy \texttt{group}, poprzednika \texttt{predecessor} i następnika \texttt{successor}, oraz tablicy trasowania \texttt{fing}-\texttt{erTable}. Zmienna \texttt{next} wykorzystywana jest w procedurze \texttt{fix\_fingers} (listing \ref{lst:sg_fix_fingers}) i oznacza indeks następnego wpisu w tablicy trasowania do sprawdzenia. Adres zawiera unikalny adres danego węzła, przez który inne węzły mogą się z nim komunikować (najczęściej jest to adres IP). Węzły należące do tej samej grupy uspójniają między sobą pola \texttt{fingerTable}, \texttt{group}, \texttt{successor} i \texttt{predecessor}. Sposób uspójniania tych pól między węzłami w grupie, podobnie jak sposób uspójniania replik między węzłami w grupie, nie jest ściśle określony i zależy od konkretnej implementacji.
 
-Istotnym elementem wpływającym na działanie protokołu Statycznych Grup są trzy parametry: \texttt{M} -- oznaczający, podobnie jak w protokole Chord, liczbę bitów przeznaczonych na pojedynczy identyfikator oraz liczbę wpisów w tablicy trasowania; \texttt{MAX\_GROUP\_SIZE} -- mówiący o maksymalnej liczbie węzłów, które mogą tworzyć jedną grupę; oraz \texttt{STABILITY\_REQUIREMENT} -- wymagany poziom stabilności do utworzenia nowej grupy.
+Istotnym elementem wpływającym na działanie protokołu Statycznych Grup są trzy parametry: \texttt{M} --- oznaczający, podobnie jak w protokole Chord, liczbę bitów przeznaczonych na pojedynczy identyfikator oraz liczbę wpisów w tablicy trasowania; \texttt{MAX\_GROUP\_SIZE} --- mówiący o maksymalnej liczbie węzłów, które mogą tworzyć jedną grupę; oraz \texttt{STABILITY\_REQUIREMENT} --- wymagany poziom stabilności do utworzenia nowej grupy.
 
 \subsection{Lokalizacja grupy odpowiedzialnej za klucz}
 
-Podobnie jak w protokole Chord, główną operacją SG jest lookup, czyli odnalezienie lokalizacji określonego obiektu. Operacja ta różni się jednak od tej z protokołu Chord (patrz paragraf \ref{odnajdywanie_lokalizacji_klucza}) tym, że szukana jest grupa węzłów, a nie pojedynczy węzeł. Za operację lookup odpowiedzialna jest funkcja \texttt{find\_successor} pokazana na listingu \ref{lst:sg_find_successor}. Działa ona analogicznie jak jej odpowiednik w protokole Chord i korzysta z funkcji \texttt{closest\_preceding\_group} pokazanej na listingu \ref{lst:sg_closest_preceding_group}, która również ma swojego odpowiednika w protokole Chord (\texttt{closest\_preceding\_node}).
+Podobnie jak w protokole Chord, główną operacją SG jest lookup, czyli odnalezienie lokalizacji określonego obiektu. Operacja ta różni się jednak od zaproponowanej w protokole Chord (patrz paragraf \ref{odnajdywanie_lokalizacji_klucza}) tym, że szukana jest grupa węzłów, a nie pojedynczy węzeł. Za operację lookup odpowiedzialna jest funkcja \texttt{find\_success}-\texttt{or} pokazana na listingu \ref{lst:sg_find_successor}. Działa ona analogicznie jak jej odpowiednik w protokole Chord i korzysta z funkcji \texttt{closest\_preceding\_group} pokazanej na listingu \ref{lst:sg_closest_preceding_group}, która również ma swojego odpowiednika w protokole Chord (\texttt{closest\_prece}-\texttt{ding\_node}).
 
 \lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie lokalizacji obiektu o danym identyfikatorze.}, captionpos=b, label={lst:sg_find_successor}, float=h]{sg_find_successor.txt}
 
@@ -438,7 +436,7 @@ Podobnie jak w protokole Chord, główną operacją SG jest lookup, czyli odnale
 
 \subsection{Dołączanie do sieci}
 
-Węzeł może dołączyć do istniejącego pierścienia Statycznych Grup dzięki węzłowi będącemu już w istniejącym pierścieniu, bądź może stworzyć nowy pierścień. Pokazuje to listing \ref{lst:sg_start}, na którym przedstawiona jest procedura \texttt{start}, która działa w następujący sposób: jeżeli nie podano adresu \texttt{addr}, z którym węzeł \texttt{n} ma się połączyć, to wywołuje on procedurę \texttt{create} (listing \ref{lst:sg_create}), tworząc nowy pierścień. W przeciwnym wypadku, węzeł \texttt{n} wywołuje zdalną procedurę \texttt{find\_group\_to\_join} (listing \ref{lst:sg_find_group_to_join}) na węźle reprezentowanym przez adres \texttt{addr}, która zwraca obiekt grupy \texttt{g}. Węzeł \texttt{n} tworzy nową grupę, jeżeli węzeł \texttt{addr} zwróci pusty obiekt \texttt{null}, lub gdy wartość stabilności \texttt{stability} węzła \texttt{n} jest większa lub równa parametrowi \texttt{STABILITY\_REQUIREMENT} i jednocześnie rozmiar grupy \texttt{g} jest większy lub równy połowie wartości parametru \texttt{MAX\_GROUP\_SIZE}. Jeżeli tak nie jest, to węzeł \texttt{n} dołącza do grupy \texttt{g}. Dzięki takiej logice, nowe grupy tworzone są tylko przez węzły stabilne, lub gdy nie ma wolnej grupy do dołączenia; jednocześnie, jeżeli zaproponowana grupa \texttt{g} jest mała (jej rozmiar jest mniejszy od połowy wartości parametru \texttt{MAX\_GROUP\_SIZE}) to węzeł stabilny zamiast stworzyć nową grupę, dołaczą do \texttt{g}. Zapobiega to tworzeniu nowych grup w przypadku, gdy inne grupy są małe.
+Węzeł może dołączyć do istniejącego pierścienia Statycznych Grup dzięki węzłowi będącemu już w istniejącym pierścieniu, lub może stworzyć nowy pierścień. Pokazuje to listing \ref{lst:sg_start}, na którym przedstawiona jest procedura \texttt{start}, która działa w następujący sposób: jeżeli nie podano adresu \texttt{addr}, z którym węzeł \texttt{n} ma się połączyć, to wywołuje on procedurę \texttt{create} (listing \ref{lst:sg_create}), tworząc nowy pierścień. W przeciwnym wypadku, węzeł \texttt{n} wywołuje zdalną procedurę \texttt{find\_group\_to\_join} (listing \ref{lst:sg_find_group_to_join}) dla węzła reprezentowanego przez adres \texttt{addr}, która zwraca obiekt grupy \texttt{g}. Węzeł \texttt{n} tworzy nową grupę, jeżeli węzeł \texttt{addr} zwróci pusty obiekt \texttt{null}, lub gdy wartość stabilności \texttt{stability} węzła \texttt{n} jest większa lub równa parametrowi \texttt{STABILITY\_REQUIREMENT} i jednocześnie rozmiar grupy \texttt{g} jest większy lub równy połowie wartości parametru \texttt{MAX\_GROUP\_SIZE}. Jeżeli tak nie jest, to węzeł \texttt{n} dołącza do grupy \texttt{g}. Dzięki takiej logice, nowe grupy tworzone są tylko przez węzły stabilne, lub gdy nie ma wolnej grupy do dołączenia; jednocześnie, jeżeli zaproponowana grupa \texttt{g} jest mała (jej rozmiar jest mniejszy od połowy wartości parametru \texttt{MAX\_GROUP\_SIZE}) to węzeł stabilny zamiast stworzyć nową grupę, dołaczą do \texttt{g}. Zapobiega to tworzeniu nowych grup w przypadku, gdy inne grupy są małe.
 
 \lstinputlisting[caption={Pseudokod procedury dołączania węzła do istniejącego pierścienia, bądź utworzenie własnego pierścienia.}, captionpos=b, label={lst:sg_start}, float=!h]{sg_start.txt}
 
@@ -450,7 +448,7 @@ Węzeł może dołączyć do istniejącego pierścienia Statycznych Grup dzięki
 
 \lstinputlisting[caption={Pseudokod procedury dodania adresu do listy adresów węzłów w grupie.}, captionpos=b, label={lst:sg_add_address}, float=!h]{sg_add_address.txt}
 
-Wartą omówienia jest funkcja \texttt{find\_group\_to\_join}, która zwraca wolną grupę do dołączenia. Zaimplementowana jest w taki sposób, aby znaleźć w obrębie zbioru grup, grupę najmniejszą. Owy zbiór składa się z grup będących w tablicach trasowania tych grup, które posiada w swojej tablicy trasowania węzeł \texttt{n}. W zależności od polityki, funkcja ta mogła by być zaimplementowana w inny sposób; mogłaby wybierać grupę na odmiennej zasadzie. Dla przykładu mogłaby brać pod uwagę stabilność węzła i na tej podstawie dobrać taką grupę, aby zachować różnorodność węzłów w grupie.
+Wartą omówienia jest funkcja \texttt{find\_group\_to\_join}, która zwraca wolną grupę do dołączenia. Zaimplementowana jest w taki sposób, aby znaleźć w obrębie zbioru grup, grupę najmniejszą. Owy zbiór składa się z grup będących w tablicach trasowania tych grup, które posiada w swojej tablicy trasowania węzeł \texttt{n}. W zależności od polityki, funkcja ta mogłaby wybierać grupę na odmiennej zasadzie. Dla przykładu mogłaby brać pod uwagę stabilność węzła i na tej podstawie dobrać taką grupę, aby zachować różnorodność węzłów w grupie.
 
 \lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za zwrócenie grupy do dołączenia.}, captionpos=b, label={lst:sg_find_group_to_join}, float=!h]{sg_find_group_to_join.txt}
 
@@ -459,7 +457,7 @@ Wartą omówienia jest funkcja \texttt{find\_group\_to\_join}, która zwraca wol
 
 \subsection{Stabilizacja}
 
-Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wskaźniki na grupę następną, poprzednią oraz aktualną tablicę trasowania. Stabilizacja w protokole Statycznych Grup przebiega analogicznie do stabilizacji w protokole Chord, opisanej w paragrafie \ref{zmiany_w_sieci}. Uruchamiane są procedury \texttt{stabilize} (listing \ref{lst:sg_stabilize}), \texttt{fix\_fingers} (listing \ref{lst:sg_fix_fingers}) oraz \texttt{check\_predecessor} (listing \ref{lst:sg_check_predecessor}). Ale ponieważ, w odróżnieniu od protokołu Chord, dochodzi jeszcze jeden komponent -- grupa, należy dodatkowo sprawdzać jego integralność. Zajmuje się tym procedura \texttt{check\_group} pokazana na listingu \ref{lst:sg_check_group}, w której to sprawdzana jest poprawność wszystkich węzłów w grupie, aby mieć ich aktualną listę.
+Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wskaźniki na grupę następną, poprzednią oraz aktualną tablicę trasowania. Stabilizacja w protokole Statycznych Grup przebiega analogicznie do stabilizacji w protokole Chord, opisanej w paragrafie \ref{zmiany_w_sieci}. Uruchamiane są procedury \texttt{stabilize} (listing \ref{lst:sg_stabilize}), \texttt{fix\_fingers} (listing \ref{lst:sg_fix_fingers}) oraz \texttt{check\_predecessor} (listing \ref{lst:sg_check_predecessor}). Ale ponieważ, w odróżnieniu od protokołu Chord, dochodzi jeszcze jeden komponent --- grupa, należy dodatkowo sprawdzać jego integralność. Zajmuje się tym procedura \texttt{check\_group} pokazana na listingu \ref{lst:sg_check_group}, w której to sprawdzana jest poprawność wszystkich węzłów w grupie, aby mieć ich aktualną listę.
 
 \lstinputlisting[caption={Pseudokod procedury wywoływanej okresowo i odpowiedzialnej za weryfikację bezpośredniego nastepnika \texttt{successor} grupy węzła \texttt{n}, oraz powiadomienie jej o jego grupie \texttt{group}.}, captionpos=b, label={lst:sg_stabilize}, float=h]{sg_stabilize.txt}
 
@@ -474,23 +472,49 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 
 \chapter{Testy symulacyjne}
 
+Na sieć węzłów w której działa zaproponowany w niniejszej pracy magisterskiej protokół Statycznych Grup wpływają parametry protokołu (takie jak maksymalna liczność grup, czy wymagana stabilność do utworzenia nowej grupy) oraz parametry sieci (takie jak liczba węzłów, czy częstotliwość dołączeń i odłączeń). Rozdział ten przedstawia środowisko symulacyjne \textit{PeerSim}, na którym zaimplementowano i przetestowano protokół Statycznych Grup, oraz przedstawia wyniki testów wpływu parametrów protokołu i parametrów sieci na symulowaną sieć w której działa protokół Statycznych Grup.
+
+\section{PeerSim}
+
+Do zaimplementowania i przetestowania protokołu Statycznych Grup wykorzystano środowisko symulacyjne PeerSim \cite{bib:peersim}, które pozwala na uruchamianie własnych protokołów. Rozpowszechniane jest na licencji wolnego oprogramowania \textit{GNU General Public License} (GPL). Napisane jest w języku Java i składa się z dwóch silników symulacyjnych. Pierwszym jestem silnik wykorzystujący do działania cykle. Drugim jest silnik korzystający ze zdarzeń. W implementacji protokołu Statycznych Grup wykorzystywany jest silnik oparty na cyklach, który abstrahuje od warstwy transportowej oraz od współbieżności, a więc obiekty węzłów komunikują się ze sobą bezpośrednio i wszystkie operacje w sieci wykonywane są sekwencyjnie.
+
+\lstinputlisting[caption={Przykładowy plik konfiguracyjny środowiska symulacyjnego PeerSim.}, captionpos=b, label={lst:sample_config}, float=!h]{sample_config.txt}
+
+Działanie symulatora uzależnione jest od pliku konfiguracyjnego, w którym ustawia się wartości globalnych parametrów, takich jak liczność sieci, czy liczba eksperymentów. Ponadto, w pliku tym wskazuje się klasy, z których symulator ma korzystać podczas symulacji, oraz definiuje się ewentualne parametry tych klas. Przykładowy plik konfiguracyjny wykorzystywany w implementacji protokołu Statycznych Grup pokazany jest na listingu \ref{lst:sample_config}. Widać na nim ustawione wartości globalnych parametrów (pierwsze 4 linie), kolejno: liczba eksperymentów, ziarno dla generatora liczb pseudolosowych, liczba cykli symulatora oraz liczność sieci. Dalej, w linii 6 wskazano klasę, która ma się uruchomić na początku każdego eksperymentu. Wskazuje na to słowo kluczowe \texttt{init}, po którym następuje dowolny identyfikator klasy, w tym wypadku \texttt{create}. Klasą, na którą wskazuje linia 6 jest \texttt{CreateInitialNodes} z pakietu \texttt{staticgroups}. Następnie, w linii 7, na podobnej zasadzie wskazana jest klasa protokołu \texttt{StaticGroupsProtocol} z pakietu \texttt{staticgroups} o identyfikatorze \texttt{sg}. Dalej wskazano klasy, które oznaczone są jako \texttt{control}, czyli wykonują jakąś akcję co cykl, dzięki czemu mogą wpływać na przebieg symulacji, bądź zbierać informacje o niej. Wskazane klasy, wszystkie z pakietu \texttt{staticgroups}, to kolejno: \texttt{RandomDynamicNetwork}, \texttt{StaticGroupsMaintainer}, \texttt{StaticGroupsTests}, oraz \texttt{StaticGroupsMetrics}. 
+
+Klasa \texttt{CreateInitialNodes} odpowiada za dołączenie węzłów do sieci przed rozpoczęciem eksperymentu\footnote{Dołączenie węzłów do sieci przed rozpoczęciem eksperymentu jest istotne, aby móc zbadać zachowanie się istniejącej już sieci bez potrzeby tworzenia jej podczas trwania eksperymentu.}. \texttt{StaticGroupsProtocol} jest klasą protokołu, której obiekt posiada każdy węzeł. Klasa ta przyjmuje parametry pokazane w liniach od 10 do 15 na listingu \ref{lst:sample_config}:
 \begin{itemize}
-\item opisac PeerSim
-\item scenariusze: ile wezlow, jak czesto dolaczaja, jak duze sa grupy, wspolczyniki stabilizacji
-\item wyniki
-\item analiza
+\item \texttt{DEBUG}: gdy parametr ten ustawiony jest na wartość 1, na standardowym wyjściu wypisywane są informacje o przebiegu symulacji.
+\item \texttt{protocol}: identyfikator protokołu w symulatorze PeerSim.
+\item \texttt{M}: liczba bitów przeznaczonych na pojedynczy identyfikator obiektu oraz liczba wpisów w tablicy trasowania.
+\item \texttt{MAX\_GROUP\_SIZE}: maksymalny rozmiar grupy.
+\item \texttt{STABILITY\_REQUIREMENT}: wartość zmiennoprzecinkowa wyznaczająca minimalną wartość stabilności węzła, potrzebną do utworzenia przez niego nowej grupy.
 \end{itemize}
 
-\begin{comment}
+Klasa \texttt{RandomDynamicNetwork} odpowiada za zmiany w sieci (dołączanie węzłów do sieci lub odłączanie węzłów od sieci). W liniach od 20 do 24 na listingu \ref{lst:sample_config} zdefiniowane są wybrane parametry tej klasy:
+\begin{itemize}
+\item \texttt{RANDOM}: w przypadku zmiany w sieci, wartość 1 tego parametru wymusza pseudolosowość w określaniu, czy w danym cyklu do sieci ma zostać dodany węzeł, czy z sieci ma zostać usunięty węzeł.
+\item \texttt{RANDOM\_ADD\_PROBABILITY}: parametr ten określa prawdopodobieństwo dodania węzła do sieci (zamiast jego usunięcia), jeżeli w sieci ma nastąpić zmiana. Ma znaczenie tylko w przypadku, gdy \texttt{RANDOM} równe jest 1.
+\item \texttt{step}: parametr określający, co ile cykli ma nastąpić zmiana w sieci.
+\item \texttt{init.0}: parametr wskazujący klasę, która ma zostać użyta w przypadku dodania węzła do sieci.
+\end{itemize}
+
+Następna klasa znajdująca się na listingu \ref{lst:sample_config}, \texttt{StaticGroupMaintainer}, odpowiada za uruchamianie na węzłach procedur stabilizacji. Pokazany w linii 28 na listingu \ref{lst:sample_config} parametr \texttt{step} określa co ile cykli mają być uruchamiane procedury stabilizacji na każdym węźle. Dalej, klasa \texttt{StaticGroupTests} odpowiedzialna jest za testy poprawności wskaźników grup (pola \texttt{successor} i \texttt{predecessor}, oraz wpisy w \texttt{fingerTable}). Ostatnią klasą pokazaną na listingu \ref{lst:sample_config} jest \texttt{StaticGroup}-\texttt{Metrics}, która zbiera informacje o przebiegu symulacji, takie jak czas trwania symulacji, czy średnia liczność grup, i wypisuje je na standardowym wyjściu.
+
+\section{Testy}
+Działanie protokołu Statycznych Grup jest zależne od parametrów sieci takich jak liczba węzłów, częstotliwość zmian w sieci (co ile cykli symulatora następuje dołączenie lub odłączenie węzła), czy prawdopodobieństwo  dołączenia węzła w przypadku zmiany w sieci (\texttt{RANDOM\_ADD\_PROBABILITY}), oraz od parametrów protokołu Statycznych Grup takich jak maksymalny rozmiar grupy (\texttt{MAX\_GROUP\_SIZE}), czy wymagana stabilność do utworzenia nowej grupy (\texttt{STABILITY\_REQUIREMENT}). W podrozdziale tym przedstawiono wpływ tych parametrów na działanie protokołu Statycznych Grup w środowisku symulacyjnym PeerSim. Dla wszystkich testów parametr \texttt{M} klasy \texttt{StaticGroupsProtocol} równy był 11, parametr \texttt{RANDOM} klasy \texttt{RandomDynamicNetwork} równy był 1, parametr \texttt{step} klasy \texttt{RandomDynamicNet}-\texttt{work} równy był 1, parametr \texttt{step} klasy \texttt{StaticGroupsMaintainer} równy był 1. Wartości pozostałych, istotnych dla przebiegu poniższy testów, parametrów podane są w ramach opisów każdego z testów, a wartości parametrów nieistotnych dla przebiegu poniższych testów zostały pominięte. Wynikiem pojedynczego eksperymentu był jeden pomiar. Ponadto, stabilność każdego węzła była losowana z zakresu od 0 do 1, a każde odłączenie węzła odbywało się w następujący sposób: losowane były cztery węzły z całej sieci i z nich odłączał się ten, który miał najmniejszą stabilność.
+
+\subsection{Średnia liczność grup}
+
+Wykres 6.1 przedstawia wpływ parametru \texttt{MAX\_GROUP\_SIZE} na średnią liczność grup. Wpływ ten zbadano dla wybranych wartości parametru \texttt{STABILITY\_RE}-\texttt{QUIREMENT}. Parametry testu, dla którego powstał wykres 6.1: liczba eksperymentów --- 20, początkowa liczba węzłów --- 1000, liczba cykli --- 1000, prawdopodobieństwo dołączenia nowego węzła w przypadku zmiany w sieci --- 0.5. Z wykresu wynika, że średnia liczność grup rośnie liniowo wraz ze wzrostem maksymalnego rozmiaru grup i jest jednocześnie zależna od parametru \texttt{STABILITY\_REQUIREMENT}. Widać, że gdy parametr \texttt{STABILITY\_REQUIREMENT} równy jest 0.99, to średnia liczność grup jest bliska maksymalnej liczności grup, a gdy \texttt{STABILITY\_REQUIREMENT} równy jest 0.01, 0.1, lub 0.5, to średnia liczność grup jest około dwa razy niższa, niż maksymalna liczność grup. Jest tak dlatego, ponieważ parametr \texttt{STABILITY\_REQU}-\texttt{IREMENT} odpowiada za minimalną wartość stabilności węzła potrzebną, aby mógł on utworzyć nową grupę, a więc im wyższa wartość tego parametru, tym tworzenie nowych grup w sieci rzadziej ma miejsce, co skutkuje tym, iż nowe węzły częściej dołączają do istniejących grup, podwyższając ich liczność.
 
 \begin{figure}[H]
 \captionsetup{labelformat=empty}
-
 \begin{tikzpicture}
 \begin{axis}[
     width=\textwidth,
-    xlabel={MAX\_GROUP\_SIZE},
-    ylabel={Śr. liczność grup},
+    xlabel={\texttt{MAX\_GROUP\_SIZE}},
+    ylabel={Średnia liczność grup},
     xmin=0, xmax=20,
     ymin=0, ymax=20,
     legend pos=north west,
@@ -498,34 +522,26 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
     xmajorgrids=true,
     grid style=dashed,
 ]
-
-
+\input{plotAGStoMGS001SR.tex}
 \input{plotAGStoMGS01SR.tex}
 \input{plotAGStoMGS05SR.tex}
 \input{plotAGStoMGS09SR.tex}
-
-\legend{STABILITY\_REQUIREMENT = 0.1, STABILITY\_REQUIREMENT = 0.5, STABILITY\_REQUIREMENT  = 0.9}
-
+\input{plotAGStoMGS099SR.tex}
+\legend{\texttt{STABILITY\_REQUIREMENT} = 0.01, \texttt{STABILITY\_REQUIREMENT} = 0.1, \texttt{STABILITY\_REQUIREMENT}  = 0.5, \texttt{STABILITY\_REQUIREMENT}  = 0.9, \texttt{STABILITY\_REQUIREMENT}  = 0.99}
 \end{axis}
 \end{tikzpicture}
-
-
-\caption{Wykres x.y: MAX\_GROUP\_SIZE a średnia liczność grup.}
+\caption{Wykres 6.1: Wpływ parametru \texttt{MAX\_GROUP\_SIZE} wraz z wybranymi wartościami \texttt{STABILITY\_REQUIREMENT} na średnią liczność grup.}
 \end{figure}
 
-
-
-
-
+Wykres 6.2 przedstawia wpływ parametru \texttt{STABILITY\_REQUIREMENT} na średnią liczność grup. Wpływ ten zbadano dla różnych wartości parametru \texttt{RANDOM\_AD}-\texttt{D\_PROBABILITY}. Parametry testu, dla którego powstał wykres 6.2: liczba eksperymentów --- 101, początkowa liczba węzłów --- 1000, liczba cykli --- 1000, maksymalny rozmiar grupy --- 10. Z wykresu wynika, że średnia liczność grup rośnie wraz ze wzrostem parametru \texttt{STABILITY\_REQUIREMENT}. Wzrost średniej liczności grup jest największy dla sytuacji, w której to jest więcej dołączeń niż odłączeń węzłów (parametr \texttt{RANDOM\_ADD\_PROBABILITY} przyjmuje wartości powyżej 0.5); gdy jest jednak więcej odłączeń, niż dołączeń (parametr \texttt{RANDOM\_ADD\_PROBABILITY} przyjmuje wartości poniżej 0.5), wzrost średniej liczności grup jest zdecydowanie mniejszy, a dla skrajnie niskich wartości parametru \texttt{RANDOM\_ADD\_PROBABILITY} (0.01), wzrost średniej liczności jest niezauważalny. Wynika to z faktu, iż gdy w sieci jest więcej odłączeń węzłów, niż dołączeń węzłów, to grupy częściej tracą członków, niż zyskują. Jeżeli jednak więcej węzłów się dołącza niż odłącza, grupy się wypełniają węzłami, co zwiększa ich liczność. Ponadto, przy wysokich wymaganiach odnośnie tworzenia nowych grup (gdy parametr \texttt{STABILITY\_REQUIREMENT} przyjmuje duże wartości), rzadko który węzeł jest na tyle stabilny, aby utworzyć nową grupę, zamiast dołączyć do istniejącej; a więc węzły częściej dołączają do istniejących grup, niż tworzą nowe, co zwiększa średnią liczność grup.
 
 \begin{figure}[H]
 \captionsetup{labelformat=empty}
-
 \begin{tikzpicture}
 \begin{axis}[
     width=\textwidth,
-    xlabel={STABILITY\_REQUIREMENT},
-    ylabel={Śr. liczność grup},
+    xlabel={\texttt{STABILITY\_REQUIREMENT}},
+    ylabel={Średnia liczność grup},
     xmin=0, xmax=1,
     ymin=0, ymax=10,
     legend pos=north west,
@@ -533,56 +549,156 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
     xmajorgrids=true,
     grid style=dashed,
 ]
-
+\input{plotAGStoSR001RAP.tex}
 \input{plotAGStoSR01RAP.tex}
+\input{plotAGStoSR03RAP.tex}
 \input{plotAGStoSR05RAP.tex}
 \input{plotAGStoSR09RAP.tex}
-\legend{przyłaczenia/odłączenia = 0.1, przyłaczenia/odłączenia = 0.5, przyłaczenia/odłączenia = 0.9}
-
+\legend{\texttt{RANDOM\_ADD\_PROBABILITY} = 0.01, \texttt{RANDOM\_ADD\_PROBABILITY} = 0.1, \texttt{RANDOM\_ADD\_PROBABILITY} = 0.3, \texttt{RANDOM\_ADD\_PROBABILITY} = 0.5, \texttt{RANDOM\_ADD\_PROBABILITY} = 0.9}
 \end{axis}
 \end{tikzpicture}
+\caption{Wykres 6.2: Wpływ parametru \texttt{STABILITY\_REQUIREMENT} wraz z wybranymi wartościami \texttt{RANDOM\_ADD\_PROBABILITY} na średnią liczność grup.}
+\end{figure}
 
+\subsection{Średni czas życia grup}
 
-\caption{Wykres x.y: STABILITY\_REQUIREMENT a średnia liczność grup.}
+Poniżej przedstawiono wyniki testów wpływu parametrów \texttt{MAX\_GROUP\_SIZE} i \texttt{STABILITY\_REQUIREMENT} na średni czas życia grup. Czas życia grupy oznacza liczbę cykli, które minęły od momentu powstania grupy, aż do odłączenia się ostatniego członka grupy.
+
+Wykres 6.3 przedstawia wpływ parametru \texttt{MAX\_GROUP\_SIZE} na średni czas życia grup. Wpływ ten zbadano dla różnych wartości \texttt{STABILITY\_REQUIREMENT}. Parametry testu, dla którego powstał wykres 6.3: liczba eksperymentów --- 20, początkowa liczba węzłów --- 1000, liczba cykli --- 10000, prawdopodobieństwo dołączenia nowego węzła w przypadku zmiany w sieci --- 0.5. Na wykresie 6.3 widać, że dla \texttt{MAX\_GROUP\_SIZE} mniejszego niż 8, średni czas życia grup rośnie wraz ze wzrostem \texttt{MAX\_GROUP\_SIZE}. Ponadto, wzrost ten jest większy dla większych wartości parametrów \texttt{STABILITY\_REQUIREMENT}. Dla \texttt{MAX\_GROUP\_SIZE} większego od 7, średni czas życia grup jest podobny dla różnych wartości parametru \texttt{STABILITY\_REQUIR}-\texttt{EMENT}, i wynosi między 7000 a 10000 -- czyli przez większość cykli pojedynczego eksperymentu. Rozbieżność ta wynika z faktu losowości zachowań w sieci (parametr \texttt{RANDOM} klasy \texttt{RandomDynamicNetwork} równy jest 1) oraz losowości stabilności węzła. Z wykresu 6.3 wynika, że maksymalna liczność grupy, dla której odczuwana jest zmiana wartości parametru  \texttt{STABILITY\_REQUIREMENT} przy symulacji trwającej 10000 cykli --- to 7. Wynika to z faktu, iż im większa grupa, tym mniejsza szansa, że wszyscy członkowie odejdą zanim do grupy dołączy nowy węzeł (co skutkuje zakończeniem życia grupy). Maksymalna liczność grupy równa 8, jest wystarczająca, aby grupy żyły średnio przez większość z 10000 cykli.
+
+\begin{figure}[H]
+\captionsetup{labelformat=empty}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\textwidth,
+    xlabel={\texttt{MAX\_GROUP\_SIZE}},
+    ylabel={Średni czas życia grup},
+    xmin=0, xmax=20,
+    ymin=0, ymax=12000,
+    legend pos=south east,
+    ymajorgrids=true,
+    xmajorgrids=true,
+    grid style=dashed,
+]
+
+\input{plotAGLTtoMGS01SR.tex}
+\input{plotAGLTtoMGS05SR.tex}
+\input{plotAGLTtoMGS09SR.tex}
+\legend{\texttt{STABILITY\_REQUIREMENT} = 0.1, \texttt{STABILITY\_REQUIREMENT} = 0.5, \texttt{STABILITY\_REQUIREMENT} = 0.9}
+\end{axis}
+\end{tikzpicture}
+\caption{Wykres 6.3: Wpływ parametru \texttt{MAX\_GROUP\_SIZE} wraz z wybranymi wartościami \texttt{STABILITY\_REQUIREMENT} na średni czas życia grup.}
+\end{figure}
+
+Wykres 6.4 przedstawia wpływ parametru \texttt{STABILITY\_REQUIREMENT} na średni czas życia grup. Wpływ ten zbadano dla różnych wartości \texttt{MAX\_GROUP\_SIZE}. Parametry testu, dla którego powstał wykres 6.4: liczba eksperymentów --- 21, początkowa liczba węzłów --- 1000, liczba cykli --- 10000, prawdopodobieństwo dołączenia nowego węzła w przypadku zmiany w sieci --- 0.5. Na wykresie 6.4 widać, że dla maksymalnej liczności grup równej 3, 5 lub 7, wraz z wzrostem parametru \texttt{STABILITY\_REQUIREMENT} wzrasta średni czas życia grup --- przy czym wzrost ten jest największy dla wysokich wartości \texttt{STABILITY\_REQUIREMENT} (od 0.6 do 1). Zależność ta nie jest widoczna dla przypadku, w którym parametr \texttt{MAX\_GROUP\_SIZE} równy jest 10, lub 20 -- wtenczas średni czas życia grup waha się od 6000 do 10000 dla dowolnej wartości \texttt{STABILITY\_REQUIREMENT}, a dla \texttt{STABILITY\_REQUIREMENT} wyższego od 0.4, średni czas życia grup waha się od 8854 od 10000. Wahania te wynikają z losowości zachowań węzłów w sieci oraz losowości w wyznaczaniu stabilności. Zmiana parametru \texttt{STABILITY\_REQUIREMENT} nie wpływa znacząco na średni czas życia grup dla \texttt{MAX\_GROUP\_SIZE} równego 10, lub 20, ponieważ w tych wypadkach grupy są na tyle liczne, że mała jest szansa, aby w przeciągu 10000 cykli zginęły z powodu odejścia wszystkich członków.
+
+\begin{figure}[H]
+\captionsetup{labelformat=empty}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\textwidth,
+    height=0.76\textwidth,
+    xlabel={\texttt{STABILITY\_REQUIREMENT}},
+    ylabel={Średni czas życia grup},
+    xmin=0, xmax=1,
+    ymin=0, ymax=12000,
+    %legend pos=south east,
+    legend style={
+		at={(0.58,0.85)},
+		anchor=south west},
+    ymajorgrids=true,
+    xmajorgrids=true,
+    grid style=dashed,
+]
+\input{plotAGLTtoSR3MGS.tex}
+\input{plotAGLTtoSR5MGS.tex}
+\input{plotAGLTtoSR7MGS.tex}
+\input{plotAGLTtoSR10MGS.tex}
+\input{plotAGLTtoSR20MGS.tex}
+\legend{\texttt{MAX\_GROUP\_SIZE} = 3, \texttt{MAX\_GROUP\_SIZE} = 5, \texttt{MAX\_GROUP\_SIZE} = 7, \texttt{MAX\_GROUP\_SIZE} = 10, \texttt{MAX\_GROUP\_SIZE} = 20}
+\end{axis}
+\end{tikzpicture}
+\caption{Wykres 6.4: Wpływ parametru \texttt{STABILITY\_REQUIREMENT} wraz z wybranymi wartościami \texttt{MAX\_GROUP\_SIZE} na średni czas życia grup.}
 \end{figure}
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+\begin{comment}
+
+
+
+\begin{figure}[H]
+\captionsetup{labelformat=empty}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\textwidth,
+    xlabel={\texttt{STABILITY\_REQUIREMENT}},
+    ylabel={Średni czas życia grup},
+    xmin=0, xmax=1,
+    ymin=0, ymax=12000,
+    %legend pos=south east,
+    legend style={
+		at={(0.58,0.85)},
+		anchor=south west},
+    ymajorgrids=true,
+    xmajorgrids=true,
+    grid style=dashed,
+]
+
+\input{plotAGLTtoSR01RAP.tex}
+\input{plotAGLTtoSR03RAP.tex}
+\input{plotAGLTtoSR05RAP.tex}
+\input{plotAGLTtoSR07RAP.tex}
+\input{plotAGLTtoSR09RAP.tex}
+
+\end{axis}
+\end{tikzpicture}
+\caption{}
+\end{figure}
 
 
 
 
 \begin{figure}[H]
 \captionsetup{labelformat=empty}
-
 \begin{tikzpicture}
 \begin{axis}[
     width=\textwidth,
-    xlabel={Stosunek przyłaczeń do odłączeń},
-    ylabel={Śr. liczność grup},
+    xlabel={\texttt{RANDOM\_ADD\_PROBABILITY}},
+    ylabel={Średnia liczność grup},
     xmin=0, xmax=1,
     ymin=0, ymax=10,
-    legend pos=north west,
+    legend pos=south east,
     ymajorgrids=true,
     xmajorgrids=true,
     grid style=dashed,
 ]
-
 \input{plotAGStoRAP01.tex}
 \input{plotAGStoRAP05.tex}
+\input{plotAGStoRAP07.tex}
 \input{plotAGStoRAP09.tex}
+\input{plotAGStoRAP099.tex}
 
-\legend{STABILITY\_REQUIREMENT = 0.1, STABILITY\_REQUIREMENT = 0.5, STABILITY\_REQUIREMENT  = 0.9}
-
+\legend{\texttt{STABILITY\_REQUIREMENT} = 0.1, \texttt{STABILITY\_REQUIREMENT} = 0.5, \texttt{STABILITY\_REQUIREMENT} = 0.7, \texttt{STABILITY\_REQUIREMENT} = 0.9, \texttt{STABILITY\_REQUIREMENT} = 0.99}
 \end{axis}
 \end{tikzpicture}
 
 
-\caption{Wykres x.y: Stosunek przyłączeń do odłączeń a średnia liczność grup (1000 cykli, MAX\_GROUP\_SIZE=10).}
+\caption{Wykres 6.3: \texttt{RANDOM\_ADD\_PROBABILITY} i \texttt{STABILITY\_REQUIREMENT} a średnia liczność grup.}
 \end{figure}
-
 
 \begin{figure}[H]
 \captionsetup{labelformat=empty}
@@ -616,6 +732,7 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 
 \end{comment}
 
+
 \begin{comment}
 \begin{figure}[H]
 \floatstyle{boxed}
@@ -627,6 +744,41 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 \end{comment}
 
 
+\begin{comment}
+
+\begin{figure}[H]
+\floatstyle{boxed}
+\centering
+\input{graph26.tex}
+\caption{Częstotliwość przypływów/odpływów do częstotliwości  operacji stabilizacji - 2.6.}
+\label{fig:links}
+\end{figure}
+
+\begin{figure}[H]
+\floatstyle{boxed}
+\centering
+\input{graph27.tex}
+\caption{Częstotliwość operacji stabilizacji do częstotliwości przypływów/odpływów - 2.7.}
+\label{fig:links}
+\end{figure}
+
+\begin{figure}[H]
+\floatstyle{boxed}
+\centering
+\input{graph28.tex}
+\caption{Częstotliwość przypływów/odpływów do częstotliwości  operacji stabilizacji - 2.8.}
+\label{fig:links}
+\end{figure}
+\end{comment}
+
+
+
+
+
+
+
+
+
 \chapter{Podsumowanie}
 
 \begin{itemize}
@@ -635,7 +787,6 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 
 
 %-----------Koniec czesci zasadniczej-----------
-
 
 \begin{thebibliography}{11}
 \addcontentsline{toc}{chapter}{Bibliografia} % dodane do spisu treści
@@ -656,15 +807,15 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 
 \bibitem{bib:chord_lec} Smruti R. Sarangi, \emph{Distributed Hash Tables, Chord}, Lectures, Department of Computer Science, Indian Institute of Technology, New Delhi, India
 
-\bibitem{bib:chord_lec} P. Knezevic, A. Wombacher, T. Risse, \emph{Enabling High Data Availability in a DHT}, 16th International Workshop on Database and Expert Systems Applications, 2005 (pp. 363-367). [10.1109/DEXA.2005.84] Los Alamitos: IEEE Computer Society Press. DOI: 10.1109/DEXA.2005.84
+\bibitem{bib:knezevic} P. Knezevic, A. Wombacher, T. Risse, \emph{Enabling High Data Availability in a DHT}, 16th International Workshop on Database and Expert Systems Applications, 2005 (pp. 363-367). [10.1109/DEXA.2005.84] Los Alamitos: IEEE Computer Society Press. DOI: 10.1109/DEXA.2005.84
 
-\bibitem{bib:chord_lec} A. Rao, K. Lakshminarayanan, S. Surana, R. Karp, I. Stoica, \emph{Load Balancing in Structured P2P Systems}, Peer-to-Peer Systems II. IPTPS 2003. Lecture Notes in Computer Science, vol 2735. Springer, Berlin, Heidelberg
+\bibitem{bib:rao} A. Rao, K. Lakshminarayanan, S. Surana, R. Karp, I. Stoica, \emph{Load Balancing in Structured P2P Systems}, Peer-to-Peer Systems II. IPTPS 2003. Lecture Notes in Computer Science, vol 2735. Springer, Berlin, Heidelberg
 
 \bibitem{bib:tac} Javad Taheri , Mohammad Kazem Akbari, \emph{TAC: A Topology-Aware Chord-based Peer-to-Peer Network}, Advanced Information Technologies Lab., Department of Computer Engineering and IT, Amirkabir University of Technology, Tehran, Iran
 
 \bibitem{bib:scatter} Lisa Glendenning, Ivan Beschastnikh, Arvind Krishnamurthy, Thomas E. Anderson, \emph{Scalable consistency in Scatter}, SOSP '11 Proceedings of the Twenty-Third ACM Symposium on Operating Systems Principles
 
-\bibitem{bib:rollerchain} J. Paiva, J. Leitao, L. Rodrigues, \emph{Rollerchain: A DHT for Efficient Replication}, Proceedings -- IEEE 12th International Symposium on Network Computing and Applications, NCA 2013. 17-24. 10.1109/NCA.2013.29
+\bibitem{bib:rollerchain} J. Paiva, J. Leitao, L. Rodrigues, \emph{Rollerchain: A DHT for Efficient Replication}, Proceedings --- IEEE 12th International Symposium on Network Computing and Applications, NCA 2013. 17-24. 10.1109/NCA.2013.29
 
 \bibitem{bib:gnutella} \emph{Gtk-Gnutella}, [online] \url{https://sourceforge.net/projects/gtk-gnutella/} [dostęp: 08.09.2018 r.]
 
@@ -679,6 +830,8 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 \bibitem{bib:edutella} \emph{Edutella}, [online] \url{https://sourceforge.net/projects/edutella/} [dostęp: 08.09.2018 r.]
 
 \bibitem{bib:jxta} Navaneeth Krishnan, \emph{The Jxta solution to P2P}, [online] \url{https://www.javaworld.com/article/2075733/enterprise-java/the-jxta-solution-to-p2p.html} [dostęp: 08.09.2018 r.]
+
+\bibitem{bib:peersim} \emph{PeerSim P2P Simulator}, [online] \url{http://peersim.sourceforge.net/} [dostęp: 08.09.2018 r.]
 
 %\bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, [online] \url{http://www.cs.put.poznan.pl/akobusinska/lsds.html} [dostęp: 08.09.2018 r.]
 

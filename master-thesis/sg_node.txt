@@ -1,6 +1,7 @@
 Node:
 	Int next
 	String address
+	Float stability
 	Finger[] fingerTable
 	Group group
 	Group successor

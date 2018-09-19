@@ -2,12 +2,8 @@ n.start(addr):
     if addr is null
         create()
     else
-        stability = get_stability()
-        if stability $\ge$ STABILITY_REQUIREMENT
+        g = addr->find_group_to_join()
+        if g is null or (stability $\ge$ STABILITY_REQUIREMENT and size(g.addresses) $\ge$ (MAX_GROUP_SIZE / 2))
             join(addr)
         else
-            g = addr->find_group_to_join()
-            if g is null
-                join(addr)
-            else
-                join_to_group(g)
+            join_to_group(g)

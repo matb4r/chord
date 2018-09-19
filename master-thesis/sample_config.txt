@@ -1,0 +1,31 @@
+simulation.experiments 1
+random.seed 1234567890
+simulation.cycles 1000
+network.size 1000
+
+init.create staticgroups.CreateInitialNodes
+
+protocol.sg staticgroups.StaticGroupsProtocol
+{
+    DEBUG 1
+    protocol sg
+    M 11
+    MAX_GROUP_SIZE 10
+    STABILITY_REQUIREMENT 0.5
+}
+
+control.dnet staticgroups.RandomDynamicNetwork
+{
+	RANDOM 1
+	RANDOM_ADD_PROBABILITY 0.8
+	step 1
+	init.0 staticgroups.StaticGroupsInitializer
+}
+
+control.maintain staticgroups.StaticGroupsMaintainer
+{
+	step 1
+}
+
+control.tests staticgroups.StaticGroupsTests
+control.metrics staticgroups.StaticGroupsMetrics
