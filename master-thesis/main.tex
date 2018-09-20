@@ -138,18 +138,12 @@ English abstract
 
 \chapter{Wstęp}
 
-\begin{comment}
-\begin{itemize}
-\item motywacja (miękka + konkret) -> cel pracy
-\item zakres i omówienie rozdziałów
-\end{itemize}
-\end{comment}
+Niniejsza praca magisterska przedstawia protokół Statycznych Grup. Jest on rozszerzeniem protokołu Chord o mechanizm grupowania węzłów w grupy, aby zapewnić infrastrukturę dla replikacji. Wstęp ten przedstawia motywację i cel niniejszej pracy magisterskiej oraz omawia jej poszczególne rozdziały.
 
-Niniejsza praca magisterska przedstawia systemy Peer-to-Peer i wskazuje na istotność replikacji w tych systemach. Ponadto, opisuje protokół Chord służący do wyszukiwania danych w systemach Peer-to-Peer oraz pokazuje istniejące rozwiązania replikowania danych w tych systemach. Jednak najważniejszą częścią niniejszej pracy jest propozycja protokołu, który zapewnia infrastrukturę potrzebną do zaimplementowania replikacji w systemach Peer-to-Peer. Oprócz opisu proponowanego protokołu, przedstawiono wyniki testów symulacyjnych.
 
 \section{Motywacja i cel pracy}
 
-Systemy rozproszone to systemy które składają się z wielu niezależnych komputerów, a sprawiają na użytkownikach wrażenie jednego, logicznie zwartego systemu \cite{bib:kobusinska}. Wraz z rozwojem technologii, systemy te nabierają coraz większego znaczenia, stając jednym z najważniejszych zagadnień technologicznych, z których  korzystają codziennie miliardy użytkowników. Jedną z form systemów rozproszonych są systemy Peer-to-Peer, które znajdują coraz więcej zastosowań. Powstało wiele aplikacji, korzystających z systemów Peer-to-Peer \cite{bib:gnutella, bib:kazaa, bib:freehaven, bib:pastry, bib:pier, bib:edutella, bib:jxta}. Mimo tego, autorzy systemów wciąż napotykają na liczne problemy. Przykładowymi problemami \cite{bib:martins} są: występowanie pojedynczych punktów awarii, obciążenie komunikacyjne, różnice w obciążeniu różnych części systemu, czy brak skalowalności w przypadku dołączania dużej liczby węzłów. Jednym z rozwiązań na wymienione problemy jest replikacja. Mechanizm replikacji jest szerokim zagadnieniem, któremu zostało poświęcone wiele badań \cite{bib:martins, bib:jeyasheeli, bib:ye, bib:paiva, bib:scatter, bib:rollerchain}. Mimo, iż replikacja może rozwiązać wyżej wymienione problemy, nie została uwzględniona w protokole Chord, który jest jednym z bardziej znanych protokołów w systemach Peer-to-Peer \cite{bib:paiva}. Pojawiły się prace \cite{bib:scatter, bib:rollerchain}, w których rozszerzono protokół Chord o mechanizm replikacji, stosując do tego mechanizm grupowania węzłów. Jednak zaproponowane mechanizmy grupowania są kosztowne, gdyż wymagają wykonywania częstych operacji międzygrupowych, które zmieniają topologię sieci. W tej pracy magisterskiej zaproponowano protokół, który rozszerza protokół Chord o replikację, stosując mechanizm grupowania. Jednakże różni się on od przytoczonych rozwiązań tym, iż nie stosuje operacji międzygrupowych. Protokół ten nazwano protokołem Statycznych Grup. Jego przedstawienie oraz przetestowanie jest celem niniejszej pracy.
+Systemy rozproszone to systemy które składają się z wielu niezależnych komputerów, a sprawiają na użytkownikach wrażenie jednego, logicznie zwartego systemu \cite{bib:kobusinska}. Wraz z rozwojem technologii, systemy te nabierają coraz większego znaczenia, stając jednym z najważniejszych tworów technologicznych, z których  korzystają codziennie miliardy użytkowników. Jedną z form systemów rozproszonych są systemy Peer-to-Peer, które znajdują coraz więcej zastosowań. Powstało wiele aplikacji, korzystających z systemów Peer-to-Peer \cite{bib:gnutella, bib:kazaa, bib:freehaven, bib:pastry, bib:pier, bib:edutella, bib:jxta}. Mimo tego, autorzy systemów wciąż napotykają na liczne problemy. Przykładowymi problemami \cite{bib:martins} są: występowanie pojedynczych punktów awarii, obciążenie komunikacyjne, różnice w obciążeniu różnych części systemu, czy brak skalowalności w przypadku dołączania dużej liczby węzłów. Jednym z rozwiązań na wymienione problemy jest replikacja. Mechanizm replikacji jest szerokim zagadnieniem, któremu zostało poświęcone wiele badań \cite{bib:martins, bib:jeyasheeli, bib:ye, bib:paiva, bib:scatter, bib:rollerchain}. Mimo, iż replikacja może rozwiązać wyżej wymienione problemy, nie została uwzględniona w protokole Chord, który jest jednym z bardziej znanych protokołów w systemach Peer-to-Peer \cite{bib:paiva}. Pojawiły się prace \cite{bib:scatter, bib:rollerchain}, w których rozszerzono protokół Chord o mechanizm replikacji, stosując do tego mechanizm grupowania węzłów. Jednak zaproponowane mechanizmy grupowania są kosztowne, gdyż wymagają wykonywania częstych operacji międzygrupowych, które zmieniają topologię sieci. W tej pracy magisterskiej zaproponowano protokół, który rozszerza protokół Chord o replikację, stosując mechanizm grupowania. Jednakże różni się on od przytoczonych rozwiązań tym, iż nie stosuje operacji międzygrupowych. Protokół ten nazwano protokołem Statycznych Grup. Jego przedstawienie oraz przetestowanie jest celem niniejszej pracy.
 
 \begin{comment}
 \section{Cel pracy}
@@ -161,9 +155,9 @@ Celem niniejszej pracy jest zaproponowanie rozszerzenia protokołu Chord o repli
 
 Niniejsza praca rozpoczyna się rozdziałem opisującym systemy Peer-to-Peer. Rozdział ten wskazuje na problemy i wyzwania, które pojawiają się przy konstrukcji owych systemów. Dalej, uzasadnia istotność replikacji w systemach rozproszonych oraz wymienia koszty wynikające z zastosowania replikacji. Na końcu opisuje czym jest sieć nakładkowa w systemach Peer-to-Peer i przedstawia jej typy.
 
-Następny rozdział traktuje o protokole Chord, który służy do lokalizacji obiektów w sieci. W rozdziale tym przedstawione są własności, które Chord zapewnia. Dalej opisane są założenia protokołu i sposób jego działania. Działanie protokołu wyjaśnione jest przy pomocy pseudokodów. Na końcu przedstawione są możliwe rozszerzenia protokołu Chord, oraz rozszerzenia już istniejące.
+Następny rozdział traktuje o protokole Chord, który służy do lokalizacji obiektów w sieci. W rozdziale tym przedstawione są własności, które Chord zapewnia. Dalej opisane są założenia protokołu i sposób jego działania. Działanie protokołu wyjaśnione jest przy pomocy pseudokodów. Na końcu przedstawione są możliwe rozszerzenia protokołu Chord oraz rozszerzenia już istniejące.
 
-Rozdział \ref{rozdzial_grupowanie} opisuje mechanizm grupowania węzłów w grupy na przykładzie dwóch istniejących rozwiązań --- Scatter oraz Rollerchain. Opisuje ich działanie, przedstawiając niektóre mechanizmy z których korzystają. Na końcu rozdział ten przedstawia przykładowe podejścia do zarządzania grupami, wskazując ich wady i zalety.
+Rozdział \ref{rozdzial_grupowanie} opisuje mechanizm grupowania węzłów w grupy na przykładzie dwóch istniejących rozwiązań --- Scatter oraz Rollerchain. Opisuje ich działanie, przedstawiając niektóre mechanizmy z których korzystają. Na końcu rozdział ten przedstawia przykładowe podejścia zarządzania grupami, wskazując ich wady i zalety.
 
 Kolejny rozdział przedstawia zaproponowane rozwiązanie --- protokół Statycznych Grup. Przedstawione są jego zalety i wady. Opisane są również zagadnienia, od których protokół ten abstrahuje. Dalej następuje szczegółowy opis protokołu Statycznych Grup -- przy pomocy pseudokodu przedstawione są struktury, procedury oraz funkcje wykorzystywane w protokole. Opisany jest schemat działania węzłów w przypadku szukania lokalizacji obiektu, dołączania do sieci oraz stabilizacji.
 
@@ -464,6 +458,7 @@ Podobnie jak w protokole Chord, główną operacją SG jest lookup, czyli odnale
 \lstinputlisting[caption={Pseudokod funkcji odpowiedzialnej za znalezienie najbliższego poprzednika obiektu o danym identfikatorze z tablicy trasowania.}, captionpos=b, label={lst:sg_closest_preceding_group}, float=h]{sg_closest_preceding_group.txt}
 
 \subsection{Dołączanie do sieci}
+\label{dolaczanie_do_sieci}
 
 Węzeł może dołączyć do istniejącego pierścienia Statycznych Grup dzięki węzłowi będącemu już w istniejącym pierścieniu, lub może stworzyć nowy pierścień. Pokazuje to listing \ref{lst:sg_start}, na którym przedstawiona jest procedura \texttt{start}, która działa w następujący sposób: jeżeli nie podano adresu \texttt{addr}, z którym węzeł \texttt{n} ma się połączyć, to wywołuje on procedurę \texttt{create} (listing \ref{lst:sg_create}), tworząc nowy pierścień. W przeciwnym wypadku, węzeł \texttt{n} wywołuje zdalną procedurę \texttt{find\_group\_to\_join} (listing \ref{lst:sg_find_group_to_join}) dla węzła reprezentowanego przez adres \texttt{addr}, która zwraca obiekt grupy \texttt{g}. Węzeł \texttt{n} tworzy nową grupę, jeżeli węzeł \texttt{addr} zwróci pusty obiekt \texttt{null}, lub gdy wartość stabilności \texttt{stability} węzła \texttt{n} jest większa lub równa parametrowi \texttt{STABILITY\_REQUIREMENT} i jednocześnie rozmiar grupy \texttt{g} jest większy lub równy połowie wartości parametru \texttt{MAX\_GROUP\_SIZE}. Jeżeli tak nie jest, to węzeł \texttt{n} dołącza do grupy \texttt{g}. Dzięki takiej logice, nowe grupy tworzone są tylko przez węzły stabilne, lub gdy nie ma wolnej grupy do dołączenia; jednocześnie, jeżeli zaproponowana grupa \texttt{g} jest mała (jej rozmiar jest mniejszy od połowy wartości parametru \texttt{MAX\_GROUP\_SIZE}) to węzeł stabilny zamiast stworzyć nową grupę, dołaczą do \texttt{g}. Zapobiega to tworzeniu nowych grup w przypadku, gdy inne grupy są małe.
 
@@ -653,18 +648,6 @@ Wykres 6.4 przedstawia wpływ parametru \texttt{STABILITY\_REQUIREMENT} na śred
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 \begin{comment}
 
 
@@ -802,17 +785,22 @@ Wykres 6.4 przedstawia wpływ parametru \texttt{STABILITY\_REQUIREMENT} na śred
 
 
 
+\section{Wnioski}
 
-
-
-
-
+Z powyższych wykresów wynika, że protokół Statycznych Grup zachowuje się zgodnie z oczekiwaniami --- średnia liczność grup oraz średni czas życia grup zależą od dobranych parametrów i mogą być dostosowywane do potrzeb. Dla przykładu, jeżeli celem byłoby zapewnienie długiego czasu życia grup, należałoby zwiększyć maksymalną liczność grup --- co naturalnie podniosłoby żywotność grup, gdyż grupy byłyby większe, przez co mniej narażone na odpływ wszystkich członków, lub ustawić parametr \texttt{STABILITY\_REQUIREMENT} na wysoką wartość --- wówczas tylko bardzo stabilne węzły tworzyłyby nowe grupy, a więc żywotność grup byłaby większa. Innym celem mogło by być utrzymywanie grup w jak największej liczności --- należałoby wtedy ustawić parametr \texttt{STABILITY\_REQUIREMENT} na dużą wartość (większą niż 0.9). Wówczas zamiast tworzyć nowe grupy, znaczna większość węzłów dołączałoby do grup już istniejących. Lecz jeżeli celem byłoby utrzymywanie liczności grup na średnim poziomie (oscylującym wokół połowy maksymalnej liczności grup), należałoby ustawić parametr \texttt{STABILITY\_REQUIREMENT} na niższe wartości (mniejsze niż 0.9). Wówczas nowe grupy będą częściej tworzone. Protokół jednak wymusza, aby grupy miały rozmiar większy niż połowa \texttt{MAX\_GROUP\_SIZE} (odpowiedzialny jest za to opisany w paragrafie \ref{dolaczanie_do_sieci} warunek w linii 6 na listingu \ref{lst:sg_start}). Dlatego, jeżeli celem byłoby utrzymywanie liczności grup na niskim poziomie, to nie można by tego osiągnąć ustawiając parametry protokołu --- można by to osiągnąć jedynie poprzez specyficzne zachowanie się sieci, tzn. odłączenia od sieci powinny być znacznie liczniejsze, niż dołączenia do sieci (w powyższych testach odpowiedzialny za to jest parametr \texttt{RANDOM\_ADD\_PROBABILITY}).
 
 \chapter{Podsumowanie}
 
-\begin{itemize}
-\item o czym byla praca, czy cel osiagniety, czy spoko wyniki, dalsze rozwiazania, co można ulepszyc (parametr stability żeby znalesc dobrą grupę; inaczej szukac grupy do dolaczenia)
-\end{itemize}
+Niniejsza praca przedstawiła propozycję protokołu Statycznych Grup, który rozszerza protokół Chord o replikację, wykorzystując do tego mechanizm grupowania węzłów w grupy. Wyniki przeprowadzonych eksperymentów pokazują, że protokół zachowuje się zgodnie z oczekiwaniami, a przy odpowiednim doborze parametrów, można utrzymać średnią liczność i średni czas życia grup na pożądanym poziomie.
+
+Celem powstania protokołu Statycznych Grup było zapewnienie infrastruktury dla replikacji, nie wnikając w szczegóły dotyczące sposobu uspójniania danych między replikami. Pozostawia to pole do dalszych badań dotyczących replikacji z wykorzystaniem protokołu Statycznych Grup --- np. wpływ sposobu uspójniania danych i wielkość grup na ruch komunikacyjny w sieci.
+
+Przedstawiony w tej pracy magisterskiej protokół Statycznych Grup abstrahuje od sposobu określania stabilności węzła. Można by zbadać również wpływ sposobu określania stabilności węzła na zachowanie się grup. Ponadto, węzły w protokole Stabilnych Grup, gdy dostają żądanie o zaproponowanie grupy do dołączenia, zwracają grupę najmniejszą z podzbioru wszystkich grup w sieci. Sposób wyznaczania grupy mógłby być inny. Przykładowo, węzły mogłyby brać pod uwagę stabilność węzła, który wysłał żądanie, i zaproponować mu odpowiednią grupę --- taką, aby zachować w grupach różnorodność pod względem stabilności węzłów. Inną polityką mogłoby być proponowanie najbardziej obciążonej grupy, aby zachować zrównoważenie obciążenia między wszystkimi węzłami w sieci.
+
+Jest wiele aspektów, w których protokół Statycznych Grup mógłby zostać rozszerzony. Przykładowo, gdy ostatni węzeł z grupy bezawaryjnie odchodzi z sieci, mógłby przesłać wszystkie dane, za które jest odpowiedzialny i które przechowuje u siebie, do innej grupy. Dzięki temu można by uniknąć utraty części danych.
+
+Wyżej wymienione aspekty sprawiają, że niniejsza praca magisterska jest tylko początkiem badań, jeżeli chodzi ewentualne wykorzystanie pomysłu, jakim jest protokół Statycznych Grup, w realnie działających aplikacjach.
+
 
 
 %-----------Koniec czesci zasadniczej-----------
