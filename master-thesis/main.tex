@@ -107,6 +107,7 @@ Poznań, Październik 2018
 
 \end{titlepage}
 
+\begin{comment}
 % wlasny abstract
 \renewcommand{\abstractname}{}
 \begin{abstract}
@@ -128,6 +129,7 @@ English abstract
 
 \end{abstract}
 
+\end{comment}
 
 \tableofcontents
 
@@ -136,11 +138,38 @@ English abstract
 
 \chapter{Wstęp}
 
+\begin{comment}
 \begin{itemize}
 \item motywacja (miękka + konkret) -> cel pracy
 \item zakres i omówienie rozdziałów
 \end{itemize}
+\end{comment}
 
+Niniejsza praca magisterska przedstawia systemy Peer-to-Peer i wskazuje na istotność replikacji w tych systemach. Ponadto, opisuje protokół Chord służący do wyszukiwania danych w systemach Peer-to-Peer oraz pokazuje istniejące rozwiązania replikowania danych w tych systemach. Jednak najważniejszą częścią niniejszej pracy jest propozycja protokołu, który zapewnia infrastrukturę potrzebną do zaimplementowania replikacji w systemach Peer-to-Peer. Oprócz opisu proponowanego protokołu, przedstawiono wyniki testów symulacyjnych.
+
+\section{Motywacja i cel pracy}
+
+Systemy rozproszone to systemy które składają się z wielu niezależnych komputerów, a sprawiają na użytkownikach wrażenie jednego, logicznie zwartego systemu \cite{bib:kobusinska}. Wraz z rozwojem technologii, systemy te nabierają coraz większego znaczenia, stając jednym z najważniejszych zagadnień technologicznych, z których  korzystają codziennie miliardy użytkowników. Jedną z form systemów rozproszonych są systemy Peer-to-Peer, które znajdują coraz więcej zastosowań. Powstało wiele aplikacji, korzystających z systemów Peer-to-Peer \cite{bib:gnutella, bib:kazaa, bib:freehaven, bib:pastry, bib:pier, bib:edutella, bib:jxta}. Mimo tego, autorzy systemów wciąż napotykają na liczne problemy. Przykładowymi problemami \cite{bib:martins} są: występowanie pojedynczych punktów awarii, obciążenie komunikacyjne, różnice w obciążeniu różnych części systemu, czy brak skalowalności w przypadku dołączania dużej liczby węzłów. Jednym z rozwiązań na wymienione problemy jest replikacja. Mechanizm replikacji jest szerokim zagadnieniem, któremu zostało poświęcone wiele badań \cite{bib:martins, bib:jeyasheeli, bib:ye, bib:paiva, bib:scatter, bib:rollerchain}. Mimo, iż replikacja może rozwiązać wyżej wymienione problemy, nie została uwzględniona w protokole Chord, który jest jednym z bardziej znanych protokołów w systemach Peer-to-Peer \cite{bib:paiva}. Pojawiły się prace \cite{bib:scatter, bib:rollerchain}, w których rozszerzono protokół Chord o mechanizm replikacji, stosując do tego mechanizm grupowania węzłów. Jednak zaproponowane mechanizmy grupowania są kosztowne, gdyż wymagają wykonywania częstych operacji międzygrupowych, które zmieniają topologię sieci. W tej pracy magisterskiej zaproponowano protokół, który rozszerza protokół Chord o replikację, stosując mechanizm grupowania. Jednakże różni się on od przytoczonych rozwiązań tym, iż nie stosuje operacji międzygrupowych. Protokół ten nazwano protokołem Statycznych Grup. Jego przedstawienie oraz przetestowanie jest celem niniejszej pracy.
+
+\begin{comment}
+\section{Cel pracy}
+
+Celem niniejszej pracy jest zaproponowanie rozszerzenia protokołu Chord o replikację. Rozszerzenie te korzysta z mechanizmu grupowania węzłów i nazwano je protokołem Statycznych Grup. Praca ta ma na celu również przetestowanie zaproponowanego protokołu, aby zbadać wpływ różnych parametrów na jego zachowanie.
+\end{comment}
+
+\section{Omówienie rozdziałów}
+
+Niniejsza praca rozpoczyna się rozdziałem opisującym systemy Peer-to-Peer. Rozdział ten wskazuje na problemy i wyzwania, które pojawiają się przy konstrukcji owych systemów. Dalej, uzasadnia istotność replikacji w systemach rozproszonych oraz wymienia koszty wynikające z zastosowania replikacji. Na końcu opisuje czym jest sieć nakładkowa w systemach Peer-to-Peer i przedstawia jej typy.
+
+Następny rozdział traktuje o protokole Chord, który służy do lokalizacji obiektów w sieci. W rozdziale tym przedstawione są własności, które Chord zapewnia. Dalej opisane są założenia protokołu i sposób jego działania. Działanie protokołu wyjaśnione jest przy pomocy pseudokodów. Na końcu przedstawione są możliwe rozszerzenia protokołu Chord, oraz rozszerzenia już istniejące.
+
+Rozdział \ref{rozdzial_grupowanie} opisuje mechanizm grupowania węzłów w grupy na przykładzie dwóch istniejących rozwiązań --- Scatter oraz Rollerchain. Opisuje ich działanie, przedstawiając niektóre mechanizmy z których korzystają. Na końcu rozdział ten przedstawia przykładowe podejścia do zarządzania grupami, wskazując ich wady i zalety.
+
+Kolejny rozdział przedstawia zaproponowane rozwiązanie --- protokół Statycznych Grup. Przedstawione są jego zalety i wady. Opisane są również zagadnienia, od których protokół ten abstrahuje. Dalej następuje szczegółowy opis protokołu Statycznych Grup -- przy pomocy pseudokodu przedstawione są struktury, procedury oraz funkcje wykorzystywane w protokole. Opisany jest schemat działania węzłów w przypadku szukania lokalizacji obiektu, dołączania do sieci oraz stabilizacji.
+
+W przedostatnim rozdziale przedstawione są testy symulacyjne protokołu Statycznych Grup. Rozdział ten rozpoczyna się od przedstawienia środowiska symulacyjnego PeerSim przy pomocy przykładowego pliku konfiguracyjnego. Dalej wyszczególnione są istotne warunki (wartości parametrów oraz zachowanie się symulatora) w których przeprowadzono testy protokołu Statycznych Grup. Następnie przedstawiono wyniki testów, które badały średni rozmiar grup oraz średni czas życia grup. Każdy przypadek testowy rozpoczyna się wskazaniem wartości parametrów, po czym następują --- opis wyników oraz wnioski. 
+
+Niniejszą pracę magisterską kończy podsumowanie, które opisuje wnioski i wskazuje na dalsze możliwe rozwiązania mogące poprawić działanie protokołu Statycznych Grup.
 
 \chapter{Systemy Peer-to-Peer}
 
