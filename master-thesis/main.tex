@@ -647,106 +647,6 @@ Wykres 6.4 przedstawia wpływ parametru \texttt{STABILITY\_REQUIREMENT} na śred
 \caption{Wykres 6.4: Wpływ parametru \texttt{STABILITY\_REQUIREMENT} wraz z wybranymi wartościami \texttt{MAX\_GROUP\_SIZE} na średni czas życia grup.}
 \end{figure}
 
-
-
-
-\begin{comment}
-
-
-
-\begin{figure}[H]
-\captionsetup{labelformat=empty}
-\begin{tikzpicture}
-\begin{axis}[
-    width=\textwidth,
-    xlabel={\texttt{STABILITY\_REQUIREMENT}},
-    ylabel={Średni czas życia grup},
-    xmin=0, xmax=1,
-    ymin=0, ymax=12000,
-    %legend pos=south east,
-    legend style={
-		at={(0.58,0.85)},
-		anchor=south west},
-    ymajorgrids=true,
-    xmajorgrids=true,
-    grid style=dashed,
-]
-
-\input{plotAGLTtoSR01RAP.tex}
-\input{plotAGLTtoSR03RAP.tex}
-\input{plotAGLTtoSR05RAP.tex}
-\input{plotAGLTtoSR07RAP.tex}
-\input{plotAGLTtoSR09RAP.tex}
-
-\end{axis}
-\end{tikzpicture}
-\caption{}
-\end{figure}
-
-
-
-
-\begin{figure}[H]
-\captionsetup{labelformat=empty}
-\begin{tikzpicture}
-\begin{axis}[
-    width=\textwidth,
-    xlabel={\texttt{RANDOM\_ADD\_PROBABILITY}},
-    ylabel={Średnia liczność grup},
-    xmin=0, xmax=1,
-    ymin=0, ymax=10,
-    legend pos=south east,
-    ymajorgrids=true,
-    xmajorgrids=true,
-    grid style=dashed,
-]
-\input{plotAGStoRAP01.tex}
-\input{plotAGStoRAP05.tex}
-\input{plotAGStoRAP07.tex}
-\input{plotAGStoRAP09.tex}
-\input{plotAGStoRAP099.tex}
-
-\legend{\texttt{STABILITY\_REQUIREMENT} = 0.1, \texttt{STABILITY\_REQUIREMENT} = 0.5, \texttt{STABILITY\_REQUIREMENT} = 0.7, \texttt{STABILITY\_REQUIREMENT} = 0.9, \texttt{STABILITY\_REQUIREMENT} = 0.99}
-\end{axis}
-\end{tikzpicture}
-
-
-\caption{Wykres 6.3: \texttt{RANDOM\_ADD\_PROBABILITY} i \texttt{STABILITY\_REQUIREMENT} a średnia liczność grup.}
-\end{figure}
-
-\begin{figure}[H]
-\captionsetup{labelformat=empty}
-
-\begin{tikzpicture}
-\begin{axis}[
-    width=\textwidth,
-    xlabel={Liczba węzłów},
-    ylabel={Czas},
-    xmin=0, xmax=10000,
-    ymin=0, ymax=2000,
-    legend pos=north west,
-    ymajorgrids=true,
-    xmajorgrids=true,
-    grid style=dashed,
-]
-
-\input{plotTimeToNetSize10MGS.tex}
-\input{plotTimeToNetSize20MGS.tex}
-\input{plotTimeToNetSize50MGS.tex}
-
-
-\legend{MAX\_GROUP\_SIZE = 10, MAX\_GROUP\_SIZE = 20, MAX\_GROUP\_SIZE = 50}
-
-\end{axis}
-\end{tikzpicture}
-
-
-\caption{Wykres x.y: Czas potrzebny na obsłużenie zmian w sieci w stosunku do liczby węzłów.}
-\end{figure}
-
-\end{comment}
-
-
 \begin{comment}
 \begin{figure}[H]
 \floatstyle{boxed}
@@ -756,7 +656,6 @@ Wykres 6.4 przedstawia wpływ parametru \texttt{STABILITY\_REQUIREMENT} na śred
 \label{fig:links}
 \end{figure}
 \end{comment}
-
 
 \begin{comment}
 
@@ -784,8 +683,6 @@ Wykres 6.4 przedstawia wpływ parametru \texttt{STABILITY\_REQUIREMENT} na śred
 \label{fig:links}
 \end{figure}
 \end{comment}
-
-
 
 \section{Wnioski}
 
