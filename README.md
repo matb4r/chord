@@ -2,4 +2,4 @@
 Extension of Chord P2P protocol
 
 
-<img src="master-thesis/graph27.png" width="70%">
+<img src="master-thesis/graph27.png" width="100%">
