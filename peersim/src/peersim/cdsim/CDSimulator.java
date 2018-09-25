@@ -139,7 +139,7 @@ public class CDSimulator {
         String names[] = Configuration.getNames(PAR_INIT);
 
         for (int i = 0; i < inits.length; ++i) {
-            System.err.println("- Running initializer " + names[i] + ": "
+            if (StaticGroupsProtocol.DEBUG) System.err.println("- Running initializer " + names[i] + ": "
                     + inits[i].getClass());
             ((Control) inits[i]).execute();
         }
@@ -166,7 +166,7 @@ public class CDSimulator {
             controls[i] = (Control) Configuration.getInstance(names[i]);
             ctrlSchedules[i] = new Scheduler(names[i]);
         }
-        System.err.println("CDSimulator: loaded controls " + Arrays.asList(names));
+        if (StaticGroupsProtocol.DEBUG) System.err.println("CDSimulator: loaded controls " + Arrays.asList(names));
         return names;
     }
 
@@ -196,20 +196,18 @@ public class CDSimulator {
         // initialization
         CDState.setCycle(0);
         CDState.setPhase(CDState.PHASE_UNKNOWN);
-        System.out.println("-------------------- CDSimulator: resetting");
+        if (StaticGroupsProtocol.DEBUG) System.out.println("-------------------- CDSimulator: resetting");
         controls = null;
         ctrlSchedules = null;
         Network.reset();
-        System.out.println("-------------------- CDSimulator: running initializers");
-        StaticGroupsMetrics.executeOnStart();
+        if (StaticGroupsProtocol.DEBUG) System.out.println("-------------------- CDSimulator: running initializers");
         runInitializers();
-        if (StaticGroupsMetrics.actualExperiment > 0) nextExperimentChanges();
 
         // main cycle
         loadControls();
 
-        System.out.println("-------------------- CDSimulator: starting simulation");
-
+        if (StaticGroupsProtocol.DEBUG) System.out.println("-------------------- CDSimulator: starting simulation");
+        StaticGroupsMetrics.executeOnStart();
         for (int i = 0; i < cycles; ++i) {
             CDState.setCycle(i);
 
@@ -220,8 +218,9 @@ public class CDSimulator {
             }
             if (stop)
                 break;
-            System.out.println("-------------------- CDSimulator: cycle " + i + " done");
+            if (StaticGroupsProtocol.DEBUG) System.out.println("-------------------- CDSimulator: cycle " + i + " done");
             StaticGroupsMetrics.actualCycle++;
+            Group.updateLiveTime();
         }
 
         CDState.setPhase(CDState.POST_SIMULATION);
@@ -250,13 +249,18 @@ public class CDSimulator {
         StaticGroupsMetrics.badSuccessorsCounter = 0;
         StaticGroupsMetrics.exceptionsCounter = 0;
         StaticGroupsMetrics.actualCycle = 0;
+        StaticGroupsMetrics.numberOfDiedGroups = 0;
+        StaticGroupsMetrics.sumOfGroupsLiveTime = 0;
         StaticGroupsMetrics.maxNetSize = Integer.MIN_VALUE;
         StaticGroupsMetrics.minNetSize = Integer.MAX_VALUE;
         StaticGroupsMetrics.badNodes = new ArrayList<>();
     }
 
     private static void nextExperimentChanges() {
-        StaticGroupsProtocol.STABILITY_REQUIREMENT += 0.1 * StaticGroupsMetrics.actualExperiment;
+//        StaticGroupsProtocol.STABILITY_REQUIREMENT = 0.05 * (StaticGroupsMetrics.actualExperiment - 1);
+//        StaticGroupsProtocol.MAX_GROUP_SIZE = StaticGroupsMetrics.actualExperiment;
+//        RandomDynamicNetwork.RANDOM_ADD_PROBABILITY += 0.01 * StaticGroupsMetrics.actualExperiment;
+//        Network.len = StaticGroupsMetrics.actualExperiment * 10;
     }
 
 }

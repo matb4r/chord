@@ -12,10 +12,9 @@ public class StaticGroupsInitializer implements NodeInitializer {
 
     @Override
     public void initialize(Node n) {
-        System.out.println("executing StaticGroupsInitializer");
+        if (StaticGroupsProtocol.DEBUG) System.out.println("executing StaticGroupsInitializer");
         this.node = (StaticGroupsProtocol) n.getProtocol(StaticGroupsProtocol.pid);
         this.node.start(Utils.getRandomNode(this.node));
     }
-
 
 }

@@ -22,9 +22,9 @@ public class StaticGroupsTests implements Control {
 
     public static void executeTests() {
         if (test) {
-            System.out.print("Tests: ");
+            if (StaticGroupsProtocol.DEBUG) System.out.print("Tests: ");
             for (int i = 0; i < Utils.NODES.size(); i++) {
-                System.out.print(i + ", ");
+                if (StaticGroupsProtocol.DEBUG) System.out.print(i + ", ");
                 if (predecessorTest(Utils.NODES.get(i)) == false) {
                     StaticGroupsMetrics.badPredecessorsCounter++;
                     if (!StaticGroupsMetrics.badGroupes.contains(Utils.NODES.get(i).group))
@@ -50,7 +50,7 @@ public class StaticGroupsTests implements Control {
                     }
                 }
             }
-            System.out.println("done!");
+            if (StaticGroupsProtocol.DEBUG) System.out.println("done!");
         }
     }
 

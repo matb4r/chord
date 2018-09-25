@@ -25,6 +25,8 @@ public class Utils {
     public static void removeNode(StaticGroupsProtocol n) {
         ArrayList<StaticGroupsProtocol> g = Utils.GROUPS.get(n.group.id);
         if (g.size() < 2) {
+            StaticGroupsMetrics.sumOfGroupsLiveTime += n.group.liveTime;
+            StaticGroupsMetrics.numberOfDiedGroups++;
             Utils.GROUPS.remove(n.group.id);
         } else {
             g.remove(n);

@@ -12,9 +12,10 @@ public class GraphDrawer implements Control {
     private static final String PAR_DRAW = "draw";
 
     private static final String PATH = "../master-thesis/graph.tex";
-    private static final double R = 7;
-    private static final double NODE_SIZE = 0.05;
+    private static final double R = 4;
+    private static final double NODE_SIZE = 0.1;
     private static final String NODE_COLOR = "teal";
+    private static final String NODE_BORDER_COLOR = "teal";
     private static final String CONNECTIONS_COLOR = "gray";
     private static final String BAD_CONNECTIONS_COLOR = "red";
     private static final String BAD_PREDECESSORS_COLOR = "magenta";
@@ -70,7 +71,7 @@ public class GraphDrawer implements Control {
 
     private static String ringStr() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\\filldraw[fill=" + NODE_COLOR + ", draw=black]\n");
+        sb.append("\\filldraw[fill=" + NODE_COLOR + ", draw=" + NODE_BORDER_COLOR + "]\n");
         for (ArrayList<StaticGroupsProtocol> l : Utils.GROUPS.values()) {
             try {
                 StaticGroupsProtocol n = l.get(0);

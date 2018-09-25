@@ -13,17 +13,21 @@ import static staticgroups.Utils.*;
 
 public class StaticGroupsProtocol implements CDProtocol {
 
+    private static final String PAR_DEBUG = "DEBUG";
     private static final String PAR_PROT = "protocol";
     private static final String PAR_M = "M";
     private static final String PAR_MAX_GROUP_SIZE = "MAX_GROUP_SIZE";
     private static final String PAR_STABILITY_REQUIREMENT = "STABILITY_REQUIREMENT";
-    private static final String PAR_UPDATING_WHOLE_GROUP = "UPDATING_WHOLE_GROUP";
+    private static final String PAR_UPDATE_WHOLE_GROUP = "UPDATE_WHOLE_GROUP";
 
+    public static boolean DEBUG = false;
     public static int pid;
     public static int M = 0;
     public static int MAX_GROUP_SIZE = 0;
     public static double STABILITY_REQUIREMENT = 0;
-    public static boolean UPDATING_WHOLE_GROUP = false;
+    public static boolean UPDATE_WHOLE_GROUP = false;
+
+    public double stability;
 
     public String address;
     public Group group;
@@ -35,11 +39,12 @@ public class StaticGroupsProtocol implements CDProtocol {
     public int next;
 
     public StaticGroupsProtocol(String prefix) {
+        DEBUG = Configuration.contains(prefix + "." + PAR_DEBUG);
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         M = Configuration.getInt(prefix + "." + PAR_M);
         MAX_GROUP_SIZE = Configuration.getInt(prefix + "." + PAR_MAX_GROUP_SIZE);
         STABILITY_REQUIREMENT = Configuration.getDouble(prefix + "." + PAR_STABILITY_REQUIREMENT);
-        UPDATING_WHOLE_GROUP = Configuration.contains(prefix + "." + PAR_UPDATING_WHOLE_GROUP);
+        UPDATE_WHOLE_GROUP = Configuration.contains(prefix + "." + PAR_UPDATE_WHOLE_GROUP);
     }
 
     public void start(StaticGroupsProtocol nodeInRing) {
@@ -50,25 +55,13 @@ public class StaticGroupsProtocol implements CDProtocol {
         next = 0;
         fingerTable = new Finger[M];
         group = new Group();
+        stability = calculateStability();
 
         if (nodeInRing == null) {
             create();
         } else {
-//            float stability = calculateStability();
-//            if (stability >= STABILITY_REQUIREMENT) {
-//                join();
-//            } else {
-//                Group g = nodeInRing.findGroupToJoin(stability);
-//                if (g == null) {
-//                    join();
-//                } else {
-//                    joinToGroup(g);
-//                }
-//            }
-
-            float stability = calculateStability();
             Group g = nodeInRing.findGroupToJoin();
-            if (g == null || (stability >= STABILITY_REQUIREMENT && g.addresses.size() >= 8)) {
+            if (g == null || (stability >= STABILITY_REQUIREMENT && g.addresses.size() >= (MAX_GROUP_SIZE / 2))) {
                 join();
             } else {
                 joinToGroup(g);
@@ -76,7 +69,7 @@ public class StaticGroupsProtocol implements CDProtocol {
 
         }
         addNode(this);
-        System.out.println("Node " + address + " added");
+        if (StaticGroupsProtocol.DEBUG) System.out.println("Node " + address + " added");
     }
 
     public void create() {
@@ -99,7 +92,11 @@ public class StaticGroupsProtocol implements CDProtocol {
     }
 
     public Group findGroupToJoin() {
-        Group smallestGroup = getFirstNodeById(fingerTable[0].group.id).smallestGroupFromFingerTable();
+        StaticGroupsProtocol firstNodeById = getFirstNodeById(fingerTable[0].group.id);
+        if (firstNodeById == null) {
+            return null;
+        }
+        Group smallestGroup = firstNodeById.smallestGroupFromFingerTable();
         for (int i = 1; i < M; i++) {
             Group g = getFirstNodeById(fingerTable[i].group.id).smallestGroupFromFingerTable();
             if (g.addresses.size() < smallestGroup.addresses.size()) {
@@ -210,7 +207,7 @@ public class StaticGroupsProtocol implements CDProtocol {
         Group p = successorNode.predecessor;
         if (p != null && betweenAB(p.id, group.id, successor.id)) {
             successor = p;
-            if (UPDATING_WHOLE_GROUP) updateSuccessor(group.id, p);
+            if (UPDATE_WHOLE_GROUP) updateSuccessor(group.id, p);
         }
         getFirstNodeById(successor.id).notify(group);
     }
@@ -218,7 +215,7 @@ public class StaticGroupsProtocol implements CDProtocol {
     public void notify(Group g) {
         if (predecessor == null || betweenAB(g.id, predecessor.id, group.id)) {
             predecessor = g;
-            if (UPDATING_WHOLE_GROUP) updatePredecessor(group.id, g);
+            if (UPDATE_WHOLE_GROUP) updatePredecessor(group.id, g);
         }
     }
 
@@ -227,7 +224,7 @@ public class StaticGroupsProtocol implements CDProtocol {
             next = 0;
         }
         fingerTable[next].group = findSuccessor(fingerTable[next].start);
-        if (UPDATING_WHOLE_GROUP) updateFingerTable(group.id, fingerTable);
+        if (UPDATE_WHOLE_GROUP) updateFingerTable(group.id, fingerTable);
         next++;
     }
 
@@ -238,19 +235,18 @@ public class StaticGroupsProtocol implements CDProtocol {
                 it.remove();
             }
         }
-        if (UPDATING_WHOLE_GROUP) updateAddresses(group.id, group.addresses);
+        if (UPDATE_WHOLE_GROUP) updateAddresses(group.id, group.addresses);
     }
 
     public void checkSuccessor() {
         if (getFirstNodeById(successor.id) == null) {
-            StaticGroupsProtocol randomNode = getRandomNode(this);
-            if (randomNode == null) {
-                // jesli ta grupa jest jedyna w sieci
+            if (Utils.isOnlyOneGroupInNetwork()) {
                 successor = group;
             } else {
+                StaticGroupsProtocol randomNode = getRandomNode(this);
                 successor = randomNode.findSuccessor(group.id);
             }
-            if (UPDATING_WHOLE_GROUP) updateSuccessor(group.id, successor);
+            if (UPDATE_WHOLE_GROUP) updateSuccessor(group.id, successor);
             updatePredecessor(successor.id, group);
         }
     }
@@ -258,7 +254,7 @@ public class StaticGroupsProtocol implements CDProtocol {
     public void checkPredecessor() {
         if (predecessor == null || getFirstNodeById(predecessor.id) == null) {
             predecessor = null;
-            if (UPDATING_WHOLE_GROUP) updatePredecessor(group.id, null);
+            if (UPDATE_WHOLE_GROUP) updatePredecessor(group.id, null);
         }
     }
 

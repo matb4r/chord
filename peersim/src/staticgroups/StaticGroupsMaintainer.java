@@ -11,8 +11,8 @@ public class StaticGroupsMaintainer implements Control {
 
     @Override
     public boolean execute() {
-        System.out.println("executing maintaining");
-        fixNodes(false, false);
+        if (StaticGroupsProtocol.DEBUG) System.out.println("executing maintaining");
+        fixNodes(true, true);
         return false;
     }
 

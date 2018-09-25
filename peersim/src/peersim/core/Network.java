@@ -19,6 +19,8 @@
 package peersim.core;
 
 import peersim.config.Configuration;
+import staticgroups.StaticGroupsMetrics;
+
 import java.util.Comparator;
 import java.util.Arrays;
 

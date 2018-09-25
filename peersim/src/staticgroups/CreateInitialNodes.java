@@ -11,9 +11,9 @@ public class CreateInitialNodes implements Control {
 
     @Override
     public boolean execute() {
-        System.out.println("executing CreateInitialNodes");
+        if (StaticGroupsProtocol.DEBUG) System.out.println("executing CreateInitialNodes");
         for (int i = 0; i < Network.size(); i++) {
-            System.out.print(i + " ");
+            if (StaticGroupsProtocol.DEBUG) System.out.print(i + " ");
             Node node = Network.get(i);
             StaticGroupsProtocol n = (StaticGroupsProtocol) node.getProtocol(StaticGroupsProtocol.pid);
 
@@ -23,7 +23,7 @@ public class CreateInitialNodes implements Control {
                 n.start(Utils.getRandomNode(n));
             }
 
-            StaticGroupsMaintainer.fixNodes(true, false);
+            StaticGroupsMaintainer.fixNodes(true, true);
         }
         return false;
     }
