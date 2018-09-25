@@ -92,7 +92,7 @@ Praca magisterska
 \vfill
 \center
 \Huge
-\textbf{Efektywne wyszukiwanie danych w systemach P2P w oparciu o rozszerzenia protokołu Chord}
+\textbf{Mechanizm grupowania węzłów \\w systemach P2P rozszerzający protokół Chord}
 
 
 \vfill
@@ -143,7 +143,9 @@ Niniejsza praca magisterska przedstawia protokół Statycznych Grup. Jest on roz
 
 \section{Motywacja i cel pracy}
 
-Systemy rozproszone to systemy które składają się z wielu niezależnych komputerów, a sprawiają na użytkownikach wrażenie jednego, logicznie zwartego systemu \cite{bib:kobusinska}. Wraz z rozwojem technologii, systemy te nabierają coraz większego znaczenia, stając jednym z najważniejszych tworów technologicznych, z których  korzystają codziennie miliardy użytkowników. Jedną z form systemów rozproszonych są systemy Peer-to-Peer, które znajdują coraz więcej zastosowań. Powstało wiele aplikacji, korzystających z systemów Peer-to-Peer \cite{bib:gnutella, bib:kazaa, bib:freehaven, bib:pastry, bib:pier, bib:edutella, bib:jxta}. Mimo tego, autorzy systemów wciąż napotykają na liczne problemy. Przykładowymi problemami \cite{bib:martins} są: występowanie pojedynczych punktów awarii, obciążenie komunikacyjne, różnice w obciążeniu różnych części systemu, czy brak skalowalności w przypadku dołączania dużej liczby węzłów. Jednym z rozwiązań na wymienione problemy jest replikacja. Mechanizm replikacji jest szerokim zagadnieniem, któremu zostało poświęcone wiele badań \cite{bib:martins, bib:jeyasheeli, bib:ye, bib:paiva, bib:scatter, bib:rollerchain}. Mimo, iż replikacja może rozwiązać wyżej wymienione problemy, nie została uwzględniona w protokole Chord, który jest jednym z bardziej znanych protokołów w systemach Peer-to-Peer \cite{bib:paiva}. Pojawiły się prace \cite{bib:scatter, bib:rollerchain}, w których rozszerzono protokół Chord o mechanizm replikacji, stosując do tego mechanizm grupowania węzłów. Jednak zaproponowane mechanizmy grupowania są kosztowne, gdyż wymagają wykonywania częstych operacji międzygrupowych, które zmieniają topologię sieci. W tej pracy magisterskiej zaproponowano protokół, który rozszerza protokół Chord o replikację, stosując mechanizm grupowania. Jednakże różni się on od przytoczonych rozwiązań tym, iż nie stosuje operacji międzygrupowych. Protokół ten nazwano protokołem Statycznych Grup. Jego przedstawienie oraz przetestowanie jest celem niniejszej pracy.
+Systemy rozproszone to systemy które składają się z wielu niezależnych komputerów, a sprawiają na użytkownikach wrażenie jednego, logicznie zwartego systemu \cite{bib:kobusinska}. Wraz z rozwojem Internetu, systemy te nabierają coraz większego znaczenia, stając jedną z najważniejszych technologii, z których  korzystają codziennie miliardy użytkowników \cite{bib:einav, bib:fraiberger, bib:braubach, bib:aws}. Jedną z form systemów rozproszonych są systemy Peer-to-Peer \cite{bib:martins, bib:paiva, bib:kobusinska}, które znajdują coraz więcej zastosowań. Powstało wiele aplikacji, korzystających z systemów Peer-to-Peer \cite{bib:einav, bib:fraiberger, bib:gnutella, bib:kazaa, bib:freehaven, bib:pastry, bib:pier, bib:edutella, bib:jxta}. Mimo tego, autorzy w trakcie konstrukcji tego typu systemów wciąż napotykają na liczne problemy. Przykładowymi problemami \cite{bib:martins} są: występowanie pojedynczych punktów awarii, obciążenie komunikacyjne, różnice w obciążeniu różnych części systemu, czy brak skalowalności w przypadku dołączania dużej liczby węzłów. Jednym z rozwiązań na wymienione problemy jest replikacja, gdyż dzięki utrzymywaniu kopii elementów systemu można wyeliminować pojedyncze punkty awarii, zredukować i zrównoważyć obciążenie komunikacyjne oraz poprawić skalowalność systemu poprzez zachowanie akceptowalnych czasów odpowiedzi \cite{bib:martins}. Implementacja protokołu replikacji zapewniającym różne modele spójności jest szerokim i trudnym zagadnieniem, któremu zostało poświęcone wiele badań \cite{bib:martins, bib:jeyasheeli, bib:ye, bib:paiva, bib:pace, bib:cherbal, bib:shafaat, bib:ktari, bib:tsai,bib:scatter, bib:rollerchain}.
+
+Jednym z bardziej znanych protokołów w systemach Peer-to-Peer jest protokół Chord \cite{bib:paiva}. Nie jest on jednak dostosowany, aby zaimplementować w nim replikację. Pojawiły się prace \cite{bib:scatter, bib:rollerchain}, w których rozszerzono protokół Chord o mechanizm grupowania węzłów w grupy, dzięki któremu możliwa jest implementacja replikacji. Jednak zaproponowane mechanizmy grupowania są kosztowne, gdyż wymagają wykonywania częstych operacji międzygrupowych, które zmieniają topologię sieci. W tej pracy magisterskiej zaproponowano protokół, który rozszerza protokół Chord o infrastrukturę grup umożliwiającą implementację mechanizmu replikacji. Jednakże różni się on od przytoczonych rozwiązań tym, iż nie stosuje operacji międzygrupowych. Protokół ten nazwano protokołem Statycznych Grup. Analiza protokołu Chord, jego istniejących rozszerzeń oraz projekt, implementacja i przetestowanie protokołu Statycznych Grup jest celem niniejszej pracy.
 
 \begin{comment}
 \section{Cel pracy}
@@ -153,13 +155,13 @@ Celem niniejszej pracy jest zaproponowanie rozszerzenia protokołu Chord o repli
 
 \section{Omówienie rozdziałów}
 
-Niniejsza praca rozpoczyna się rozdziałem opisującym systemy Peer-to-Peer. Rozdział ten wskazuje na problemy i wyzwania, które pojawiają się przy konstrukcji owych systemów. Dalej, uzasadnia istotność replikacji w systemach rozproszonych oraz wymienia koszty wynikające z zastosowania replikacji. Na końcu opisuje czym jest sieć nakładkowa w systemach Peer-to-Peer i przedstawia jej typy.
+Niniejszą pracę rozpoczęto rozdziałem opisującym systemy typu Peer-to-Peer. Rozdział ten wskazuje na problemy i wyzwania, które pojawiają się przy konstrukcji tego typu systemów. Dalej, uzasadniono istotność replikacji w systemach rozproszonych oraz wymieniono koszty wynikające z zastosowania replikacji. Na końcu opisano czym jest sieć nakładkowa w systemach Peer-to-Peer i przedstawiono jej typy.
 
-Następny rozdział traktuje o protokole Chord, który służy do lokalizacji obiektów w sieci. W rozdziale tym przedstawione są własności, które Chord zapewnia. Dalej opisane są założenia protokołu i sposób jego działania. Działanie protokołu wyjaśnione jest przy pomocy pseudokodów. Na końcu przedstawione są możliwe rozszerzenia protokołu Chord oraz rozszerzenia już istniejące.
+Następny rozdział traktuje o protokole Chord, który służy do lokalizacji obiektów w sieci. W rozdziale tym przedstawione są własności, które Chord zapewnia. Dalej opisane są założenia protokołu i sposób jego działania. Szczegóły implementacji protokołu przybliżone są przy pomocy pseudokodów. Na końcu przedstawione są możliwe rozszerzenia protokołu Chord oraz zaprezentowane są istniejące już rozwiązania.
 
 Rozdział \ref{rozdzial_grupowanie} opisuje mechanizm grupowania węzłów w grupy na przykładzie dwóch istniejących rozwiązań --- Scatter oraz Rollerchain. Opisuje ich działanie, przedstawiając niektóre mechanizmy z których korzystają. Na końcu rozdział ten przedstawia przykładowe podejścia zarządzania grupami, wskazując ich wady i zalety.
 
-Kolejny rozdział przedstawia zaproponowane rozwiązanie --- protokół Statycznych Grup. Przedstawione są jego zalety i wady. Opisane są również zagadnienia, od których protokół ten abstrahuje. Dalej następuje szczegółowy opis protokołu Statycznych Grup -- przy pomocy pseudokodu przedstawione są struktury, procedury oraz funkcje wykorzystywane w protokole. Opisany jest schemat działania węzłów w przypadku szukania lokalizacji obiektu, dołączania do sieci oraz stabilizacji.
+Kolejny rozdział przedstawia zaproponowane rozwiązanie --- protokół Statycznych Grup, którego celem jest zapewnienie infrastruktury do implementacji replikacji. Przedstawione są zalety i wady zaproponowanego protokołu. Opisane są również zagadnienia, od których protokół ten abstrahuje. Dalej następuje szczegółowy opis protokołu Statycznych Grup -- przy pomocy pseudokodu przedstawione są struktury, procedury oraz funkcje wykorzystywane w protokole. Opisany jest schemat działania węzłów w przypadku szukania lokalizacji obiektu, dołączania do sieci oraz stabilizacji.
 
 W przedostatnim rozdziale przedstawione są testy symulacyjne protokołu Statycznych Grup. Rozdział ten rozpoczyna się od przedstawienia środowiska symulacyjnego PeerSim przy pomocy przykładowego pliku konfiguracyjnego. Dalej wyszczególnione są istotne warunki (wartości parametrów oraz zachowanie się symulatora) w których przeprowadzono testy protokołu Statycznych Grup. Następnie przedstawiono wyniki testów, które badały średni rozmiar grup oraz średni czas życia grup. Każdy przypadek testowy rozpoczyna się wskazaniem wartości parametrów, po czym następują --- opis wyników oraz wnioski. 
 
@@ -252,6 +254,8 @@ Funkcja spójnego mieszania (ang. \textit{consistent hash function}) przypisuje 
 
 Identyfikatory są ułożone kolejno według wartości na \textit{okręgu identyfikatorów}. Okrąg ten, z numerami od $0$ do  $2^m-1$ , nazywany będzie w tej pracy \textit{pierścieniem}. Klucze są przypisane temu węzłowi, którego identyfikator znajduje się na okręgu jako pierwszy po danym kluczu \textit{k}, lub jest jemu równy. Ten węzeł nazywa się \textit{następnikiem} klucza \textit{k} i oznaczany jest jako \texttt{successor(k)}. Przykładowy pierścień pokazany jest na rysunku \ref{fig:pierscien}.
 
+Utrzymywanie pierścienia odbywa się w następujący sposób: gdy węzeł \textit{n} dołączy do sieci, odpowiednie klucze, poprzednio przypisane następnikowi węzła \textit{n}, zostają przypisane do \textit{n}. Kiedy węzeł \textit{n} opuści sieć, wszystkie klucze za które był odpowiedzialny są przypisane na nowo do następnika \textit{n}. Dla przykładu, jeśli do sieci reprezentowanej przez pierścień na rysunku \ref{fig:pierscien} dołączyłby węzeł o identyfikatorze 26, to klucz 24 zostałby przeniesiony z węzła 32 do nowo dołączonego węzła.
+
 \begin{figure}[H]
 \floatstyle{boxed}
 \centering
@@ -259,8 +263,6 @@ Identyfikatory są ułożone kolejno według wartości na \textit{okręgu identy
 \caption{Okrąg identyfikatorów (pierścień) zawierający dziesięć węzłów, które przechowują w sumie pięć kluczy.}
 \label{fig:pierscien}
 \end{figure}
-
-Utrzymywanie pierścienia odbywa się w następujący sposób: gdy węzeł \textit{n} dołączy do sieci, odpowiednie klucze, poprzednio przypisane następnikowi węzła \textit{n}, zostają przypisane do \textit{n}. Kiedy węzeł \textit{n} opuści sieć, wszystkie klucze za które był odpowiedzialny są przypisane na nowo do następnika \textit{n}. Dla przykładu, jeśli do sieci reprezentowanej przez pierścień na rysunku \ref{fig:pierscien} dołączyłby węzeł o identyfikatorze 26, to klucz 24 zostałby przeniesiony z węzła 32 do nowo dołączonego węzła.
 
 \subsection{Odnajdywanie lokalizacji klucza}
 \label{odnajdywanie_lokalizacji_klucza}
@@ -496,15 +498,15 @@ Każdy węzeł okresowo uruchamia procedury stabilizacji, aby mieć aktualne wsk
 
 \chapter{Testy symulacyjne}
 
-Na sieć węzłów w której działa zaproponowany w niniejszej pracy magisterskiej protokół Statycznych Grup wpływają parametry protokołu (takie jak maksymalna liczność grup, czy wymagana stabilność do utworzenia nowej grupy) oraz parametry sieci (takie jak liczba węzłów, czy częstotliwość dołączeń i odłączeń). Rozdział ten przedstawia środowisko symulacyjne \textit{PeerSim}, na którym zaimplementowano i przetestowano protokół Statycznych Grup, oraz przedstawia wyniki testów wpływu parametrów protokołu i parametrów sieci na symulowaną sieć w której działa protokół Statycznych Grup.
+Rozdział ten przedstawia środowisko symulacyjne \textit{PeerSim}, w którym przetestowano protokół Statycznych Grup. Przedstawione są parametry protokołu (takie jak maksymalna liczność grup, czy wymagana stabilność do utworzenia nowej grupy) oraz parametry sieci (takie jak liczba węzłów, czy częstotliwość dołączeń i odłączeń). Dalej, opisane są przeprowadzone testy wpływu parametrów protokołu i parametrów sieci na symulowaną sieć w której działa protokół Statycznych Grup. Rozdział kończą wnioski dotyczące wyników testów.
 
 \section{PeerSim}
 
-Do zaimplementowania i przetestowania protokołu Statycznych Grup wykorzystano środowisko symulacyjne PeerSim \cite{bib:peersim}, które pozwala na uruchamianie własnych protokołów. Rozpowszechniane jest na licencji wolnego oprogramowania \textit{GNU General Public License} (GPL). Napisane jest w języku Java i składa się z dwóch silników symulacyjnych. Pierwszym jestem silnik wykorzystujący do działania cykle. Drugim jest silnik korzystający ze zdarzeń. W implementacji protokołu Statycznych Grup wykorzystywany jest silnik oparty na cyklach, który abstrahuje od warstwy transportowej oraz od współbieżności, a więc obiekty węzłów komunikują się ze sobą bezpośrednio i wszystkie operacje w sieci wykonywane są sekwencyjnie.
+Do zaimplementowania i przetestowania protokołu Statycznych Grup wykorzystano środowisko symulacyjne PeerSim \cite{bib:peersim}, które pozwala na uruchamianie i testowanie protokołów. Rozpowszechniane jest na licencji wolnego oprogramowania \textit{GNU General Public License} (GPL). Napisane jest w języku Java i składa się z dwóch silników symulacyjnych. Pierwszym jestem silnik wykorzystujący do działania cykle, w którym to akcje wybranych obiektów wywoływane są w wybranych cyklach. Drugim jest silnik korzystający ze zdarzeń, w którym to akcje obiektów inicjowane są przez zdarzenia. W implementacji protokołu Statycznych Grup wykorzystywany jest silnik oparty na cyklach, który abstrahuje od warstwy transportowej oraz od współbieżności, a więc obiekty węzłów komunikują się ze sobą bezpośrednio i wszystkie operacje w sieci wykonywane są sekwencyjnie.
 
 \lstinputlisting[caption={Przykładowy plik konfiguracyjny środowiska symulacyjnego PeerSim.}, captionpos=b, label={lst:sample_config}, float=!h]{sample_config.txt}
 
-Działanie symulatora uzależnione jest od pliku konfiguracyjnego, w którym ustawia się wartości globalnych parametrów, takich jak liczność sieci, czy liczba eksperymentów. Ponadto, w pliku tym wskazuje się klasy, z których symulator ma korzystać podczas symulacji, oraz definiuje się ewentualne parametry tych klas. Przykładowy plik konfiguracyjny wykorzystywany w implementacji protokołu Statycznych Grup pokazany jest na listingu \ref{lst:sample_config}. Widać na nim ustawione wartości globalnych parametrów (pierwsze 4 linie), kolejno: liczba eksperymentów, ziarno dla generatora liczb pseudolosowych, liczba cykli symulatora oraz liczność sieci. Dalej, w linii 6 wskazano klasę, która ma się uruchomić na początku każdego eksperymentu. Wskazuje na to słowo kluczowe \texttt{init}, po którym następuje dowolny identyfikator klasy, w tym wypadku \texttt{create}. Klasą, na którą wskazuje linia 6 jest \texttt{CreateInitialNodes} z pakietu \texttt{staticgroups}. Następnie, w linii 7, na podobnej zasadzie wskazana jest klasa protokołu \texttt{StaticGroupsProtocol} z pakietu \texttt{staticgroups} o identyfikatorze \texttt{sg}. Dalej wskazano klasy, które oznaczone są jako \texttt{control}, czyli wykonują jakąś akcję co cykl, dzięki czemu mogą wpływać na przebieg symulacji, bądź zbierać informacje o niej. Wskazane klasy, wszystkie z pakietu \texttt{staticgroups}, to kolejno: \texttt{RandomDynamicNetwork}, \texttt{StaticGroupsMaintainer}, \texttt{StaticGroupsTests}, oraz \texttt{StaticGroupsMetrics}. 
+Działanie symulatora uzależnione jest od pliku konfiguracyjnego, w którym ustawia się wartości globalnych parametrów, takich jak liczność sieci, czy liczba eksperymentów. Ponadto, w pliku tym wskazuje się klasy, z których symulator ma korzystać podczas symulacji, oraz definiuje się ewentualne parametry tych klas. Przykładowy plik konfiguracyjny wykorzystywany w implementacji protokołu Statycznych Grup pokazany jest na listingu \ref{lst:sample_config}. Widać na nim ustawione wartości globalnych parametrów (pierwsze 4 linie), kolejno: liczba eksperymentów, ziarno dla generatora liczb pseudolosowych, liczba cykli symulatora oraz liczność sieci. Dalej, w linii 6 wskazano klasę, która ma zostać uruchomiona na początku każdego eksperymentu. Wskazuje na to słowo kluczowe \texttt{init}, po którym następuje dowolny identyfikator klasy, w tym wypadku \texttt{create}. Klasą, na którą wskazuje linia 6 jest \texttt{CreateInitialNodes} z pakietu \texttt{staticgroups}. Następnie, w linii 7, na podobnej zasadzie wskazana jest klasa protokołu \texttt{StaticGroupsProtocol} z pakietu \texttt{staticgroups} o identyfikatorze \texttt{sg}. Dalej wskazano klasy, które oznaczone są jako \texttt{control}, czyli wykonują jakąś akcję co cykl, dzięki czemu mogą wpływać na przebieg symulacji, bądź zbierać informacje o niej. Wskazane klasy, wszystkie z pakietu \texttt{staticgroups}, to kolejno: \texttt{RandomDynamicNetwork}, \texttt{StaticGroupsMaintainer}, \texttt{StaticGroupsTests}, oraz \texttt{StaticGroupsMetrics}. 
 
 Klasa \texttt{CreateInitialNodes} odpowiada za dołączenie węzłów do sieci przed rozpoczęciem eksperymentu\footnote{Dołączenie węzłów do sieci przed rozpoczęciem eksperymentu jest istotne, aby móc zbadać zachowanie się istniejącej już sieci bez potrzeby tworzenia jej podczas trwania eksperymentu.}. \texttt{StaticGroupsProtocol} jest klasą protokołu, której obiekt posiada każdy węzeł. Klasa ta przyjmuje parametry pokazane w liniach od 10 do 15 na listingu \ref{lst:sample_config}:
 \begin{itemize}
@@ -523,14 +525,14 @@ Klasa \texttt{RandomDynamicNetwork} odpowiada za zmiany w sieci (dołączanie w�
 \item \texttt{init.0}: parametr wskazujący klasę, która ma zostać użyta w przypadku dodania węzła do sieci.
 \end{itemize}
 
-Następna klasa znajdująca się na listingu \ref{lst:sample_config}, \texttt{StaticGroupMaintainer}, odpowiada za uruchamianie na węzłach procedur stabilizacji. Pokazany w linii 28 na listingu \ref{lst:sample_config} parametr \texttt{step} określa co ile cykli mają być uruchamiane procedury stabilizacji na każdym węźle. Dalej, klasa \texttt{StaticGroupTests} odpowiedzialna jest za testy poprawności wskaźników grup (pola \texttt{successor} i \texttt{predecessor}, oraz wpisy w \texttt{fingerTable}). Ostatnią klasą pokazaną na listingu \ref{lst:sample_config} jest \texttt{StaticGroup}-\texttt{Metrics}, która zbiera informacje o przebiegu symulacji, takie jak czas trwania symulacji, czy średnia liczność grup, i wypisuje je na standardowym wyjściu.
+Następna klasa znajdująca się na listingu \ref{lst:sample_config}, \texttt{StaticGroupMaintainer}, odpowiada za uruchamianie na węzłach procedur stabilizacji. Pokazany w linii 28 na listingu \ref{lst:sample_config} parametr \texttt{step} określa co ile cykli mają być uruchamiane procedury stabilizacji na każdym węźle. Dalej, klasa \texttt{StaticGroupTests} odpowiedzialna jest za testy poprawności wskaźników grup (pola \texttt{successor} i \texttt{predecessor}, oraz wpisy w \texttt{fingerTable}). Ostatnią klasą pokazaną na listingu \ref{lst:sample_config} jest \texttt{StaticGroup}-\texttt{Metrics}, która zbiera informacje o przebiegu symulacji, takie jak czas trwania symulacji, czy średnia liczność grup i wypisuje je na standardowym wyjściu.
 
 \section{Testy}
-Działanie protokołu Statycznych Grup jest zależne od parametrów sieci takich jak liczba węzłów, częstotliwość zmian w sieci (co ile cykli symulatora następuje dołączenie lub odłączenie węzła), czy prawdopodobieństwo  dołączenia węzła w przypadku zmiany w sieci (\texttt{RANDOM\_ADD\_PROBABILITY}), oraz od parametrów protokołu Statycznych Grup takich jak maksymalny rozmiar grupy (\texttt{MAX\_GROUP\_SIZE}), czy wymagana stabilność do utworzenia nowej grupy (\texttt{STABILITY\_REQUIREMENT}). W podrozdziale tym przedstawiono wpływ tych parametrów na działanie protokołu Statycznych Grup w środowisku symulacyjnym PeerSim. Dla wszystkich testów parametr \texttt{M} klasy \texttt{StaticGroupsProtocol} równy był 11, parametr \texttt{RANDOM} klasy \texttt{RandomDynamicNetwork} równy był 1, parametr \texttt{step} klasy \texttt{RandomDynamicNet}-\texttt{work} równy był 1, parametr \texttt{step} klasy \texttt{StaticGroupsMaintainer} równy był 1. Wartości pozostałych, istotnych dla przebiegu poniższy testów, parametrów podane są w ramach opisów każdego z testów, a wartości parametrów nieistotnych dla przebiegu poniższych testów zostały pominięte. Wynikiem pojedynczego eksperymentu był jeden pomiar. Ponadto, stabilność każdego węzła była losowana z zakresu od 0 do 1, a każde odłączenie węzła odbywało się w następujący sposób: losowane były cztery węzły z całej sieci i z nich odłączał się ten, który miał najmniejszą stabilność.
+Działanie protokołu Statycznych Grup jest zależne od parametrów sieci takich jak liczba węzłów, częstotliwość zmian w sieci (co ile cykli symulatora następuje dołączenie lub odłączenie węzła), czy prawdopodobieństwo  dołączenia węzła w przypadku zmiany w sieci (\texttt{RANDOM\_ADD\_PROBABILITY}), oraz od parametrów protokołu Statycznych Grup takich jak maksymalny rozmiar grupy (\texttt{MAX\_GROUP\_SIZE}), czy wymagana stabilność do utworzenia nowej grupy (\texttt{STABILITY\_REQUIREMENT}). W podrozdziale tym przedstawiono wpływ tych parametrów na działanie protokołu Statycznych Grup w środowisku symulacyjnym PeerSim. Dla wszystkich testów parametr \texttt{M} klasy \texttt{StaticGroupsProtocol} równy był 11 (aby w sieci było dostatecznie dużo wolnych identyfikatorów), parametr \texttt{RANDOM} klasy \texttt{RandomDynamicNetw}-\texttt{ork} równy był 1 (aby dołączanie i odłączanie węzłów od sieci odbywało się w kolejności losowej), parametr \texttt{step} klasy \texttt{RandomDynamicNetwork} równy był 1 (aby w każdym cyklu odbywała się zmiana w sieci), parametr \texttt{step} klasy \texttt{StaticGroupsM}-\texttt{aintainer} równy był 1 (aby w każdym cyklu węzły uruchamiały procedury stabilizacji). Wartości pozostałych, istotnych dla przebiegu poniższy testów, parametrów podane są w ramach opisów każdego z testów\footnote{Liczba cykli oraz liczba węzłów w sieci zostały tak dobrane w każdym teście, aby zachować sensowny czas wykonania testu.}, a wartości parametrów nieistotnych dla przebiegu poniższych testów zostały pominięte. Wynikiem pojedynczego eksperymentu był jeden pomiar. Ponadto, stabilność każdego węzła była losowana z zakresu od 0 do 1, a każde odłączenie węzła odbywało się w następujący sposób: losowane były cztery węzły z całej sieci i z nich odłączał się ten, który miał najmniejszą stabilność.
 
 \subsection{Średnia liczność grup}
 
-Wykres 6.1 przedstawia wpływ parametru \texttt{MAX\_GROUP\_SIZE} na średnią liczność grup. Wpływ ten zbadano dla wybranych wartości parametru \texttt{STABILITY\_RE}-\texttt{QUIREMENT}. Parametry testu, dla którego powstał wykres 6.1: liczba eksperymentów --- 20, początkowa liczba węzłów --- 1000, liczba cykli --- 1000, prawdopodobieństwo dołączenia nowego węzła w przypadku zmiany w sieci --- 0.5. Z wykresu wynika, że średnia liczność grup rośnie liniowo wraz ze wzrostem maksymalnego rozmiaru grup i jest jednocześnie zależna od parametru \texttt{STABILITY\_REQUIREMENT}. Widać, że gdy parametr \texttt{STABILITY\_REQUIREMENT} równy jest 0.99, to średnia liczność grup jest bliska maksymalnej liczności grup, a gdy \texttt{STABILITY\_REQUIREMENT} równy jest 0.01, 0.1, lub 0.5, to średnia liczność grup jest około dwa razy niższa, niż maksymalna liczność grup. Jest tak dlatego, ponieważ parametr \texttt{STABILITY\_REQU}-\texttt{IREMENT} odpowiada za minimalną wartość stabilności węzła potrzebną, aby mógł on utworzyć nową grupę, a więc im wyższa wartość tego parametru, tym tworzenie nowych grup w sieci rzadziej ma miejsce, co skutkuje tym, iż nowe węzły częściej dołączają do istniejących grup, podwyższając ich liczność.
+Wykres 6.1 przedstawia wpływ parametru \texttt{MAX\_GROUP\_SIZE} na średnią liczność grup. Wpływ ten zbadano dla wybranych wartości parametru \texttt{STABILITY\_RE}-\texttt{QUIREMENT}. Parametry testu, dla którego powstał wykres 6.1: liczba eksperymentów --- 20, początkowa liczba węzłów --- 1000, liczba cykli --- 1000, prawdopodobieństwo dołączenia nowego węzła w przypadku zmiany w sieci --- 0.5. Z wykresu wynika, że średnia liczność grup rośnie liniowo wraz ze wzrostem maksymalnego rozmiaru grup i jest jednocześnie zależna od parametru \texttt{STABILITY\_REQUIREMENT}. Widać, że gdy parametr \texttt{STABILITY\_REQUIREMENT} równy jest 0.99, to średnia liczność grup jest bliska maksymalnej liczności grup, a gdy \texttt{STABILITY\_REQUIREMENT} równy jest 0.01, 0.1, lub 0.5, to średnia liczność grup jest około dwa razy niższa, niż maksymalna liczność grup. Jest tak dlatego, ponieważ parametr \texttt{STABILITY\_REQU}-\texttt{IREMENT} odpowiada za minimalną wartość stabilności węzła potrzebną, aby mógł on utworzyć nową grupę, a więc im wyższa wartość tego parametru, tym tworzenie nowych grup w sieci rzadziej ma miejsce, co skutkuje tym, iż nowe węzły częściej dołączają do istniejących grup, podwyższając ich liczność. Ponadto średnia liczność grup nie spada znacząco zmniejszając parametr \texttt{STABILITY\_REQUIREMENT} z wartości od 0.5 do 0.01. Jest tak, ponieważ protokół dąży do tego, aby grupy miały rozmiar większy niż połowa \texttt{MAX\_GROUP\_SIZE} (patrz opisany w paragrafie \ref{dolaczanie_do_sieci} warunek w linii 6 na listingu \ref{lst:sg_start}).
 
 \begin{figure}[H]
 \captionsetup{labelformat=empty}
@@ -791,7 +793,7 @@ Z powyższych wykresów wynika, że protokół Statycznych Grup zachowuje się z
 
 \chapter{Podsumowanie}
 
-Niniejsza praca przedstawiła propozycję protokołu Statycznych Grup, który rozszerza protokół Chord o replikację, wykorzystując do tego mechanizm grupowania węzłów w grupy. Wyniki przeprowadzonych eksperymentów pokazują, że protokół zachowuje się zgodnie z oczekiwaniami, a przy odpowiednim doborze parametrów, można utrzymać średnią liczność i średni czas życia grup na pożądanym poziomie.
+Niniejsza praca przedstawiła propozycję protokołu Statycznych Grup, który rozszerza protokół Chord o infrastrukturę dla replikacji, wykorzystując do tego mechanizm grupowania węzłów w grupy. Wyniki przeprowadzonych eksperymentów pokazują, że protokół zachowuje się zgodnie z oczekiwaniami, tzn. przy odpowiednim doborze parametrów, można utrzymać średnią liczność i średni czas życia grup na pożądanym poziomie.
 
 Celem powstania protokołu Statycznych Grup było zapewnienie infrastruktury dla replikacji, nie wnikając w szczegóły dotyczące sposobu uspójniania danych między replikami. Pozostawia to pole do dalszych badań dotyczących replikacji z wykorzystaniem protokołu Statycznych Grup --- np. wpływ sposobu uspójniania danych i wielkość grup na ruch komunikacyjny w sieci.
 
@@ -812,9 +814,41 @@ Wyżej wymienione aspekty sprawiają, iż niniejsza praca magisterska jest tylko
 
 \bibitem{bib:jeyasheeli} Ms. F. Golda Jeyasheeli, L. Rajashree, \emph{Cost Effective File Replication in P2P File Sharing Systems}, 2012 International Conference on Computing, Electronics and Electrical Technologies [ICCEET]
  
+\bibitem{bib:einav} Liran Einav, Chiara Farronato, Jonathan Levin \emph{Peer-to-Peer Markets}, Annual Review of Economics
+
+\bibitem{bib:fraiberger} Samuel P. Fraiberger, Arun Sundararajan \emph{Peer-to-Peer Rental Markets in the Sharing Economy}, Annual Review of Economics
+
 \bibitem{bib:ye} C. Ye, D. M. Chiu, \emph{Peer-to-Peer Replication with Preferences}, Department of Information Engineering, The Chinese University of Hong Kong
 
 \bibitem{bib:paiva} J. Paiva, L. Rodrigues, \emph{Policies for Efficient Data Replication in P2P Systems}, INESC-ID, Instituto Superior Técnico, Universidade Técnica
+
+\bibitem{bib:wu} D. Wu, Y. Tian, K.-W. Ng, \emph{Analytical study on improving DHT lookup performance under churn}, 2006, IEEE P2P
+
+\bibitem{bib:blake} C. Blake, R. Rodrigues, \emph{High availability, scalable storage, dynamic peer networks: Pick two}, 2003, USENIX HotOS
+
+\bibitem{bib:pace} A. Pace, V. Quema, V. Schiavoni, \emph{Exploiting node connection regularity for DHT replication}, 2011, IEEE SRDS
+
+\bibitem{bib:woungang} I. Woungang, F.-H. Tseng, Y.-H. Lin, L.-D. Chou, M. S. Obaidat, \emph{MR-Chord: Improved Chord Lookup Performance in Structured Mobile P2P Networks}, 2014, IEEE Systems Journal
+
+\bibitem{bib:blond} S. Blond, F. Dessant, E. Merrer, \emph{Finding good partners in availability-aware P2P networks}, SSS, 2009
+
+\bibitem{bib:cherbal} S. Cherbal, A. Boukerram, A. Boubetra, \emph{RepMChord: A novel replication approach for mobile Chord with reduced traffic overhead}, 2017, Commmunication Systems, Volume 30, Issue 14
+
+\bibitem{bib:shafaat} T. Shafaat, B. Ahmad, S. Haridi, \emph{Id-replication for structured peer-to-peer systems}, 2012, Euro-Par
+
+\bibitem{bib:shahriar} N. Shahriar, S. R. Chowdhury, R. Ahmed, \emph{Availability in P2P based online social networks}, 2017, 4th International Conference on Networking, Systems and Security
+
+\bibitem{bib:ktari} S. Ktari, M. Zoubert, A. Hecker, H. Labiod, \emph{Performance evaluation of replication strategies in dhts under churn}, 2007, Proc. of the 6th MUM, s.90-97
+
+\bibitem{bib:mojamed} M. al mojamed, M. Kolberg, \emph{Structured Peer-to-Peer overlay deployment on MANET: A survey}, 2015, Computer networks
+
+\bibitem{bib:navimipour} N. J. Navimipour, F. S. Milani, \emph{A comprehensive study of the resource discovery techniques in Peer-to-Peer networks}, 2015, Peer-to-Peer Networking and Applications, s. 474-492
+
+\bibitem{bib:tsai} J. Tsai, J.-S. Liu, T.-Y. Chang, \emph{Optimality of a Simple Replica Placement Strategy for Chord Peer-to-Peer Networks}, 2017, IEICE TRANSACTIONS on Communications
+
+\bibitem{bib:novak} D. Novak, \emph{Load Balancing in Peer-to-Peer Data Networks}, Masaryk University, Brno, Czech Republic 
+
+\bibitem{bib:felber} P. Felber, P. Kropf, E. Shiller, \emph{Survey on Load Balancing in Peer-to-Peer Distributed Hash Tables}, 2014, IEEE Communications Surveys and Tutorials, s. 473-492
 
 \bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, 2017, Instytut Informatyki, Politechnika Poznańska
 
@@ -827,6 +861,12 @@ Wyżej wymienione aspekty sprawiają, iż niniejsza praca magisterska jest tylko
 \bibitem{bib:knezevic} P. Knezevic, A. Wombacher, T. Risse, \emph{Enabling High Data Availability in a DHT}, 16th International Workshop on Database and Expert Systems Applications, 2005 (pp. 363-367). [10.1109/DEXA.2005.84] Los Alamitos: IEEE Computer Society Press. DOI: 10.1109/DEXA.2005.84
 
 \bibitem{bib:rao} A. Rao, K. Lakshminarayanan, S. Surana, R. Karp, I. Stoica, \emph{Load Balancing in Structured P2P Systems}, Peer-to-Peer Systems II. IPTPS 2003. Lecture Notes in Computer Science, vol 2735. Springer, Berlin, Heidelberg
+
+\bibitem{bib:schollmeier} R. Schollmeier, \emph{A definition of peer-to-peer networking for the classification of peer-to-peer architectures and applications}, Proceedings First International Conference on Peer-to-Peer Computing
+
+\bibitem{bib:braubach} L. Braubach, A. Pokahr, \emph{Addressing Challenges of Distributed Systems Using Active Components}, Springer Berlin Heidelberg, Intelligent Distributed Computing V, 2012, s. 141--151
+
+\bibitem{bib:aws} J. Varia, \emph{Architecting for the Cloud: Best Practices}, 2011, Amazon Web Services
 
 \bibitem{bib:tac} Javad Taheri , Mohammad Kazem Akbari, \emph{TAC: A Topology-Aware Chord-based Peer-to-Peer Network}, Advanced Information Technologies Lab., Department of Computer Engineering and IT, Amirkabir University of Technology, Tehran, Iran
 
@@ -842,15 +882,18 @@ Wyżej wymienione aspekty sprawiają, iż niniejsza praca magisterska jest tylko
 
 \bibitem{bib:pastry} \emph{Pastry}, [online] \url{https://www.freepastry.org/} [dostęp: 08.09.2018 r.]
 
+\bibitem{bib:pastry_article} A. Rowstron, P. Druschel, \emph{Pastry: Scalable, Decentralized Object Location, and Routing for Large-Scale Peer-to-Peer Systems}, Springer Berlin Heidelberg, Middleware 2001, s. 329--350
+
 \bibitem{bib:pier} Ryan Jay Huebsch, \emph{PIER: Internet Scale P2P Query Processing with Distributed Hash Tables}, Electrical Engineering and Computer Sciences University of California at Berkeley
 
 \bibitem{bib:edutella} \emph{Edutella}, [online] \url{https://sourceforge.net/projects/edutella/} [dostęp: 08.09.2018 r.]
 
 \bibitem{bib:jxta} Navaneeth Krishnan, \emph{The Jxta solution to P2P}, [online] \url{https://www.javaworld.com/article/2075733/enterprise-java/the-jxta-solution-to-p2p.html} [dostęp: 08.09.2018 r.]
 
+\bibitem{bib:kademlia_article} P. Maymounkov, D. Mazieres \emph{Kademlia: A Peer-to-Peer Information System Based on the XOR Metric}, Springer Berlin Heidelberg, Peer-to-Peer Systems, s. 53--65
+
 \bibitem{bib:peersim} \emph{PeerSim P2P Simulator}, [online] \url{http://peersim.sourceforge.net/} [dostęp: 08.09.2018 r.]
 
-%\bibitem{bib:kobusinska} Anna Kobusińska, \emph{Systemy Rozprosozne Dużej Skali}, Wykłady, [online] \url{http://www.cs.put.poznan.pl/akobusinska/lsds.html} [dostęp: 08.09.2018 r.]
 
 \end{thebibliography}
 
