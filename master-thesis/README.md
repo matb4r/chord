@@ -1,2 +1,3 @@
 # Master thesis
-Extension of the Chord protocol
+
+The mechanism of grouping nodes in P2P systems that extends Chord protocol.
