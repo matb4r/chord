@@ -4,4 +4,4 @@ http://peersim.sourceforge.net/
 Modified version of PeerSim simulator that was adapted for the Static Groups protocol
 
 
-<img src="../master-thesis/graph28.png" width="50%">
+<img src="../master-thesis/latex/graph28.png" width="50%">
